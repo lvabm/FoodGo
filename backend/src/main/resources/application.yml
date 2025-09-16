@@ -1,16 +1,51 @@
+# =================================================================
+# PHẦN CẤU HÌNH DEFAULT (Áp dụng cho mọi môi trường)
+# =================================================================
 spring:
+  # PHẦN 1: THIẾT LẬP KẾT NỐI DATASOURCE
   datasource:
-    # http://localhost:8080/h2-console
-    url: jdbc:h2:mem:foodgo_db
-    driverClassName: org.h2.Driver
-    username: sa
-    password: 12345678
+    # QUAN TRỌNG: Sử dụng 'localhost' để kết nối DB khi chạy từ IDE (trên máy Host)
+    url: jdbc:postgresql://localhost:5432/foodgo_db
+    username: admin
+    password: admin
+    driver-class-name: org.postgresql.Driver
+
+  # PHẦN 2: CẤU HÌNH JPA/HIBERNATE
   jpa:
     hibernate:
-      ddl-auto: create-drop
-  h2:
-    console:
-      enabled: true
+      # create-drop dùng khi lỗi data các thứ nha ae
+      ddl-auto: update
+      database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  # PHẦN 3: CẤU HÌNH KHỞI TẠO SQL SCRIPT
   sql:
     init:
       mode: never
+
+  devtools:
+    # Nên bật, Devtools sẽ tự động Restart khi file .class thay đổi
+    add-properties: true
+#
+## =================================================================
+## PHẦN CẤU HÌNH CHO PROFILE 'local-dev' (Chạy từ IDE)
+## =================================================================
+#---
+#spring:
+#  config:
+#    activate:
+#      # Kích hoạt profile này khi chạy từ IDE
+#      # Nếu không sẽ xung đột cổng vì SpringBoot sẽ tạo một cổng localhost 8080 mới
+#      on-profile: local-dev
+#  docker:
+#    compose:
+#      lifecycle-management:
+#        # Chỉ định rõ những services nào cần Docker Compose khởi động.
+#        # LOẠI TRỪ DỊCH VỤ 'backend' để nó không chiếm cổng 8080 trên Host.
+#        include:
+#          - postgres
+#          - pgadmin
+#          - frontend
