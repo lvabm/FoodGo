@@ -1,5 +1,6 @@
 package com.foodgo.backend.exception;
 
+import com.foodgo.backend.common.base.BaseException;
 import com.foodgo.backend.common.constant.ErrorCode;
 import org.springframework.http.HttpStatus;
 
