@@ -1,9 +1,9 @@
 package com.foodgo.backend.common.constant;
 
 public enum BookingStatus {
-    PENDING,
-    CONFIRMED,
-    CANCELLED,
-    COMPLETED,
-    NO_SHOW
+  PENDING, // Chờ xác nhận
+  CONFIRMED, // Đã xác nhận
+  CANCELLED, // Hủy đơn
+  COMPLETED, // Đơn thành công
+  NO_SHOW // Ẩn đơn
 }
