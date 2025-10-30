@@ -1,8 +1,11 @@
 package com.foodgo.backend.module.review_d.entity;
 
 import com.foodgo.backend.common.base.BaseEntity;
+import com.foodgo.backend.module.user_d.entity.UserAccount;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -13,12 +16,21 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 public class ReviewReply extends BaseEntity {
-  @Column(name = "review_id", nullable = false)
-  private Long reviewId;
 
-  @Column(name = "owner_id", nullable = false)
-  private UUID ownerId;
 
   @Column(name = "content", length = 1000)
   private String content;
+
+  //1. QUAN HỆ MANY - TO - ONE: ReviewReply <--> Review
+  // ReviewReply sở hữu quan hệ (fk_review_id_review_reply)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @JoinColumn(name = "review_id", nullable = false)
+  private Review review;
+
+  //2. QUAN HỆ MANY - TO - ONE: ReviewReply <--> UserAccount
+  // ReviewReply sở hữu quan hệ (fk_user_id_review_reply)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @JoinColumn(name = "user_id", nullable = false)
+  private UserAccount ownerId;
+
 }

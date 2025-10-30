@@ -13,9 +13,16 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 public class UserRole extends BaseEntity {
-  @Column(name = "user_id", nullable = false)
-  private UUID userId;
 
-  @Column(name = "role_id", nullable = false)
-  private Integer roleId;
+  //1. QUAN HỆ MANY - TO - ONE: UserRole <--> UserAccount
+  // UserRole sở hữu quan hệ (fk_user_id_user_role)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @JoinColumn(name = "user_id", nullable = false)
+  private UserAccount user;
+
+  //2. QUAN HỆ MANY - TO - ONE: UserRole <--> Role
+  // UserRole sở hữu quan hệ (fk_role_id_user_role)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @JoinColumn(name = "role_id", nullable = false)
+  private Role role;
 }

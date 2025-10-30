@@ -17,4 +17,11 @@ public class FeatureOfOutlet extends BaseEntity {
 
   @Column(name = "description", length = 255)
   private String description;
+
+  //1. QUAN HỆ MANY - TO - ONE: FeatureOfOutlet <--> Outlet
+  // FeatureOfOutlet sở hữu quan hệ (fk_feature_of_outlet_id_outlet_has_feature)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @JoinColumn(name = "outlet_id", nullable = false)
+  private Outlet outlet;
+
 }

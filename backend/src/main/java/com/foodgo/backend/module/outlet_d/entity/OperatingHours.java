@@ -13,8 +13,6 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 public class OperatingHours extends BaseEntity {
-  @Column(name = "outlet_id", nullable = false)
-  private UUID outletId;
 
   @Column(name = "day_of_week", nullable = false)
   private int dayOfWeek;
@@ -24,4 +22,10 @@ public class OperatingHours extends BaseEntity {
 
   @Column(name = "close_time", length = 10)
   private String closeTime;
+
+  //1. QUAN HỆ MANY - TO - ONE: OperatingHours <--> Outlet
+  // OperatingHours sở hữu quan hệ (fk_outlet_id_operating_hours)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @JoinColumn(name = "outlet_id", nullable = false)
+  private Outlet outlet;
 }

@@ -12,9 +12,13 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class ReviewImage extends BaseEntity {
-  @Column(name = "review_id", nullable = false)
-  private Long reviewId;
 
   @Column(name = "image_url", nullable = false, length = 255)
   private String imageUrl;
+
+  //1. QUAN HỆ MANY - TO - ONE: ReviewImage <--> Review
+  // ReviewImage sở hữu quan hệ (fk_review_id_review_image)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @JoinColumn(name = "review_id", nullable = false)
+  private Review review;
 }

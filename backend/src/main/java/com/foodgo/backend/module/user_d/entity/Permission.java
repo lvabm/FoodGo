@@ -4,6 +4,8 @@ import com.foodgo.backend.common.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "permission")
 @Getter
@@ -17,4 +19,9 @@ public class Permission extends BaseEntity {
 
   @Column(name = "description", length = 255)
   private String description;
+
+  //1. QUAN HỆ ONE - TO - MANY: Permission <--> RolePermission
+  // RolePermission sở hữu quan hệ (fk_permission_id_role_permission)
+  @OneToMany(mappedBy = "permission", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  private List<RolePermission> rolePermissions;
 }

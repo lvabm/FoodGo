@@ -14,8 +14,6 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 public class PasswordResetToken extends BaseEntity {
-  @Column(name = "user_id", nullable = false)
-  private UUID userId;
 
   @Column(name = "token", nullable = false, unique = true, length = 500)
   private String token;
@@ -25,4 +23,10 @@ public class PasswordResetToken extends BaseEntity {
 
   @Column(name = "is_used", nullable = false)
   private boolean isUsed = false;
+
+  //1. QUAN HỆ MANY - TO - ONE: PasswordResetToken <--> UserAccount
+  // PasswordResetToken sở hữu quan hệ (fk_user_id_password_reset_token)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @JoinColumn(name = "user_id", nullable = false)
+  private UserAccount user;
 }

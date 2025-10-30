@@ -1,9 +1,13 @@
 package com.foodgo.backend.module.review_d.entity;
 
 import com.foodgo.backend.common.base.BaseEntity;
+import com.foodgo.backend.module.booking_d.entity.Booking;
+import com.foodgo.backend.module.outlet_d.entity.Outlet;
+import com.foodgo.backend.module.user_d.entity.UserAccount;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -14,14 +18,6 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 public class Review extends BaseEntity {
-  @Column(name = "user_id", nullable = false)
-  private UUID userId;
-
-  @Column(name = "outlet_id", nullable = false)
-  private UUID outletId;
-
-  @Column(name = "booking_id")
-  private Long bookingId;
 
   @Column(name = "rating", nullable = false)
   private int rating;
@@ -31,4 +27,27 @@ public class Review extends BaseEntity {
 
   @Column(name = "created_at", nullable = false)
   private Instant createdAt = Instant.now();
+
+  //1. QUAN HỆ MANY - TO - ONE: Review <--> Booking
+  // Review sở hữu quan hệ (fk_booking_id_review)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @JoinColumn(name = "booking_id", nullable = false)
+  private Booking booking;
+
+  //2. QUAN HỆ MANY - TO - ONE: Review <--> UserAccount
+  // Review sở hữu quan hệ (fk_user_id_review)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @JoinColumn(name = "user_id", nullable = false)
+  private UserAccount user;
+
+  //3. QUAN HỆ MANY - TO - ONE: Review <--> Outlet
+  // Review sở hữu quan hệ (fk_outlet_id_review)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @JoinColumn(name = "outlet_id", nullable = false)
+  private Outlet outlet;
+
+  //4. QUAN HỆ ONE - TO - MANY: Review <--> ReviewReport
+  // ReviewReport sở hữu quan hệ (fk_review_id_review_report)
+  @OneToMany(mappedBy = "review", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  private List<ReviewReport> reviewReports;
 }

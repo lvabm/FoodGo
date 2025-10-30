@@ -12,9 +12,16 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class OutletFnbHasFeature extends BaseEntity {
-  @Column(name = "outlet_fnb_id", nullable = false)
-  private Long outletFnbId;
 
-  @Column(name = "feature_id", nullable = false)
-  private Long featureId;
+  //2. QUAN HỆ MANY - TO - ONE: FeatureOfFnb <--> OutletFnbHasFeature
+  // OutletFnbHasFeature sở hữu quan hệ (fk_outlet_has_fnb_id_outlet_fnb_has_feature)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @JoinColumn(name = "feature_id", nullable = false)
+  private FeatureOfFnb featureOfFnb;
+
+  //2. QUAN HỆ MANY - TO - ONE: OutletHasFnb <--> OutletFnbHasFeature
+  // OutletFnbHasFeature sở hữu quan hệ (fk_outlet_has_fnb_id_outlet_fnb_has_feature)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @JoinColumn(name = "outlet_fnb_id", nullable = false)
+  private OutletHasFnb outletHasFnb;
 }

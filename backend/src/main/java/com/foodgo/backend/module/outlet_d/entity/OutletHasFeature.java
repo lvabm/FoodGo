@@ -13,9 +13,16 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 public class OutletHasFeature extends BaseEntity {
-  @Column(name = "outlet_id", nullable = false)
-  private UUID outletId;
 
-  @Column(name = "feature_id", nullable = false)
-  private Long featureId;
+  //1. QUAN HỆ MANY - TO - ONE: OutletHasFeature <--> Outlet
+  // OutletHasFeature sở hữu quan hệ (fk_outlet_id_outlet_has_feature)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @JoinColumn(name = "outlet_id", nullable = false)
+  private Outlet outlet;
+
+//  //2. QUAN HỆ MANY - TO - ONE: OutletHasFeature <--> Feature
+//  // OutletHasFeature sở hữu quan hệ (fk_feature_of_outlet_id_outlet_has_feature)
+//  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+//  @JoinColumn(name = "feature_id", nullable = false)
+//  private Feature feature;
 }
