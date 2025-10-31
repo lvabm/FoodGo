@@ -25,7 +25,7 @@ public class PasswordResetToken extends BaseEntity {
   private boolean isUsed = false;
 
   //1. QUAN HỆ MANY - TO - ONE: PasswordResetToken <--> UserAccount
-  // PasswordResetToken sở hữu quan hệ (fk_user_id_password_reset_token)
+  // PasswordResetToken sở hữu quan hệ (fk_user_account_id_password_reset_token)
   @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinColumn(name = "user_id", nullable = false)
   private UserAccount user;

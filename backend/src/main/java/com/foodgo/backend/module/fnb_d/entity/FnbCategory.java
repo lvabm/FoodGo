@@ -27,19 +27,19 @@ public class FnbCategory extends BaseEntity {
   //1. QUAN HỆ ONE - TO - MANY: FnbCategory <--> FnbSubCategory
   // FnbSubCategory sở hữu quan hệ (fk_fnb_category_id_fnb_sub_category)
   @OneToMany(mappedBy = "category", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  private List<Outlet> outlets;
+  private List<FnbSubCategory> fnbSubCategories;
 
   //2. QUAN HỆ MANY - TO - ONE: FnbType <--> FnbCategory
   // FnbCategory sở hữu quan hệ (fk_fnb_type_id_fnb_category)
   @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinColumn(name = "type_id", nullable = false)
-  private Province province;
+  private FnbType type;
 
   //2. QUAN HỆ MANY - TO - ONE: OutletCategory <--> FnbCategory
   // FnbCategory sở hữu quan hệ (fk_outlet_category_id_fnb_category)
   @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinColumn(name = "category_id", nullable = false)
-  private OutletCategory outletCategory;
+  private OutletCategory category;
 
 
 }

@@ -20,7 +20,7 @@ public class OutletImage extends BaseEntity {
   @Column(name = "description", length = 255)
   private String description;
 
-  //1. QUAN HỆ MANY - TO - ONE: OutletImage <--> Outlet
+  //1. QUAN HỆ MANY - TO - ONE: Outlet <--> OutletImage
   // OutletImage sở hữu quan hệ (fk_outlet_id_outlet_image)
   @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinColumn(name = "outlet_id", nullable = false)

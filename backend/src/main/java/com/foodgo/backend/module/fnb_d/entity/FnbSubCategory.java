@@ -31,5 +31,5 @@ public class FnbSubCategory extends BaseEntity {
   // FnbSubCategory sở hữu quan hệ (fk_fnb_category_id_fnb_sub_category)
   @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinColumn(name = "category_id", nullable = false)
-  private FnbCategory fnbCategory;
+  private FnbCategory category;
 }

@@ -2,6 +2,7 @@ package com.foodgo.backend.module.location_d.entity;
 
 import com.foodgo.backend.common.base.BaseEntity;
 import com.foodgo.backend.module.membership_d.entity.UserMembership;
+import com.foodgo.backend.module.user_d.entity.Profile;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,11 +24,11 @@ public class Country extends BaseEntity {
 
   //1. QUAN HỆ ONE - TO - MANY: Country <--> Profile
   // Profile sở hữu quan hệ (fk_country_id_profile)
-  @OneToMany(mappedBy = "outlet", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  private List<UserMembership> userMemberships;
+  @OneToMany(mappedBy = "country", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  private List<Profile> Profile;
 
   //1. QUAN HỆ ONE - TO - MANY: Country <--> Province
   // Profile sở hữu quan hệ (fk_country_id_province)
-  @OneToMany(mappedBy = "outlet", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "country", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private List<Province> provinces;
 }

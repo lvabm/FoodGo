@@ -27,10 +27,10 @@ public class UserMembership extends BaseEntity {
   // UserMembership sở hữu quan hệ (fk_membership_plan_id_user_membership)
   @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinColumn(name = "plan_id", nullable = false)
-  private MembershipPlan membershipPlan;
+  private MembershipPlan plan;
 
   //2. QUAN HỆ MANY - TO - ONE: UserAccount <--> UserMembership
-  // UserMembership sở hữu quan hệ (fk_membership_plan_id_user_membership)
+  // UserMembership sở hữu quan hệ (fk_user_account_id_user_membership)
   @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinColumn(name = "user_id", nullable = false)
   private UserAccount userAccount;

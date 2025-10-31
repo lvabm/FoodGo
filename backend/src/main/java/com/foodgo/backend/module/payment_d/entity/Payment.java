@@ -38,9 +38,4 @@ public class Payment extends BaseEntity {
   @JoinColumn(name = "booking_id", nullable = false, unique = true)
   private Booking booking;
 
-  //2. QUAN HỆ MANY - TO - ONE: Payment <--> UserAccount
-  // Payment sở hữu quan hệ (fk_user_id_payment)
-  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  @JoinColumn(name = "user_id", nullable = false)
-  private UserAccount user;
 }

@@ -1,6 +1,7 @@
 package com.foodgo.backend.module.user_d.entity;
 
 import com.foodgo.backend.common.base.BaseEntity;
+import com.foodgo.backend.module.location_d.entity.Country;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
@@ -27,12 +28,17 @@ public class Profile extends BaseEntity {
   @Column(name = "avatar_url", length = 255)
   private String avatarUrl;
 
-  @Column(name = "country_id")
-  private Integer countryId;
-
   //1. QUAN HỆ ONE - TO - ONE: Profile <--> UserAccount
-  // UserAccount sở hữu quan hệ (fk_user_id_profile)
-  @OneToOne(mappedBy = "profile", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  @Column(name = "user_id", nullable = false, unique = true)
+  // UserAccount sở hữu quan hệ (fk_user_account_id_profile)
+  @OneToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
   private UserAccount userAccount;
+
+  //2. QUAN HỆ MANY - TO - ONE: Country <--> Profile
+  // Profile sở hữu quan hệ (fk_country_id_profile)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @JoinColumn(name = "country_id", nullable = false)
+  private Country country;
+
+
 }

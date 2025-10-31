@@ -14,7 +14,7 @@ import lombok.*;
 public class OutletFnbHasFeature extends BaseEntity {
 
   //2. QUAN HỆ MANY - TO - ONE: FeatureOfFnb <--> OutletFnbHasFeature
-  // OutletFnbHasFeature sở hữu quan hệ (fk_outlet_has_fnb_id_outlet_fnb_has_feature)
+  // OutletFnbHasFeature sở hữu quan hệ (fk_feature_of_fnb_id_outlet_fnb_has_feature)
   @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinColumn(name = "feature_id", nullable = false)
   private FeatureOfFnb featureOfFnb;
@@ -23,5 +23,5 @@ public class OutletFnbHasFeature extends BaseEntity {
   // OutletFnbHasFeature sở hữu quan hệ (fk_outlet_has_fnb_id_outlet_fnb_has_feature)
   @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinColumn(name = "outlet_fnb_id", nullable = false)
-  private OutletHasFnb outletHasFnb;
+  private OutletHasFnb outletFnb;
 }

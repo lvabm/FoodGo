@@ -29,6 +29,6 @@ public class MembershipPlan extends BaseEntity {
 
   //1. QUAN HỆ ONE - TO - MANY: MembershipPlan <--> UserMembership
   // UserMembership sở hữu quan hệ (fk_membership_plan_id_user_membership)
-  @OneToMany(mappedBy = "outlet", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "plan", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private List<UserMembership> userMemberships;
 }

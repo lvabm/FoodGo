@@ -18,7 +18,7 @@ public class UserGroup extends BaseEntity {
   // UserGroup sở hữu quan hệ (fk_user_account_id_user_group)
   @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinColumn(name = "user_id", nullable = false)
-  private UserAccount User;
+  private UserAccount userAccount;
 
   //2. QUAN HỆ MANY - TO - ONE: Group <--> UserGroup
   // UserGroup sở hữu quan hệ (fk_group_id_user_group)

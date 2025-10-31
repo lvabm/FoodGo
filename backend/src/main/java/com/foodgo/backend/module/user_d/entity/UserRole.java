@@ -15,10 +15,10 @@ import java.util.UUID;
 public class UserRole extends BaseEntity {
 
   //1. QUAN HỆ MANY - TO - ONE: UserRole <--> UserAccount
-  // UserRole sở hữu quan hệ (fk_user_id_user_role)
+  // UserRole sở hữu quan hệ (fk_user_account_id_user_role)
   @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinColumn(name = "user_id", nullable = false)
-  private UserAccount user;
+  private UserAccount userAccount;
 
   //2. QUAN HỆ MANY - TO - ONE: UserRole <--> Role
   // UserRole sở hữu quan hệ (fk_role_id_user_role)

@@ -24,4 +24,9 @@ public class OutletType extends BaseEntity {
   // Outlet sở hữu quan hệ (fk_outlet_type_id_outlet)
   @OneToMany(mappedBy = "type", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private List<Outlet> outlets;
+
+  //2. QUAN HỆ ONE - TO - MANY: OutletType <--> OutletCategory
+  // OutletCategory sở hữu quan hệ (fk_outlet_type_id_outlet_category)
+  @OneToMany(mappedBy = "type", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  private List<OutletCategory> outletCategories;
 }

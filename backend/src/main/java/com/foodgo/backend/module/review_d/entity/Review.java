@@ -8,7 +8,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.time.Instant;
 import java.util.List;
-import java.util.UUID;
 
 @Entity
 @Table(name = "review")
@@ -34,8 +33,8 @@ public class Review extends BaseEntity {
   @JoinColumn(name = "booking_id", nullable = false)
   private Booking booking;
 
-  //2. QUAN HỆ MANY - TO - ONE: Review <--> UserAccount
-  // Review sở hữu quan hệ (fk_user_id_review)
+  //2. QUAN HỆ MANY - TO - ONE: UserAccount <--> Review
+  // Review sở hữu quan hệ (fk_user_account_id_review)
   @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinColumn(name = "user_id", nullable = false)
   private UserAccount user;
@@ -50,4 +49,20 @@ public class Review extends BaseEntity {
   // ReviewReport sở hữu quan hệ (fk_review_id_review_report)
   @OneToMany(mappedBy = "review", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private List<ReviewReport> reviewReports;
+
+  //5. QUAN HỆ ONE - TO - MANY: Review <--> ReviewImage
+  // ReviewImage sở hữu quan hệ (fk_review_id_review_image)
+  @OneToMany(mappedBy = "review", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  private List<ReviewImage> reviewImages;
+
+  //6. QUAN HỆ ONE - TO - MANY: Review <--> ReviewReply
+  // ReviewReply sở hữu quan hệ (fk_review_id_review_image)
+  @OneToMany(mappedBy = "review", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  private List<ReviewReply> reviewReplies;
+
+  //7. QUAN HỆ ONE - TO - MANY: Review <--> ReviewReaction
+  // ReviewReaction sở hữu quan hệ (fk_review_id_review_reaction)
+  @OneToMany(mappedBy = "review", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  private List<ReviewReaction> reviewReactions;
+
 }

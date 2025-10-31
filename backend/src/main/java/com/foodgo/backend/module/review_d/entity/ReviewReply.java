@@ -28,9 +28,9 @@ public class ReviewReply extends BaseEntity {
   private Review review;
 
   //2. QUAN HỆ MANY - TO - ONE: ReviewReply <--> UserAccount
-  // ReviewReply sở hữu quan hệ (fk_user_id_review_reply)
+  // ReviewReply sở hữu quan hệ (fk_user_account_id_review_reply)
   @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  @JoinColumn(name = "user_id", nullable = false)
-  private UserAccount ownerId;
+  @JoinColumn(name = "owner_id", nullable = false)
+  private UserAccount owner;
 
 }

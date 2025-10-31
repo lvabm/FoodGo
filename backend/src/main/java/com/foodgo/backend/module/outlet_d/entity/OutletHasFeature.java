@@ -14,15 +14,15 @@ import java.util.UUID;
 @Builder
 public class OutletHasFeature extends BaseEntity {
 
-  //1. QUAN HỆ MANY - TO - ONE: OutletHasFeature <--> Outlet
+  //1. QUAN HỆ MANY - TO - ONE: Outlet <--> OutletHasFeature
   // OutletHasFeature sở hữu quan hệ (fk_outlet_id_outlet_has_feature)
   @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinColumn(name = "outlet_id", nullable = false)
   private Outlet outlet;
 
-//  //2. QUAN HỆ MANY - TO - ONE: OutletHasFeature <--> Feature
-//  // OutletHasFeature sở hữu quan hệ (fk_feature_of_outlet_id_outlet_has_feature)
-//  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-//  @JoinColumn(name = "feature_id", nullable = false)
-//  private Feature feature;
+  //2. QUAN HỆ MANY - TO - ONE: FeatureOfOutlet  <--> OutletHasFeature
+  // OutletHasFeature sở hữu quan hệ (fk_feature_of_outlet_id_outlet_has_feature)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @JoinColumn(name = "feature_id", nullable = false)
+  private FeatureOfOutlet featureOfOutlet;
 }
