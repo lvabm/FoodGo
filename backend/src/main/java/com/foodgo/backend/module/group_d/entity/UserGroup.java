@@ -12,7 +12,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserGroup extends BaseEntity {
+public class UserGroup extends BaseEntity<Long> {
 
   //1. QUAN HỆ MANY - TO - ONE: UserAccount <--> UserGroup
   // UserGroup sở hữu quan hệ (fk_user_account_id_user_group)

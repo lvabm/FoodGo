@@ -11,7 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class RolePermission extends BaseEntity {
+public class RolePermission extends BaseEntity<Long> {
   //1. QUAN HỆ MANY - TO - ONE: RolePermission <--> Role
   // RolePermission sở hữu quan hệ (fk_role_id_role_permission)
   @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)

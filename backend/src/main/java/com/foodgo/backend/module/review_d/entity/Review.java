@@ -6,8 +6,10 @@ import com.foodgo.backend.module.outlet_d.entity.Outlet;
 import com.foodgo.backend.module.user_d.entity.UserAccount;
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "review")
@@ -16,7 +18,13 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Review extends BaseEntity {
+public class Review extends BaseEntity<UUID> {
+
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(updatable = false, nullable = false)
+  private UUID id;
+
 
   @Column(name = "rating", nullable = false)
   private int rating;

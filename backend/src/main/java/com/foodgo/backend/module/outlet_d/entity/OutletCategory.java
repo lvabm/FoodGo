@@ -2,8 +2,6 @@ package com.foodgo.backend.module.outlet_d.entity;
 
 import com.foodgo.backend.common.base.BaseEntity;
 import com.foodgo.backend.module.fnb_d.entity.FnbCategory;
-import com.foodgo.backend.module.fnb_d.entity.FnbType;
-import com.foodgo.backend.module.user_d.entity.UserAccount;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class OutletCategory extends BaseEntity {
+public class OutletCategory extends BaseEntity<Integer> {
   @Column(name = "name", nullable = false, unique = true, length = 100)
   private String name;
 

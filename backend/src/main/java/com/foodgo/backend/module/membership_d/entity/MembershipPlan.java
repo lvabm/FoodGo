@@ -1,9 +1,9 @@
 package com.foodgo.backend.module.membership_d.entity;
 
 import com.foodgo.backend.common.base.BaseEntity;
-import com.foodgo.backend.module.review_d.entity.Review;
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MembershipPlan extends BaseEntity {
+public class MembershipPlan extends BaseEntity<Integer> {
   @Column(name = "name", nullable = false, unique = true, length = 100)
   private String name;
 

@@ -1,8 +1,6 @@
 package com.foodgo.backend.module.fnb_d.entity;
 
 import com.foodgo.backend.common.base.BaseEntity;
-import com.foodgo.backend.module.location_d.entity.Province;
-import com.foodgo.backend.module.outlet_d.entity.Outlet;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class FnbSubCategory extends BaseEntity {
+public class FnbSubCategory extends BaseEntity<Integer> {
   @Column(name = "name", nullable = false, unique = true, length = 100)
   private String name;
 

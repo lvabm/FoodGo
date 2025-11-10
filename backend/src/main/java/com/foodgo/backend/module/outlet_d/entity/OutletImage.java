@@ -3,7 +3,6 @@ package com.foodgo.backend.module.outlet_d.entity;
 import com.foodgo.backend.common.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import java.util.UUID;
 
 @Entity
 @Table(name = "outlet_image")
@@ -12,7 +11,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class OutletImage extends BaseEntity {
+public class OutletImage extends BaseEntity<Integer> {
 
   @Column(name = "image_url", nullable = false, length = 255)
   private String imageUrl;

@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class OutletType extends BaseEntity {
+public class OutletType extends BaseEntity<Integer> {
   @Column(name = "name", nullable = false, unique = true, length = 100)
   private String name;
 

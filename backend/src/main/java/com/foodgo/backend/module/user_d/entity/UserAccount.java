@@ -15,6 +15,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "user_account")
@@ -23,7 +24,13 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserAccount extends BaseEntity {
+public class UserAccount extends BaseEntity<UUID> {
+
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(updatable = false, nullable = false)
+  private UUID id;
+
 
   @Column(name = "username", nullable = false, unique = true, length = 30)
   private String username;
@@ -84,27 +91,27 @@ public class UserAccount extends BaseEntity {
   //9. QUAN HỆ ONE - TO - MANY: UserAccount <--> ReviewReaction
   // ReviewReaction sở hữu quan hệ (fk_user_account_id_review_reaction)
   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  private List<ReviewReaction> reviewReactions ;
+  private List<ReviewReaction> reviewReactions;
 
   //10. QUAN HỆ ONE - TO - MANY: UserAccount <--> ReviewReport
   // ReviewReport sở hữu quan hệ (fk_user_account_id_review_report)
   @OneToMany(mappedBy = "reporter", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  private List<ReviewReport> reviewReports ;
+  private List<ReviewReport> reviewReports;
 
   //11. QUAN HỆ ONE - TO - MANY: UserAccount <--> Notification
   // Notification sở hữu quan hệ (fk_user_account_id_notification)
   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  private List<Notification> notifications ;
+  private List<Notification> notifications;
 
   //12. QUAN HỆ ONE - TO - MANY: UserAccount <--> UserMembership
   // UserMembership sở hữu quan hệ (fk_user_account_id_user_membership)
   @OneToMany(mappedBy = "userAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  private List<UserMembership> userMemberships ;
+  private List<UserMembership> userMemberships;
 
   //13. QUAN HỆ ONE - TO - MANY: UserAccount <--> UserGroup
   // UserGroup sở hữu quan hệ (fk_user_account_id_user_group)
   @OneToMany(mappedBy = "userAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  private List<UserGroup> userGroups ;
+  private List<UserGroup> userGroups;
 
 
 }

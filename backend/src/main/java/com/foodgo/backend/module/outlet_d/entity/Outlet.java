@@ -2,7 +2,6 @@ package com.foodgo.backend.module.outlet_d.entity;
 
 import com.foodgo.backend.common.base.BaseEntity;
 import com.foodgo.backend.module.booking_d.entity.Booking;
-import com.foodgo.backend.module.fnb_d.entity.FnbCategory;
 import com.foodgo.backend.module.fnb_d.entity.OutletHasFnb;
 import com.foodgo.backend.module.location_d.entity.District;
 import com.foodgo.backend.module.review_d.entity.Review;
@@ -20,7 +19,13 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Outlet extends BaseEntity {
+public class Outlet extends BaseEntity<UUID> {
+
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(updatable = false, nullable = false)
+  private UUID id;
+
   @Column(name = "name", nullable = false, length = 255)
   private String name;
 
@@ -80,7 +85,6 @@ public class Outlet extends BaseEntity {
   @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinColumn(name = "type_id", nullable = false)
   private OutletType type;
-
 
 
 }

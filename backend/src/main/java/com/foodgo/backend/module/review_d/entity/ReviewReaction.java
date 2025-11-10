@@ -4,7 +4,6 @@ import com.foodgo.backend.common.base.BaseEntity;
 import com.foodgo.backend.module.user_d.entity.UserAccount;
 import jakarta.persistence.*;
 import lombok.*;
-import java.util.UUID;
 
 @Entity
 @Table(name = "review_reaction")
@@ -13,7 +12,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ReviewReaction extends BaseEntity {
+public class ReviewReaction extends BaseEntity<Long> {
 
   @Column(name = "reaction_type", length = 50)
   private String reactionType;

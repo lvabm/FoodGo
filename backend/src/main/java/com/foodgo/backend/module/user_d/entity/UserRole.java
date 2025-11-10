@@ -3,7 +3,6 @@ package com.foodgo.backend.module.user_d.entity;
 import com.foodgo.backend.common.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import java.util.UUID;
 
 @Entity
 @Table(name = "user_role")
@@ -12,7 +11,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserRole extends BaseEntity {
+public class UserRole extends BaseEntity<Long> {
 
   //1. QUAN HỆ MANY - TO - ONE: UserRole <--> UserAccount
   // UserRole sở hữu quan hệ (fk_user_account_id_user_role)

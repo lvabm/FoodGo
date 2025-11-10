@@ -3,7 +3,6 @@ package com.foodgo.backend.module.outlet_d.entity;
 import com.foodgo.backend.common.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import java.util.UUID;
 
 @Entity
 @Table(name = "outlet_has_feature")
@@ -12,7 +11,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class OutletHasFeature extends BaseEntity {
+public class OutletHasFeature extends BaseEntity<Integer> {
 
   //1. QUAN HỆ MANY - TO - ONE: Outlet <--> OutletHasFeature
   // OutletHasFeature sở hữu quan hệ (fk_outlet_id_outlet_has_feature)

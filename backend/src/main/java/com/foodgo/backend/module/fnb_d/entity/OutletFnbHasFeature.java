@@ -11,7 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class OutletFnbHasFeature extends BaseEntity {
+public class OutletFnbHasFeature extends BaseEntity<Integer> {
 
   //2. QUAN HỆ MANY - TO - ONE: FeatureOfFnb <--> OutletFnbHasFeature
   // OutletFnbHasFeature sở hữu quan hệ (fk_feature_of_fnb_id_outlet_fnb_has_feature)
