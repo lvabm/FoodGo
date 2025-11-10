@@ -1,6 +1,6 @@
 package com.foodgo.backend.module.user_d.entity;
 
-import com.foodgo.backend.common.base.BaseEntity;
+import com.foodgo.backend.common.base.BaseIntegerEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,7 +13,7 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PasswordResetToken extends BaseEntity<Long> {
+public class PasswordResetToken extends BaseIntegerEntity<Long> {
 
   @Column(name = "token", nullable = false, unique = true, length = 500)
   private String token;
@@ -24,7 +24,7 @@ public class PasswordResetToken extends BaseEntity<Long> {
   @Column(name = "is_used", nullable = false)
   private boolean isUsed = false;
 
-  //1. QUAN HỆ MANY - TO - ONE: PasswordResetToken <--> UserAccount
+  // 1. QUAN HỆ MANY - TO - ONE: PasswordResetToken <--> UserAccount
   // PasswordResetToken sở hữu quan hệ (fk_user_account_id_password_reset_token)
   @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinColumn(name = "user_id", nullable = false)

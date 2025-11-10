@@ -1,6 +1,6 @@
 package com.foodgo.backend.module.auth.entity;
 
-import com.foodgo.backend.common.base.BaseEntity;
+import com.foodgo.backend.common.base.BaseIntegerEntity;
 import com.foodgo.backend.module.user_d.entity.UserAccount;
 import jakarta.persistence.*;
 import lombok.*;
@@ -14,7 +14,7 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class RefreshToken extends BaseEntity<Long> {
+public class RefreshToken extends BaseIntegerEntity<Long> {
 
   @Column(name = "token", nullable = false, unique = true, length = 500)
   private String token;
@@ -34,7 +34,7 @@ public class RefreshToken extends BaseEntity<Long> {
   @Column(name = "created_at", nullable = false)
   private Instant createdAt = Instant.now();
 
-  //1. QUAN HỆ MANY - TO - ONE: UserAccount <--> RefreshToken
+  // 1. QUAN HỆ MANY - TO - ONE: UserAccount <--> RefreshToken
   // RefreshToken sở hữu quan hệ (fk_user_account_id_refresh_token)
   @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinColumn(name = "user_id", nullable = false)

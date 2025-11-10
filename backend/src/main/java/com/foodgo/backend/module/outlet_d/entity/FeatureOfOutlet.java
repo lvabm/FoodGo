@@ -1,6 +1,6 @@
 package com.foodgo.backend.module.outlet_d.entity;
 
-import com.foodgo.backend.common.base.BaseEntity;
+import com.foodgo.backend.common.base.BaseIntegerEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,17 +11,16 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class FeatureOfOutlet extends BaseEntity<Integer> {
+public class FeatureOfOutlet extends BaseIntegerEntity<Integer> {
   @Column(name = "name", nullable = false, unique = true, length = 100)
   private String name;
 
   @Column(name = "description", length = 255)
   private String description;
 
-  //1. QUAN HỆ MANY - TO - ONE: FeatureOfOutlet <--> Outlet
+  // 1. QUAN HỆ MANY - TO - ONE: FeatureOfOutlet <--> Outlet
   // FeatureOfOutlet sở hữu quan hệ (fk_feature_of_outlet_id_outlet_has_feature)
   @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinColumn(name = "outlet_id", nullable = false)
   private Outlet outlet;
-
 }

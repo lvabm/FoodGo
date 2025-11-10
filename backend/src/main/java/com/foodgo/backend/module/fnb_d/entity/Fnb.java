@@ -1,9 +1,11 @@
 package com.foodgo.backend.module.fnb_d.entity;
 
-import com.foodgo.backend.common.base.BaseEntity;
+import com.foodgo.backend.common.base.BaseIntegerEntity;
+import com.foodgo.backend.common.base.BaseUUIDEntity;
 import com.foodgo.backend.module.location_d.entity.Province;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -16,12 +18,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Fnb extends BaseEntity<UUID> {
-
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(updatable = false, nullable = false)
-  private UUID id;
+public class Fnb extends BaseUUIDEntity {
 
   @Column(name = "name", nullable = false, length = 255)
   private String name;
@@ -32,18 +29,18 @@ public class Fnb extends BaseEntity<UUID> {
   @Column(name = "description", length = 1000)
   private String description;
 
-  //1. QUAN HỆ ONE - TO - MANY: Fnb  <--> OutletHasFnb
+  // 1. QUAN HỆ ONE - TO - MANY: Fnb  <--> OutletHasFnb
   // OutletHasFnb sở hữu quan hệ (fk_fnb_id_outlet_has_fnb)
   @OneToMany(mappedBy = "fnb", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private List<OutletHasFnb> outletHasFnbs;
 
-  //2. QUAN HỆ MANY - TO - ONE: FnbSubCategory  <--> Fnb
+  // 2. QUAN HỆ MANY - TO - ONE: FnbSubCategory  <--> Fnb
   // Fnb sở hữu quan hệ (fk_fnb_sub_category_id_fnb)
   @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinColumn(name = "sub_category_id", nullable = false)
   private FnbSubCategory subCategory;
 
-  //3. QUAN HỆ MANY - TO - ONE: Province <--> Fnb
+  // 3. QUAN HỆ MANY - TO - ONE: Province <--> Fnb
   // Fnb sở hữu quan hệ (fk_province_id_fnb)
   @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinColumn(name = "province_id", nullable = false)

@@ -1,6 +1,7 @@
 package com.foodgo.backend.module.booking_d.entity;
 
-import com.foodgo.backend.common.base.BaseEntity;
+import com.foodgo.backend.common.base.BaseIntegerEntity;
+import com.foodgo.backend.common.base.BaseUUIDEntity;
 import com.foodgo.backend.common.constant.BookingStatus;
 import com.foodgo.backend.module.outlet_d.entity.Outlet;
 import com.foodgo.backend.module.payment_d.entity.Payment;
@@ -8,6 +9,7 @@ import com.foodgo.backend.module.review_d.entity.Review;
 import com.foodgo.backend.module.user_d.entity.UserAccount;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.time.Instant;
 import java.util.List;
@@ -20,12 +22,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Booking extends BaseEntity<UUID> {
-
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(updatable = false, nullable = false)
-  private UUID id;
+public class Booking extends BaseUUIDEntity {
 
   @Column(name = "booking_time", nullable = false)
   private Instant bookingTime;
@@ -40,26 +37,25 @@ public class Booking extends BaseEntity<UUID> {
   @Column(name = "note", length = 500)
   private String note;
 
-  //1. QUAN HỆ ONE - TO - MANY: Booking <--> Payment
+  // 1. QUAN HỆ ONE - TO - MANY: Booking <--> Payment
   // Payment sở hữu quan hệ (fk_booking_id_payment)
   @OneToMany(mappedBy = "booking", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private List<Payment> payments;
 
-  //2. QUAN HỆ ONE - TO - MANY: Booking <--> Review
+  // 2. QUAN HỆ ONE - TO - MANY: Booking <--> Review
   // Review sở hữu quan hệ (fk_booking_id_review)
   @OneToMany(mappedBy = "booking", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private List<Review> reviews;
 
-  //3. QUAN HỆ MANY - TO - ONE: UserAccount <--> Booking
+  // 3. QUAN HỆ MANY - TO - ONE: UserAccount <--> Booking
   // Booking sở hữu quan hệ (fk_user_account_id_booking)
   @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinColumn(name = "user_id", nullable = false)
   private UserAccount user;
 
-  //4. QUAN HỆ MANY - TO - ONE: Outlet <--> Booking
+  // 4. QUAN HỆ MANY - TO - ONE: Outlet <--> Booking
   // Booking sở hữu quan hệ (fk_outlet_id_booking)
   @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinColumn(name = "outlet_id", nullable = false)
   private Outlet outlet;
-
 }
