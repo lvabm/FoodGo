@@ -4,8 +4,10 @@ import com.foodgo.backend.common.base.BaseEntity;
 import com.foodgo.backend.module.location_d.entity.Province;
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "fnb")
@@ -14,7 +16,13 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Fnb extends BaseEntity {
+public class Fnb extends BaseEntity<UUID> {
+
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(updatable = false, nullable = false)
+  private UUID id;
+
   @Column(name = "name", nullable = false, length = 255)
   private String name;
 

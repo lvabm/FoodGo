@@ -11,7 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ReviewImage extends BaseEntity {
+public class ReviewImage extends BaseEntity<Integer> {
 
   @Column(name = "image_url", nullable = false, length = 255)
   private String imageUrl;

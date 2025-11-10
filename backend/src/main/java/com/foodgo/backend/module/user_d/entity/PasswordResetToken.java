@@ -3,8 +3,8 @@ package com.foodgo.backend.module.user_d.entity;
 import com.foodgo.backend.common.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.time.Instant;
-import java.util.UUID;
 
 @Entity
 @Table(name = "password_reset_token")
@@ -13,7 +13,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PasswordResetToken extends BaseEntity {
+public class PasswordResetToken extends BaseEntity<Long> {
 
   @Column(name = "token", nullable = false, unique = true, length = 500)
   private String token;

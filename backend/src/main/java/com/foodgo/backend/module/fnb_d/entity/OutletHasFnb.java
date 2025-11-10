@@ -1,11 +1,11 @@
 package com.foodgo.backend.module.fnb_d.entity;
 
 import com.foodgo.backend.common.base.BaseEntity;
-import com.foodgo.backend.module.location_d.entity.Province;
 import com.foodgo.backend.module.outlet_d.entity.Outlet;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Entity
@@ -15,10 +15,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class OutletHasFnb extends BaseEntity {
+public class OutletHasFnb extends BaseEntity<Integer> {
 
   @Column(name = "price")
-  private java.math.BigDecimal price;
+  private BigDecimal price;
 
   //1. QUAN HỆ ONE - TO - MANY: OutletHasFnb <--> OutletFnbHasFeature
   // OutletFnbHasFeature sở hữu quan hệ (fk_outlet_has_fnb_id_outlet_fnb_has_feature)

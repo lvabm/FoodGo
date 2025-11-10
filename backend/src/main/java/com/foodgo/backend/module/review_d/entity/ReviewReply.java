@@ -5,9 +5,6 @@ import com.foodgo.backend.module.user_d.entity.UserAccount;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
-import java.util.UUID;
-
 @Entity
 @Table(name = "review_reply")
 @Getter
@@ -15,7 +12,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ReviewReply extends BaseEntity {
+public class ReviewReply extends BaseEntity<Integer> {
 
 
   @Column(name = "content", length = 1000)

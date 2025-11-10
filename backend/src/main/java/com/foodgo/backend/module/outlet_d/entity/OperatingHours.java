@@ -3,7 +3,6 @@ package com.foodgo.backend.module.outlet_d.entity;
 import com.foodgo.backend.common.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import java.util.UUID;
 
 @Entity
 @Table(name = "operating_hours")
@@ -12,7 +11,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class OperatingHours extends BaseEntity {
+public class OperatingHours extends BaseEntity<Integer> {
 
   @Column(name = "day_of_week", nullable = false)
   private int dayOfWeek;

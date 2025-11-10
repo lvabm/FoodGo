@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Group extends BaseEntity {
+public class Group extends BaseEntity<Integer> {
   @Column(name = "name", nullable = false, unique = true, length = 100)
   private String name;
 
@@ -22,6 +22,6 @@ public class Group extends BaseEntity {
 
   //1. QUAN HỆ ONE - TO - MANY: Group <--> UserGroup
   // UserGroup sở hữu quan hệ (fk_group_id_user_group)
-  @OneToMany(mappedBy="group", fetch=FetchType.LAZY)
+  @OneToMany(mappedBy = "group", fetch = FetchType.LAZY)
   private List<UserGroup> userGroups;
 }

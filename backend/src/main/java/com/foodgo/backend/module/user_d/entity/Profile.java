@@ -4,8 +4,8 @@ import com.foodgo.backend.common.base.BaseEntity;
 import com.foodgo.backend.module.location_d.entity.Country;
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.time.LocalDate;
-import java.util.UUID;
 
 @Entity
 @Table(name = "profile")
@@ -14,7 +14,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Profile extends BaseEntity {
+public class Profile extends BaseEntity<Long> {
 
   @Column(name = "full_name", length = 100)
   private String fullName;

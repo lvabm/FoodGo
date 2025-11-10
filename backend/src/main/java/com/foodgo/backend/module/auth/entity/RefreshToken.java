@@ -4,8 +4,8 @@ import com.foodgo.backend.common.base.BaseEntity;
 import com.foodgo.backend.module.user_d.entity.UserAccount;
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.time.Instant;
-import java.util.UUID;
 
 @Entity
 @Table(name = "refresh_token")
@@ -14,7 +14,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class RefreshToken extends BaseEntity {
+public class RefreshToken extends BaseEntity<Long> {
 
   @Column(name = "token", nullable = false, unique = true, length = 500)
   private String token;

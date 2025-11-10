@@ -2,14 +2,13 @@ package com.foodgo.backend.module.booking_d.entity;
 
 import com.foodgo.backend.common.base.BaseEntity;
 import com.foodgo.backend.common.constant.BookingStatus;
-import com.foodgo.backend.module.fnb_d.entity.Fnb;
-import com.foodgo.backend.module.fnb_d.entity.OutletFnbHasFeature;
 import com.foodgo.backend.module.outlet_d.entity.Outlet;
 import com.foodgo.backend.module.payment_d.entity.Payment;
 import com.foodgo.backend.module.review_d.entity.Review;
 import com.foodgo.backend.module.user_d.entity.UserAccount;
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -21,7 +20,12 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Booking extends BaseEntity {
+public class Booking extends BaseEntity<UUID> {
+
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(updatable = false, nullable = false)
+  private UUID id;
 
   @Column(name = "booking_time", nullable = false)
   private Instant bookingTime;

@@ -4,8 +4,8 @@ import com.foodgo.backend.common.base.BaseEntity;
 import com.foodgo.backend.module.user_d.entity.UserAccount;
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.time.Instant;
-import java.util.UUID;
 
 @Entity
 @Table(name = "notification")
@@ -14,20 +14,20 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Notification extends BaseEntity {
+public class Notification extends BaseEntity<Long> {
 
-  @Column(name = "content", nullable = false, length = 500)
-  private String content;
+    @Column(name = "content", nullable = false, length = 500)
+    private String content;
 
-  @Column(name = "is_read", nullable = false)
-  private boolean isRead = false;
+    @Column(name = "is_read", nullable = false)
+    private boolean isRead = false;
 
-  @Column(name = "created_at", nullable = false)
-  private Instant createdAt = Instant.now();
+    @Column(name = "created_at", nullable = false)
+    private Instant createdAt = Instant.now();
 
-  //1. QUAN HỆ MANY - TO - ONE: UserAccount <--> Notification
-  // UserAccount sở hữu quan hệ (fk_user_account_id_notification)
-  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  @JoinColumn(name = "user_id", nullable = false)
-  private UserAccount user;
+    //1. QUAN HỆ MANY - TO - ONE: UserAccount <--> Notification
+    // UserAccount sở hữu quan hệ (fk_user_account_id_notification)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserAccount user;
 }

@@ -3,6 +3,7 @@ package com.foodgo.backend.module.advertisement_d.entity;
 import com.foodgo.backend.common.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.util.UUID;
 
 @Entity
@@ -12,7 +13,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Advertisement extends BaseEntity {
+public class Advertisement extends BaseEntity<Integer> {
   @Column(name = "outlet_id", nullable = false)
   private UUID outletId;
 
