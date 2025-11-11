@@ -29,7 +29,9 @@ public class AdminOutletController {
   @PatchMapping("/{id}/approve")
   public ResponseEntity<BaseResponse<OutletResponse>> approveOutlet(
       @PathVariable Long id, @RequestBody Object approveOutletRequest) {
+
     OutletResponse data = adminOutletService.approveOutlet(id, approveOutletRequest);
+
     BaseResponse<OutletResponse> body =
         BaseResponse.<OutletResponse>builder()
             .success(true)
