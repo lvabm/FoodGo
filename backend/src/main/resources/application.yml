@@ -29,3 +29,23 @@ spring:
   devtools:
     # Nên bật, Devtools sẽ tự động Restart khi file .class thay đổi
     add-properties: true
+
+# =================================================================
+# PHẦN CẤU HÌNH CHO PROFILE 'local-dev' (Chạy từ IDE)
+# =================================================================
+---
+spring:
+  config:
+    activate:
+      # Kích hoạt profile này khi chạy từ IDE
+      # Nếu không sẽ xung đột cổng vì SpringBoot sẽ tạo một cổng localhost 8080 mới
+      on-profile: local-dev
+  docker:
+    compose:
+      lifecycle-management:
+        # Chỉ định rõ những services nào cần Docker Compose khởi động.
+        # LOẠI TRỪ DỊCH VỤ 'backend' để nó không chiếm cổng 8080 trên Host.
+        include:
+          - postgres
+          - pgadmin
+          - frontend
