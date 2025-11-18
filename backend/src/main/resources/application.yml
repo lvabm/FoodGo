@@ -1,10 +1,11 @@
-# =================================================================
-# PHẦN CẤU HÌNH DEFAULT (Áp dụng cho mọi môi trường)
-# =================================================================
+server:
+  # Đảm bảo cổng Backend đồng nhất (cho Frontend Proxy)
+  port: 8080
+
 spring:
   # PHẦN 1: THIẾT LẬP KẾT NỐI DATASOURCE
   datasource:
-    # QUAN TRỌNG: Sử dụng 'localhost' để kết nối DB khi chạy từ IDE (trên máy Host)
+    # QUAN TRỌNG: Kết nối tới DB chạy trong Docker trên máy Host
     url: jdbc:postgresql://localhost:5432/foodgo_db
     username: admin
     password: admin
@@ -12,40 +13,30 @@ spring:
 
   # PHẦN 2: CẤU HÌNH JPA/HIBERNATE
   jpa:
+    defer-datasource-initialization: true
     hibernate:
-      # create-drop dùng khi lỗi data các thứ nha ae
-      ddl-auto: update
+      # update: Phù hợp cho Dev, tự động cập nhật schema. Cẩn thận khi dùng
+      # create-drop: Tự động tạo và xóa schema sau khi ứng dụng tắt (tùy chọn)
+      ddl-auto: create-drop
       database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+    # Hiển thị câu lệnh SQL trong console (Giúp Debug và tối ưu)
     show-sql: true
     properties:
       hibernate:
-        format_sql: true
+        format_sql: true # Định dạng SQL dễ đọc hơn
 
-  # PHẦN 3: CẤU HÌNH KHỞI TẠO SQL SCRIPT
-  sql:
-    init:
-      mode: never
-
+  # PHẦN 3: CẤU HÌNH HOT-RELOAD & DEVTOOLS (Tối ưu DevEx)
   devtools:
-    # Nên bật, Devtools sẽ tự động Restart khi file .class thay đổi
-    add-properties: true
-#
-## =================================================================
-## PHẦN CẤU HÌNH CHO PROFILE 'local-dev' (Chạy từ IDE)
-## =================================================================
-#---
-#spring:
-#  config:
-#    activate:
-#      # Kích hoạt profile này khi chạy từ IDE
-#      # Nếu không sẽ xung đột cổng vì SpringBoot sẽ tạo một cổng localhost 8080 mới
-#      on-profile: local-dev
-#  docker:
-#    compose:
-#      lifecycle-management:
-#        # Chỉ định rõ những services nào cần Docker Compose khởi động.
-#        # LOẠI TRỪ DỊCH VỤ 'backend' để nó không chiếm cổng 8080 trên Host.
-#        include:
-#          - postgres
-#          - pgadmin
-#          - frontend
+    # Tự động khởi động lại (restart) ứng dụng khi có thay đổi code
+    restart:
+      enabled: true
+    # Kích hoạt LiveReload cho trình duyệt (Nếu bạn có cài LiveReload extension)
+    livereload:
+      enabled: true
+
+#  # PHẦN 4: KHỞI TẠO SQL SCRIPT
+#  sql:
+#    init:
+#      mode: never
+##      data-locations: classpath:import.sql

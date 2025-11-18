@@ -1,7 +1,7 @@
 package com.foodgo.backend.module.auth.entity;
 
 import com.foodgo.backend.common.base.BaseIntegerEntity;
-import com.foodgo.backend.module.user_d.entity.UserAccount;
+import com.foodgo.backend.module.user.entity.UserAccount;
 import jakarta.persistence.*;
 import lombok.*;
 

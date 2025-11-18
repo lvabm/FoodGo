@@ -11,46 +11,6 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data  # Lưu dữ liệu DB vào volume
     restart: always
-
-  # -------------------- DỊCH VỤ PGADMIN --------------------
-  #  pgadmin:
-  #    image: dpage/pgadmin4
-  #    environment:
-  #      - PGADMIN_DEFAULT_EMAIL=admin@foodgo.com
-  #      - PGADMIN_DEFAULT_PASSWORD=admin
-  #    ports:
-  #      - '8081:80'
-  #    depends_on:
-  #      - postgres
-  #    restart: always
-
-  #  # -------------------- DỊCH VỤ BACKEND (JAVA SPRING BOOT) --------------------
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    command: [ "sleep", "infinity" ]
-    healthcheck:
-      test: [ "CMD-SHELL", "exit 0" ]
-      interval: 10s
-      timeout: 5s
-      retries: 1
-    volumes:
-      # Ánh xạ thư mục mã nguồn Backend vào Container
-      - ./backend:/app
-      # Cache Maven dependencies (Tùy chọn, tùy vào Dockerfile của bạn)
-      - ~/.m2:/root/.m2
-  # -------------------- DỊCH VỤ FRONTEND (VUE.JS) --------------------
-  frontend:
-    build:
-      context: ./frontend # Trỏ đến thư mục gốc của dự án Vue.js
-      dockerfile: Dockerfile
-    ports:
-      - '5173:80' # Mapping cổng
-    depends_on:
-      - backend # Phụ thuộc vào Backend
-    restart: always
 # -------------------- VOLUMES --------------------
 volumes:
   postgres_data:       # Volume lưu dữ liệu PostgreSQL
-  backend_maven_cache: # Volume lưu cache Maven backend
