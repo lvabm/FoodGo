@@ -1,6 +1,7 @@
-package com.foodgo.backend.module.auth.service;
+package com.foodgo.backend.module.auth.service.impl;
 
 import com.foodgo.backend.module.auth.dto.*;
+import com.foodgo.backend.module.auth.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

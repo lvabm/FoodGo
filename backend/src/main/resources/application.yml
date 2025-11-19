@@ -2,6 +2,10 @@ server:
   # Đảm bảo cổng Backend đồng nhất (cho Frontend Proxy)
   port: 8080
 
+app:
+  security:
+    enabled: false
+
 spring:
   # PHẦN 1: THIẾT LẬP KẾT NỐI DATASOURCE
   datasource:
@@ -35,8 +39,8 @@ spring:
     livereload:
       enabled: true
 
-#  # PHẦN 4: KHỞI TẠO SQL SCRIPT
-#  sql:
-#    init:
-#      mode: never
-##      data-locations: classpath:import.sql
+jwt:
+  # 🔑 BẮT BUỘC: Chuỗi này phải là Base64-encoded và có độ dài ít nhất 256 bits (>= 32 ký tự sau khi decode)
+  secret: MTAwUGVyY2VudFNlY3JldEtleUZvckZvb2RHb0JhY2tlbmRNYXlCRTEyMzQ1Njc4OQ==
+  # Thời gian hết hạn (Phút)
+  exp-minutes: 60

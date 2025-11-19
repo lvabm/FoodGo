@@ -13,8 +13,13 @@ import com.foodgo.backend.module.review.entity.ReviewReply;
 import com.foodgo.backend.module.review.entity.ReviewReport;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "user_account")
@@ -23,7 +28,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserAccount extends BaseUUIDEntity {
+public class UserAccount extends BaseUUIDEntity implements UserDetails {
 
   @Column(name = "username", nullable = false, unique = true, length = 30)
   private String username;
@@ -39,6 +44,19 @@ public class UserAccount extends BaseUUIDEntity {
 
   @Column(name = "is_active", nullable = false)
   private boolean isActive = true;
+
+  @Override
+  public Collection<? extends GrantedAuthority> getAuthorities() {
+    return this.userRoles.stream()
+        .map(UserRole::getRole)
+        .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getName()))
+        .collect(Collectors.toList());
+  }
+
+  @Override
+  public String getPassword() {
+    return passwordHash;
+  }
 
   // 1. QUAN HỆ ONE - TO - ONE: userAccount <--> Profile
   // Profile sở hữu quan hệ (fk_user_account_id_profile)
