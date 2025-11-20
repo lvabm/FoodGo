@@ -3,7 +3,7 @@ package com.foodgo.backend.module.user.entity;
 import com.foodgo.backend.common.base.BaseUUIDEntity;
 import com.foodgo.backend.module.auth.entity.RefreshToken;
 import com.foodgo.backend.module.booking.entity.Booking;
-import com.foodgo.backend.module.sharing.entity.SharingListMember;
+import com.foodgo.backend.module.sharing.entity.SharingListCollaborator;
 import com.foodgo.backend.module.membership.entity.UserMembership;
 import com.foodgo.backend.module.notification.entity.Notification;
 import com.foodgo.backend.module.outlet.entity.Outlet;
@@ -39,10 +39,11 @@ public class UserAccount extends BaseUUIDEntity implements UserDetails {
   @Column(name = "email", nullable = false, unique = true, length = 255)
   private String email;
 
-  @Column(name = "phone_number", unique = true, length = 20)
+  @Column(name = "phone_number", length = 20)
   private String phoneNumber;
 
   @Column(name = "is_active", nullable = false)
+  @Builder.Default
   private boolean isActive = true;
 
   @Override
@@ -118,8 +119,9 @@ public class UserAccount extends BaseUUIDEntity implements UserDetails {
   @OneToMany(mappedBy = "userAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private List<UserMembership> userMemberships;
 
-  // 13. QUAN HỆ ONE - TO - MANY: UserAccount <--> UserGroup
-  // UserGroup sở hữu quan hệ (fk_user_account_id_user_group)
-  @OneToMany(mappedBy = "userAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  private List<SharingListMember> sharingListMembers;
+  // 13. QUAN HỆ ONE - TO - MANY: UserAccount <--> SharingListCollaborator
+  // SharingListCollaborator sở hữu quan hệ
+  // (fk_user_account_id_sharing_list_collaborator)
+  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  private List<SharingListCollaborator> sharingListCollaborators;
 }

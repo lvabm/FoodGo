@@ -21,13 +21,13 @@ public class Country extends BaseIntegerEntity<Integer> {
   @Column(name = "code", nullable = false, unique = true, length = 10)
   private String code;
 
-  // 1. QUAN HỆ ONE - TO - MANY: Country <--> Profile
-  // Profile sở hữu quan hệ (fk_country_id_profile)
-  @OneToMany(mappedBy = "country", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  private List<Profile> Profile;
-
   // 1. QUAN HỆ ONE - TO - MANY: Country <--> Province
-  // Profile sở hữu quan hệ (fk_country_id_province)
-  @OneToMany(mappedBy = "country", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  // Province sở hữu quan hệ (fk_country_id_province)
+  @OneToMany(mappedBy = "country", fetch = FetchType.LAZY)
   private List<Province> provinces;
+
+  // 2. QUAN HỆ ONE - TO - MANY: Country <--> Profile
+  // Profile sở hữu quan hệ (fk_country_id_profile)
+  @OneToMany(mappedBy = "country", fetch = FetchType.LAZY)
+  private List<Profile> profiles;
 }

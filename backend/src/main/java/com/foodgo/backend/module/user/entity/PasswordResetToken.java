@@ -22,11 +22,12 @@ public class PasswordResetToken extends BaseIntegerEntity<Long> {
   private Instant expiresAt;
 
   @Column(name = "is_used", nullable = false)
+  @Builder.Default
   private boolean isUsed = false;
 
   // 1. QUAN HỆ MANY - TO - ONE: PasswordResetToken <--> UserAccount
   // PasswordResetToken sở hữu quan hệ (fk_user_account_id_password_reset_token)
-  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id", nullable = false)
   private UserAccount user;
 }

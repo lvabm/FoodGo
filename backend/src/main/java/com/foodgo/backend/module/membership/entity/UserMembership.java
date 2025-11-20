@@ -5,7 +5,7 @@ import com.foodgo.backend.module.user.entity.UserAccount;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.Instant;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "user_membership")
@@ -15,22 +15,25 @@ import java.time.Instant;
 @AllArgsConstructor
 @Builder
 public class UserMembership extends BaseIntegerEntity<Long> {
-
   @Column(name = "start_date", nullable = false)
-  private Instant startDate;
+  private LocalDate startDate;
 
   @Column(name = "end_date", nullable = false)
-  private Instant endDate;
+  private LocalDate endDate;
 
-  // 1. QUAN HỆ MANY - TO - ONE: MembershipPlan <--> UserMembership
-  // UserMembership sở hữu quan hệ (fk_membership_plan_id_user_membership)
-  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  @JoinColumn(name = "plan_id", nullable = false)
-  private MembershipPlan plan;
+  @Column(name = "is_active")
+  @Builder.Default
+  private Boolean isActive = true;
 
-  // 2. QUAN HỆ MANY - TO - ONE: UserAccount <--> UserMembership
-  // UserMembership sở hữu quan hệ (fk_user_account_id_user_membership)
-  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  // 1. QUAN HỆ MANY - TO - ONE: UserMembership <--> UserAccount
+  // UserMembership sở hữu quan hệ (fk_user_id_user_membership)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id", nullable = false)
   private UserAccount userAccount;
+
+  // 2. QUAN HỆ MANY - TO - ONE: UserMembership <--> MembershipPlan
+  // UserMembership sở hữu quan hệ (fk_plan_id_user_membership)
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "plan_id", nullable = false)
+  private MembershipPlan membershipPlan;
 }

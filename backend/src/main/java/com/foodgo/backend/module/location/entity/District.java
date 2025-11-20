@@ -15,17 +15,17 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class District extends BaseIntegerEntity<Integer> {
-  @Column(name = "name", nullable = false, unique = true, length = 100)
+  @Column(name = "name", nullable = false, length = 100)
   private String name;
 
-  // 1. QUAN HỆ ONE - TO - MANY: District <--> Outlet
-  // Outlet sở hữu quan hệ (fk_district_id_outlet)
-  @OneToMany(mappedBy = "district", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  private List<Outlet> outlets;
-
-  // 2. QUAN HỆ MANY - TO - ONE: Province <--> District
-  // Province sở hữu quan hệ (fk_province_id_district)
-  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  // 1. QUAN HỆ MANY - TO - ONE: Province <--> District
+  // District sở hữu quan hệ (fk_province_id_district)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "province_id", nullable = false)
   private Province province;
+
+  // 2. QUAN HỆ ONE - TO - MANY: District <--> Outlet
+  // Outlet sở hữu quan hệ (fk_district_id_outlet)
+  @OneToMany(mappedBy = "district", fetch = FetchType.LAZY)
+  private List<Outlet> outlets;
 }

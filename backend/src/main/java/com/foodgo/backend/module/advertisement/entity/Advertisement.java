@@ -1,10 +1,11 @@
 package com.foodgo.backend.module.advertisement.entity;
 
 import com.foodgo.backend.common.base.BaseIntegerEntity;
+import com.foodgo.backend.module.outlet.entity.Outlet;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.UUID;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "advertisement")
@@ -14,15 +15,23 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 public class Advertisement extends BaseIntegerEntity<Integer> {
-  @Column(name = "outlet_id", nullable = false)
-  private UUID outletId;
 
-  @Column(name = "title", nullable = false, length = 255)
-  private String title;
+  @Column(name = "position", nullable = false, length = 50)
+  private String position;
 
-  @Column(name = "content", length = 1000)
-  private String content;
+  @Column(name = "start_date", nullable = false)
+  private LocalDate startDate;
 
-  @Column(name = "image_url", length = 255)
-  private String imageUrl;
+  @Column(name = "end_date", nullable = false)
+  private LocalDate endDate;
+
+  @Column(name = "is_active")
+  @Builder.Default
+  private Boolean isActive = true;
+
+  // 1. QUAN HỆ MANY - TO - ONE: Advertisement <--> Outlet
+  // Advertisement sở hữu quan hệ (fk_outlet_id_advertisement)
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "outlet_id", nullable = false)
+  private Outlet outlet;
 }

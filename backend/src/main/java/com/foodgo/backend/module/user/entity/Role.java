@@ -21,13 +21,13 @@ public class Role extends BaseIntegerEntity<Integer> {
   @Column(name = "description", length = 255)
   private String description;
 
-  // 1. QUAN HỆ ONE - TO - ONE: Role <--> UserRole
-  // UserAccount sở hữu quan hệ (fk_role_id_user_role)
-  @OneToMany(mappedBy = "role", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  // 1. QUAN HỆ ONE - TO - MANY: Role <--> UserRole
+  // UserRole sở hữu quan hệ (fk_role_id_user_role)
+  @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
   private List<UserRole> userRoles;
 
   // 2. QUAN HỆ ONE - TO - MANY: Role <--> RolePermission
-  // UserAccount sở hữu quan hệ (fk_role_id_role_permission)
-  @OneToMany(mappedBy = "role", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  // RolePermission sở hữu quan hệ (fk_role_id_role_permission)
+  @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
   private List<RolePermission> rolePermissions;
 }

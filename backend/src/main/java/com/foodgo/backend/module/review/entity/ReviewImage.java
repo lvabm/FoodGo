@@ -18,7 +18,7 @@ public class ReviewImage extends BaseIntegerEntity<Integer> {
 
   // 1. QUAN HỆ MANY - TO - ONE: ReviewImage <--> Review
   // ReviewImage sở hữu quan hệ (fk_review_id_review_image)
-  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "review_id", nullable = false)
   private Review review;
 }

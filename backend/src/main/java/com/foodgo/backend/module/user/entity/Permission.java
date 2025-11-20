@@ -22,6 +22,6 @@ public class Permission extends BaseIntegerEntity<Integer> {
 
   // 1. QUAN HỆ ONE - TO - MANY: Permission <--> RolePermission
   // RolePermission sở hữu quan hệ (fk_permission_id_role_permission)
-  @OneToMany(mappedBy = "permission", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "permission", fetch = FetchType.LAZY)
   private List<RolePermission> rolePermissions;
 }

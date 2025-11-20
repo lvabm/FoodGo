@@ -22,21 +22,22 @@ public class Profile extends BaseIntegerEntity<Long> {
   @Column(name = "date_of_birth")
   private LocalDate dateOfBirth;
 
-  @Column(name = "address")
+  @Column(name = "address", columnDefinition = "TEXT")
   private String address;
 
   @Column(name = "avatar_url", length = 255)
-  private String avatarUrl;
+  @Builder.Default
+  private String avatarUrl = "https://default-avatar.png";
 
   // 1. QUAN HỆ ONE - TO - ONE: Profile <--> UserAccount
   // UserAccount sở hữu quan hệ (fk_user_account_id_profile)
   @OneToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
+  @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false, unique = true)
   private UserAccount userAccount;
 
   // 2. QUAN HỆ MANY - TO - ONE: Country <--> Profile
   // Profile sở hữu quan hệ (fk_country_id_profile)
-  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  @JoinColumn(name = "country_id", nullable = false)
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "country_id")
   private Country country;
 }

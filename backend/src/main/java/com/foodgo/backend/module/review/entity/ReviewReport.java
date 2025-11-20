@@ -14,18 +14,22 @@ import lombok.*;
 @Builder
 public class ReviewReport extends BaseIntegerEntity<Integer> {
 
-  @Column(name = "reason", length = 255)
+  @Column(name = "reason", nullable = false, length = 255)
   private String reason;
 
-  // 1. QUAN HỆ MANY - TO - ONE: ReviewReport <--> Review
-  // ReviewReport sở hữu quan hệ (fk_review_id_review_report)
-  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  @JoinColumn(name = "review_id", nullable = false)
-  private Review review;
+  @Column(name = "status", length = 20)
+  @Builder.Default
+  private String status = "pending";
 
-  // 2. QUAN HỆ MANY - TO - ONE: ReviewReport <--> UserAccount
+  // 1. QUAN HỆ MANY - TO - ONE: ReviewReport <--> UserAccount
   // ReviewReport sở hữu quan hệ (fk_user_account_id_review_report)
-  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "reporter_id", nullable = false)
   private UserAccount reporter;
+
+  // 2. QUAN HỆ MANY - TO - ONE: ReviewReport <--> Review
+  // ReviewReport sở hữu quan hệ (fk_review_id_review_report)
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "review_id", nullable = false)
+  private Review review;
 }

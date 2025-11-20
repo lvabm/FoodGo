@@ -2,13 +2,14 @@ package com.foodgo.backend.module.outlet.entity;
 
 import com.foodgo.backend.common.base.BaseUUIDEntity;
 import com.foodgo.backend.module.booking.entity.Booking;
-import com.foodgo.backend.module.fnb.entity.OutletHasFnb;
+import com.foodgo.backend.module.fnb.entity.OutletMenuItem;
 import com.foodgo.backend.module.location.entity.District;
 import com.foodgo.backend.module.review.entity.Review;
 import com.foodgo.backend.module.user.entity.UserAccount;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Entity
@@ -23,14 +24,42 @@ public class Outlet extends BaseUUIDEntity {
   @Column(name = "name", nullable = false, length = 255)
   private String name;
 
-  @Column(name = "address", length = 500)
-  private String address;
-
-  @Column(name = "description", length = 1000)
+  @Column(name = "description", columnDefinition = "TEXT")
   private String description;
 
+  @Column(name = "address", nullable = false, columnDefinition = "TEXT")
+  private String address;
+
+  @Column(name = "email", length = 255)
+  private String email;
+
+  @Column(name = "phone_number", length = 20)
+  private String phoneNumber;
+
+  @Column(name = "website", length = 255)
+  private String website;
+
+  @Column(name = "latitude", precision = 10, scale = 8)
+  private BigDecimal latitude;
+
+  @Column(name = "longitude", precision = 11, scale = 8)
+  private BigDecimal longitude;
+
+  @Column(name = "price_range", length = 20)
+  private String priceRange;
+
+  @Column(name = "capacity")
+  private Integer capacity;
+
   @Column(name = "is_active", nullable = false)
+  @Builder.Default
   private boolean isActive = true;
+
+  @Column(name = "average_rating", precision = 3, scale = 2)
+  private BigDecimal averageRating;
+
+  @Column(name = "total_reviews")
+  private Integer totalReviews;
 
   // 1. QUAN HỆ MANY - TO - ONE: UserAccount <--> Outlet
   // Outlet sở hữu quan hệ (fk_user_account_id_outlet)
@@ -40,12 +69,12 @@ public class Outlet extends BaseUUIDEntity {
 
   // 2. QUAN HỆ MANY - TO - ONE: Outlet <--> District
   // District sở hữu quan hệ (fk_district_id_outlet)
-  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "district_id", nullable = false)
   private District district;
 
   // 3. QUAN HỆ ONE - TO - MANY: Outlet <--> OutletHasFeature
-  // FeatureOfOutlet sở hữu quan hệ (fk_outlet_id_outlet_has_feature)
+  // OutletHasFeature sở hữu quan hệ (fk_outlet_id_outlet_has_feature)
   @OneToMany(mappedBy = "outlet", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private List<OutletHasFeature> outletHasFeatures;
 
@@ -69,10 +98,10 @@ public class Outlet extends BaseUUIDEntity {
   @OneToMany(mappedBy = "outlet", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private List<OutletImage> outletImages;
 
-  // 8. QUAN HỆ ONE - TO - MANY: Outlet <--> OutletHasFnb
-  // OutletHasFnb sở hữu quan hệ (fk_outlet_id_outlet_has_fnb)
+  // 8. QUAN HỆ ONE - TO - MANY: Outlet <--> OutletMenuItem
+  // OutletMenuItem sở hữu quan hệ (fk_outlet_id_outlet_menu_item)
   @OneToMany(mappedBy = "outlet", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  private List<OutletHasFnb> outletHasFnbs;
+  private List<OutletMenuItem> outletMenuItems;
 
   // 9. QUAN HỆ MANY - TO - ONE: OutletType <--> Outlet
   // Outlet sở hữu quan hệ (fk_outlet_type_id_outlet)

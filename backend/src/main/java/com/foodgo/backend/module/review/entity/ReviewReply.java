@@ -14,18 +14,18 @@ import lombok.*;
 @Builder
 public class ReviewReply extends BaseIntegerEntity<Integer> {
 
-  @Column(name = "reply_text", length = 1000)
+  @Column(name = "reply_text", nullable = false, columnDefinition = "TEXT")
   private String replyText;
 
-  // 1. QUAN HỆ MANY - TO - ONE: ReviewReply <--> Review
+  // 1. QUAN HỆ ONE-TO-ONE: ReviewReply <--> Review
   // ReviewReply sở hữu quan hệ (fk_review_id_review_reply)
-  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  @JoinColumn(name = "review_id", nullable = false)
+  @OneToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "review_id", nullable = false, unique = true)
   private Review review;
 
   // 2. QUAN HỆ MANY - TO - ONE: ReviewReply <--> UserAccount
   // ReviewReply sở hữu quan hệ (fk_user_account_id_review_reply)
-  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "owner_id", nullable = false)
   private UserAccount owner;
 }

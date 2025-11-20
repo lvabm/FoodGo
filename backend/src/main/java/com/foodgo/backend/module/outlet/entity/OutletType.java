@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class OutletType extends BaseIntegerEntity<Integer> {
-  @Column(name = "name", nullable = false, unique = true, length = 100)
+  @Column(name = "name", nullable = false, unique = true, length = 50)
   private String name;
 
   @Column(name = "description", length = 255)
@@ -22,11 +22,11 @@ public class OutletType extends BaseIntegerEntity<Integer> {
 
   // 1. QUAN HỆ ONE - TO - MANY: OutletType <--> Outlet
   // Outlet sở hữu quan hệ (fk_outlet_type_id_outlet)
-  @OneToMany(mappedBy = "type", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "type", fetch = FetchType.LAZY)
   private List<Outlet> outlets;
 
   // 2. QUAN HỆ ONE - TO - MANY: OutletType <--> OutletCategory
   // OutletCategory sở hữu quan hệ (fk_outlet_type_id_outlet_category)
-  @OneToMany(mappedBy = "type", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "type", fetch = FetchType.LAZY)
   private List<OutletCategory> outletCategories;
 }
