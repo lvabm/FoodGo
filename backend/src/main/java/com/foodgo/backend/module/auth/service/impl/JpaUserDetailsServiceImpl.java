@@ -1,7 +1,5 @@
 package com.foodgo.backend.module.auth.service.impl;
 
-import com.foodgo.backend.exception.ResourceNotFoundException;
-import com.foodgo.backend.module.user.entity.UserAccount;
 import com.foodgo.backend.module.user.repository.UserAccountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,7 +15,10 @@ public class JpaUserDetailsServiceImpl implements UserDetailsService {
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
     return userAccountRepository
-        .findByUsername(username)
-        .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        .findByUsernameWithRoles(username)
+        .orElseThrow(
+            () ->
+                new UsernameNotFoundException(
+                    "Không tìm thấy tài khoản với username: " + username));
   }
 }

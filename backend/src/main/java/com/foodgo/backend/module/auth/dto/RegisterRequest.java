@@ -1,3 +1,4 @@
 package com.foodgo.backend.module.auth.dto;
 
-public class RegisterRequest {}
+public record RegisterRequest(
+    String fullName, String email, String plainTextPassword, String passwordConfirmation) {}

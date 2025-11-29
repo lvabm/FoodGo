@@ -3,10 +3,10 @@ package com.foodgo.backend.module.auth.controller;
 import com.foodgo.backend.common.base.BaseResponse;
 import com.foodgo.backend.module.auth.dto.*;
 import com.foodgo.backend.module.auth.service.AuthService;
+import com.foodgo.backend.util.ApiResponseBuilder;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,28 +21,16 @@ public class AuthController {
   @PostMapping("/register")
   public ResponseEntity<BaseResponse<AuthResponse>> register(
       @Valid @RequestBody RegisterRequest request) {
-    AuthResponse auth = authService.register(request); // soft-create & send verify email
-    BaseResponse<AuthResponse> body =
-        BaseResponse.<AuthResponse>builder()
-            .success(true)
-            .message("Đăng ký thành công. Kiểm tra email để xác thực.")
-            .data(auth)
-            .build();
-    return ResponseEntity.status(HttpStatus.CREATED).body(body);
+    AuthResponse data = authService.register(request);
+    return ResponseEntity.ok(ApiResponseBuilder.success("Đăng ký tài khoản mới thành công", data));
   }
 
   @Operation(summary = "Đăng nhập")
   @PostMapping("/login")
   public ResponseEntity<BaseResponse<AuthResponse>> login(
       @Valid @RequestBody LoginRequest request) {
-    AuthResponse auth = authService.login(request); // rate-limited inside service
-    BaseResponse<AuthResponse> body =
-        BaseResponse.<AuthResponse>builder()
-            .success(true)
-            .message("Đăng nhập thành công")
-            .data(auth)
-            .build();
-    return ResponseEntity.ok(body);
+    AuthResponse data = authService.login(request);
+    return ResponseEntity.ok(ApiResponseBuilder.success("Đăng nhập thành công", data));
   }
 
   @Operation(summary = "Làm mới token (refresh)")

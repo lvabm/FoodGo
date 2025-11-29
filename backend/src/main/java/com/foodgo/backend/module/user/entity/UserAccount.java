@@ -17,6 +17,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -50,7 +51,7 @@ public class UserAccount extends BaseUUIDEntity implements UserDetails {
   public Collection<? extends GrantedAuthority> getAuthorities() {
     return this.userRoles.stream()
         .map(UserRole::getRole)
-        .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getName()))
+        .map(role -> new SimpleGrantedAuthority(role.getName()))
         .collect(Collectors.toList());
   }
 
@@ -67,7 +68,8 @@ public class UserAccount extends BaseUUIDEntity implements UserDetails {
   // 2. QUAN HỆ ONE - TO - MANY: UserAccount <--> UserRole
   // UserRole sở hữu quan hệ (fk_user_account_id_user_role)
   @OneToMany(mappedBy = "userAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  private List<UserRole> userRoles;
+  @Builder.Default
+  private List<UserRole> userRoles = new ArrayList<>();
 
   // 3. QUAN HỆ ONE - TO - MANY: UserAccount <--> Booking
   // Booking sở hữu quan hệ (fk_user_account_id_booking)

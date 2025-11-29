@@ -1,7 +1,7 @@
 package com.foodgo.backend.security;
 
 import com.foodgo.backend.module.auth.service.JwtService;
-import com.foodgo.backend.module.user.repository.UserAccountRepository;
+import com.foodgo.backend.module.auth.service.impl.JpaUserDetailsServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,7 +18,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
   private final JwtService jwtService;
-  private final UserAccountRepository userAccountRepository;
+  private final JpaUserDetailsServiceImpl jpaUserDetailsServiceImpl;
 
   @Override
   protected void doFilterInternal(
@@ -46,11 +46,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // 6. Tải thông tin User từ Database
         // userRepository là UserRepository hoặc UserService đã được inject
-        var user = userAccountRepository.findByUsername(username).orElse(null);
+        var user = jpaUserDetailsServiceImpl.loadUserByUsername(username);
 
         if (user != null) {
           // Giả định JWT Service đã kiểm tra token hợp lệ trước đó (signature, expiry)
-          // Hoặc bạn có thể gọi jwtService.isTokenValid(token, user) ở đây
 
           // 7. Tạo đối tượng Xác thực (Authentication)
           UsernamePasswordAuthenticationToken authToken =
@@ -68,10 +67,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
       }
 
-    } catch (Exception e) {
-      // Log lỗi (ví dụ: Token hết hạn, chữ ký không hợp lệ)
-      // System.out.println("JWT Exception: " + e.getMessage());
-      // Cho phép Filter Chain tiếp tục, để Spring Security xử lý lỗi 401 Unauthorized sau.
+    } catch (io.jsonwebtoken.ExpiredJwtException e) {
+      // 🔑 Lỗi Token hết hạn
+      System.err.println("JWT ERROR: Token hết hạn: " + e.getMessage());
+      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+      response.getWriter().write("Unauthorized: Token EXPIRED");
+      return; // Dừng chuỗi filter để trả về lỗi ngay
+    } catch (io.jsonwebtoken.JwtException e) {
+      // 🔑 Lỗi khác (Invalid Signature, v.v.)
+      System.err.println("JWT ERROR: Token không hợp lệ: " + e.getMessage());
+      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+      response.getWriter().write("Unauthorized: Token INVALID");
+      return;
     }
 
     // 9. Tiếp tục chuỗi Filter

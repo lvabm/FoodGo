@@ -53,36 +53,36 @@ public class JwtServiceImpl implements JwtService {
         .compact(); // Nén thành chuỗi JWT
   }
 
-  // Phương thức chung để trích xuất một claim cụ thể
-  private Claims extractAllClaims(String token) {
-    return Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload();
-  }
-
-  public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-    final Claims claims = extractAllClaims(token);
-    return claimsResolver.apply(claims);
-  }
+  //  // Phương thức chung để trích xuất một claim cụ thể
+  //  private Claims extractAllClaims(String token) {
+  //    return Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload();
+  //  }
+  //
+  //  public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+  //    final Claims claims = extractAllClaims(token);
+  //    return claimsResolver.apply(claims);
+  //  }
 
   @Override
   public String extractUsername(String token) {
     // Trích xuất username (subject)
-    return extractClaim(token, Claims::getSubject);
+    return Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload().getSubject();
   }
 
-  // 1. Trích xuất thời điểm hết hạn
-  private Date extractExpiration(String token) {
-    return extractClaim(token, Claims::getExpiration);
-  }
-
-  // 2. Kiểm tra token đã hết hạn chưa
-  private boolean isTokenExpired(String token) {
-    return extractExpiration(token).before(new Date());
-  }
-
-  // 3. 🛡️ Hàm quan trọng: Kiểm tra tính hợp lệ của token
-  public boolean isTokenValid(String token, UserDetails userDetails) {
-    final String username = extractUsername(token);
-    // Kiểm tra: Username khớp và Token chưa hết hạn
-    return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
-  }
+  //  // 1. Trích xuất thời điểm hết hạn
+  //  private Date extractExpiration(String token) {
+  //    return extractClaim(token, Claims::getExpiration);
+  //  }
+  //
+  //  // 2. Kiểm tra token đã hết hạn chưa
+  //  private boolean isTokenExpired(String token) {
+  //    return extractExpiration(token).before(new Date());
+  //  }
+  //
+  //  // 3. 🛡️ Hàm quan trọng: Kiểm tra tính hợp lệ của token
+  //  public boolean isTokenValid(String token, UserDetails userDetails) {
+  //    final String username = extractUsername(token);
+  //    // Kiểm tra: Username khớp và Token chưa hết hạn
+  //    return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+  //  }
 }

@@ -1,24 +1,95 @@
 package com.foodgo.backend.module.auth.service.impl;
 
+import com.foodgo.backend.common.constant.RoleType;
+import com.foodgo.backend.exception.BadRequestException;
+import com.foodgo.backend.exception.ConflictException;
 import com.foodgo.backend.module.auth.dto.*;
 import com.foodgo.backend.module.auth.service.AuthService;
+import com.foodgo.backend.module.auth.service.JwtService;
+import com.foodgo.backend.module.user.entity.UserAccount;
+import com.foodgo.backend.module.user.entity.UserRole;
+import com.foodgo.backend.module.user.mapper.ProfileMapper;
+import com.foodgo.backend.module.user.mapper.UserAccountMapper;
+import com.foodgo.backend.module.user.repository.RoleRepository;
+import com.foodgo.backend.module.user.repository.UserAccountRepository;
+import com.foodgo.backend.util.RandomUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
+  private final PasswordEncoder passwordEncoder;
+  private final AuthenticationManager authenticationManager;
+  private final JwtService jwtService;
+
+  private final UserAccountRepository userAccountRepository;
+  private final RoleRepository roleRepository;
+
+  private final UserAccountMapper userAccountMapper;
+  private final ProfileMapper profileMapper;
 
   @Override
+  @Transactional
   public AuthResponse register(RegisterRequest request) {
-    // TODO: Kiểm tra tồn tại user, lưu tạm, gửi email xác thực
-    throw new UnsupportedOperationException("Not implemented");
+    if (userAccountRepository.existsByEmail(request.email())) {
+      throw new ConflictException("Email đã tồn tại");
+    }
+
+    if (!request.plainTextPassword().equals(request.passwordConfirmation())) {
+      throw new BadRequestException("Mật khẩu xác nhận không trùng khớp");
+    }
+
+    var defaultRole =
+        roleRepository
+            .findByName(RoleType.USER.getName())
+            .orElseThrow(() -> new ConflictException("Role mặc định (ROLE_USER) không tồn tại."));
+
+    var userAccount = userAccountMapper.toEntity(request);
+    userAccount.setUsername(RandomUtil.generateUniqueUsername());
+    userAccount.setPasswordHash(passwordEncoder.encode(request.plainTextPassword()));
+
+    var profile = profileMapper.toEntity(request);
+    var userRole = UserRole.builder().role(defaultRole).build();
+
+    // Map 2 chiều (One to One)
+    userAccount.setProfile(profile);
+    userAccount.setUserRoles(List.of(userRole));
+    profile.setUserAccount(userAccount);
+    userRole.setUserAccount(userAccount);
+
+    var savedUser = userAccountRepository.save(userAccount);
+
+    return generateAuthResponse(savedUser);
   }
 
   @Override
+  @Transactional
   public AuthResponse login(LoginRequest request) {
-    // TODO: Kiểm tra credential, sinh token
-    throw new UnsupportedOperationException("Not implemented");
+    // 0. TÌM USERNAME TỪ EMAIL
+    var user =
+        userAccountRepository
+            .findByEmail(request.email())
+            .orElseThrow(() -> new ConflictException("Email chưa có tài khoản hoặc không hợp lệ"));
+
+    // 1. XÁC THỰC (Authentication)
+    var authentication =
+        authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(
+                user.getUsername(), request.plainTextPassword()));
+
+    // 2. LẤY USER
+    var loginUser = (UserAccount) authentication.getPrincipal();
+
+    return generateAuthResponse(loginUser);
   }
 
   @Override
@@ -67,5 +138,13 @@ public class AuthServiceImpl implements AuthService {
   public void resendVerificationEmail(ResendVerifyRequest request) {
     // TODO: Gửi lại email verify
     throw new UnsupportedOperationException("Not implemented");
+  }
+
+  private AuthResponse generateAuthResponse(UserAccount user) {
+    String accessToken = jwtService.generateToken(user);
+
+    List<String> roles =
+        user.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
+    return new AuthResponse(accessToken, roles);
   }
 }

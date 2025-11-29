@@ -1,3 +1,5 @@
 package com.foodgo.backend.module.auth.dto;
 
-public class AuthResponse {}
+import java.util.List;
+
+public record AuthResponse(String accessToken, List<String> roles) {}

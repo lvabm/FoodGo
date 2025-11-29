@@ -2,10 +2,6 @@ server:
   # Đảm bảo cổng Backend đồng nhất (cho Frontend Proxy)
   port: 8080
 
-app:
-  security:
-    enabled: false
-
 spring:
   # PHẦN 1: THIẾT LẬP KẾT NỐI DATASOURCE
   datasource:

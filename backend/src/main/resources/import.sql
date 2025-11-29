@@ -599,3 +599,105 @@ INSERT INTO notification (id, user_id, type, title, content, related_id, is_read
 --38. ADVERTISEMENT
 --========================================================
 INSERT INTO advertisement (id, outlet_id, position, start_date, end_date, is_active) VALUES (1, (SELECT id FROM outlet WHERE name = 'Quán Phở Alice'), 'featured', CURRENT_DATE, CURRENT_DATE + INTERVAL '7 days', true);
+
+--================================================================================================================
+--================================================================================================================
+-- Các lệnh này đảm bảo Sequence trong DB được đồng bộ với ID lớn nhất hiện tại, tránh lỗi duplicate key.
+--================================================================================================================
+--================================================================================================================
+
+-- 🔑 1. Profile (BIGINT ID)
+SELECT setval(pg_get_serial_sequence('profile', 'id'), (SELECT COALESCE(MAX(id), 0) FROM profile) + 1, false);
+
+-- 🔑 2. Refresh Token (BIGINT ID)
+SELECT setval(pg_get_serial_sequence('refresh_token', 'id'), (SELECT COALESCE(MAX(id), 0) FROM refresh_token) + 1, false);
+
+-- 🔑 3. Password Reset Token (BIGINT ID)
+SELECT setval(pg_get_serial_sequence('password_reset_token', 'id'), (SELECT COALESCE(MAX(id), 0) FROM password_reset_token) + 1, false);
+
+-- 🔑 4. Role (INTEGER ID)
+SELECT setval(pg_get_serial_sequence('role', 'id'), (SELECT COALESCE(MAX(id), 0) FROM role) + 1, false);
+
+-- 🔑 5. Permission (INTEGER ID)
+SELECT setval(pg_get_serial_sequence('permission', 'id'), (SELECT COALESCE(MAX(id), 0) FROM permission) + 1, false);
+
+-- 🔑 6. User Role (BIGINT ID)
+SELECT setval(pg_get_serial_sequence('user_role', 'id'), (SELECT COALESCE(MAX(id), 0) FROM user_role) + 1, false);
+
+-- 🔑 7. Role Permission (BIGINT ID)
+SELECT setval(pg_get_serial_sequence('role_permission', 'id'), (SELECT COALESCE(MAX(id), 0) FROM role_permission) + 1, false);
+
+-- 🔑 8. Sharing List (INTEGER ID)
+SELECT setval(pg_get_serial_sequence('sharing_list', 'id'), (SELECT COALESCE(MAX(id), 0) FROM sharing_list) + 1, false);
+
+-- 🔑 9. Sharing List Collaborator (BIGINT ID)
+SELECT setval(pg_get_serial_sequence('sharing_list_collaborator', 'id'), (SELECT COALESCE(MAX(id), 0) FROM sharing_list_collaborator) + 1, false);
+
+-- 🔑 10. Outlet Type (INTEGER ID)
+SELECT setval(pg_get_serial_sequence('outlet_type', 'id'), (SELECT COALESCE(MAX(id), 0) FROM outlet_type) + 1, false);
+
+-- 🔑 11. Outlet Category (INTEGER ID)
+SELECT setval(pg_get_serial_sequence('outlet_category', 'id'), (SELECT COALESCE(MAX(id), 0) FROM outlet_category) + 1, false);
+
+-- 🔑 12. Outlet Feature (INTEGER ID)
+SELECT setval(pg_get_serial_sequence('outlet_feature', 'id'), (SELECT COALESCE(MAX(id), 0) FROM outlet_feature) + 1, false);
+
+-- 🔑 13. Outlet Feature Mapping (INTEGER ID)
+SELECT setval(pg_get_serial_sequence('outlet_feature_mapping', 'id'), (SELECT COALESCE(MAX(id), 0) FROM outlet_feature_mapping) + 1, false);
+
+-- 🔑 14. Outlet Image (INTEGER ID)
+SELECT setval(pg_get_serial_sequence('outlet_image', 'id'), (SELECT COALESCE(MAX(id), 0) FROM outlet_image) + 1, false);
+
+-- 🔑 15. Operating Hours (INTEGER ID)
+SELECT setval(pg_get_serial_sequence('operating_hours', 'id'), (SELECT COALESCE(MAX(id), 0) FROM operating_hours) + 1, false);
+
+-- 🔑 16. Menu Item Type (INTEGER ID)
+SELECT setval(pg_get_serial_sequence('menu_item_type', 'id'), (SELECT COALESCE(MAX(id), 0) FROM menu_item_type) + 1, false);
+
+-- 🔑 17. Menu Item Category (INTEGER ID)
+SELECT setval(pg_get_serial_sequence('menu_item_category', 'id'), (SELECT COALESCE(MAX(id), 0) FROM menu_item_category) + 1, false);
+
+-- 🔑 18. Menu Item Sub Category (INTEGER ID)
+SELECT setval(pg_get_serial_sequence('menu_item_sub_category', 'id'), (SELECT COALESCE(MAX(id), 0) FROM menu_item_sub_category) + 1, false);
+
+-- 🔑 19. Outlet Menu Item (INTEGER ID)
+SELECT setval(pg_get_serial_sequence('outlet_menu_item', 'id'), (SELECT COALESCE(MAX(id), 0) FROM outlet_menu_item) + 1, false);
+
+-- 🔑 20. Menu Item Feature (INTEGER ID)
+SELECT setval(pg_get_serial_sequence('menu_item_feature', 'id'), (SELECT COALESCE(MAX(id), 0) FROM menu_item_feature) + 1, false);
+
+-- 🔑 21. Outlet Menu Item Feature (INTEGER ID)
+SELECT setval(pg_get_serial_sequence('outlet_menu_item_feature', 'id'), (SELECT COALESCE(MAX(id), 0) FROM outlet_menu_item_feature) + 1, false);
+
+-- 🔑 22. Review Image (INTEGER ID)
+SELECT setval(pg_get_serial_sequence('review_image', 'id'), (SELECT COALESCE(MAX(id), 0) FROM review_image) + 1, false);
+
+-- 🔑 23. Review Reply (INTEGER ID)
+SELECT setval(pg_get_serial_sequence('review_reply', 'id'), (SELECT COALESCE(MAX(id), 0) FROM review_reply) + 1, false);
+
+-- 🔑 24. Review Reaction (BIGINT ID)
+SELECT setval(pg_get_serial_sequence('review_reaction', 'id'), (SELECT COALESCE(MAX(id), 0) FROM review_reaction) + 1, false);
+
+-- 🔑 25. Review Report (INTEGER ID)
+SELECT setval(pg_get_serial_sequence('review_report', 'id'), (SELECT COALESCE(MAX(id), 0) FROM review_report) + 1, false);
+
+-- 🔑 26. Notification (BIGINT ID)
+SELECT setval(pg_get_serial_sequence('notification', 'id'), (SELECT COALESCE(MAX(id), 0) FROM notification) + 1, false);
+
+-- 🔑 27. Membership Plan (INTEGER ID)
+SELECT setval(pg_get_serial_sequence('membership_plan', 'id'), (SELECT COALESCE(MAX(id), 0) FROM membership_plan) + 1, false);
+
+-- 🔑 28. User Membership (BIGINT ID)
+SELECT setval(pg_get_serial_sequence('user_membership', 'id'), (SELECT COALESCE(MAX(id), 0) FROM user_membership) + 1, false);
+
+-- 🔑 29. Advertisement (INTEGER ID)
+SELECT setval(pg_get_serial_sequence('advertisement', 'id'), (SELECT COALESCE(MAX(id), 0) FROM advertisement) + 1, false);
+
+-- 🔑 30. Country (INTEGER ID)
+SELECT setval(pg_get_serial_sequence('country', 'id'), (SELECT COALESCE(MAX(id), 0) FROM country) + 1, false);
+
+-- 🔑 31. Province (INTEGER ID)
+SELECT setval(pg_get_serial_sequence('province', 'id'), (SELECT COALESCE(MAX(id), 0) FROM province) + 1, false);
+
+-- 🔑 32. District (INTEGER ID)
+SELECT setval(pg_get_serial_sequence('district', 'id'), (SELECT COALESCE(MAX(id), 0) FROM district) + 1, false);
