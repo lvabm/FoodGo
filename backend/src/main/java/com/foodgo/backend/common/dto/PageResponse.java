@@ -6,14 +6,18 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
+
+import java.util.List;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PageResponse<T> extends BaseResponse<T> {
-    private int pageNumber;
-    private int pageSize;
-    private long totalElements;
-    private int totalPages;
+public class PageResponse<T> extends BaseResponse<List<T>> {
+  private int pageNumber;
+  private int pageSize;
+  private long totalElements;
+  private int totalPages;
 }
