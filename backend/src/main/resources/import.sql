@@ -210,35 +210,7 @@ INSERT INTO menu_item (id, sub_category_id, province_id, name, description, is_p
 INSERT INTO menu_item (id, sub_category_id, province_id, name, description, is_popular) VALUES ('60000000-0000-0000-0000-000000000006', (SELECT id FROM menu_item_sub_category WHERE name = 'Phở'), (SELECT id FROM province WHERE name = 'Hồ Chí Minh'), 'Phở Bò Viên Nước Trong', 'Phở truyền thống với thịt bò viên dai ngon và nước dùng trong', false);
 
 --========================================================
---10. USER_ACCOUNT
---========================================================
-INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active) VALUES ('10000000-0000-0000-0000-000000000000', 'salvabm', '22022022', 'salvabm@foodgo.com', '0911295205', true);
-INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active) VALUES ('10000000-0000-0000-0000-000000000001', 'admin1', 'plain_password_123', 'admin1@example.com', '0901234568', true);
-INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active) VALUES ('10000000-0000-0000-0000-000000000002', 'user1', 'plain_password_123', 'user1@example.com', '0901234569', true);
-INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active) VALUES ('10000000-0000-0000-0000-000000000003', 'owner1', 'plain_password_123', 'owner1@example.com', '0901234587', true);
-INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active) VALUES ('10000000-0000-0000-0000-000000000004', 'guest1', 'plain_password_123', 'guest1@example.com', '0901234557', true);
-
---========================================================
---11. PROFILE
---========================================================
-INSERT INTO profile (id, user_id, full_name, date_of_birth, address, avatar_url, country_id) VALUES (1, (SELECT id FROM user_account WHERE username = 'salvabm'), 'Lê Văn An', '2005-03-22', 'Quận 8, TP. HCM', 'https://default-avatar.png', (SELECT id FROM country WHERE code = 'VN'));
-INSERT INTO profile (id, user_id, full_name, date_of_birth, address, avatar_url, country_id) VALUES (2, (SELECT id FROM user_account WHERE username = 'admin1'), 'Admin 1', '1995-05-08', 'Quận 1, TP. HCM', 'https://default-avatar.png', (SELECT id FROM country WHERE code = 'VN'));
-INSERT INTO profile (id, user_id, full_name, date_of_birth, address, avatar_url, country_id) VALUES (3, (SELECT id FROM user_account WHERE username = 'user1'), 'User 1', '1995-05-09', 'Quận 2, TP. HCM', 'https://default-avatar.png', (SELECT id FROM country WHERE code = 'VN'));
-INSERT INTO profile (id, user_id, full_name, date_of_birth, address, avatar_url, country_id) VALUES (4, (SELECT id FROM user_account WHERE username = 'owner1'), 'Owner 1', '1995-05-10', 'Quận 3, TP. HCM', 'https://default-avatar.png', (SELECT id FROM country WHERE code = 'VN'));
-INSERT INTO profile (id, user_id, full_name, date_of_birth, address, avatar_url, country_id) VALUES (5, (SELECT id FROM user_account WHERE username = 'guest1'), 'Guest 1', '1995-05-11', 'Quận 4, TP. HCM', 'https://default-avatar.png', (SELECT id FROM country WHERE code = 'VN'));
-
---========================================================
---12. REFRESH_TOKEN
---========================================================
-INSERT INTO refresh_token (id, user_id, token, device_info, ip_address, is_revoked, expires_at, created_at) VALUES (1, (SELECT id FROM user_account WHERE username = 'owner1'), 'refresh-token-sample-1', 'Chrome on Windows', '127.0.0.1', false, NOW() + INTERVAL '14 days', NOW());
-
---========================================================
---13. PASSWORD_RESET_TOKEN
---========================================================
-INSERT INTO password_reset_token (id, user_id, token, expires_at, is_used) VALUES (1, (SELECT id FROM user_account WHERE username = 'owner1'), 'pw-reset-token-1', NOW() + INTERVAL '30 minutes', false);
-
---========================================================
---14. ROLE
+--10. ROLE
 --========================================================
 INSERT INTO role (id, name, description) VALUES (1, 'ROLE_USER', 'Người dùng');
 INSERT INTO role (id, name, description) VALUES (2, 'ROLE_OWNER', 'Chủ quán');
@@ -247,7 +219,7 @@ INSERT INTO role (id, name, description) VALUES (4, 'ROLE_SYSTEM_ADMIN', 'Quản
 INSERT INTO role (id, name, description) VALUES (5, 'ROLE_GUEST', 'Khách vãng lai');
 
 --========================================================
---15. PERMISSION (Chuẩn Authorization/RBAC = Resource:Action)
+--11. PERMISSION (Chuẩn Authorization/RBAC = Resource:Action)
 --========================================================
 -- 1. Quyền Quản lý Tài khoản (User/Profile/Auth)
 INSERT INTO permission (id, name, description) VALUES (1, 'AUTH:MANAGE_TOKEN', 'Quản lý Refresh Token (Revoke, List) của chính mình');
@@ -310,156 +282,91 @@ INSERT INTO permission (id, name, description) VALUES (108, 'ADMIN:MANAGE_MEMBER
 INSERT INTO permission (id, name, description) VALUES (109, 'ADMIN:MANAGE_NOTIFICATIONS', 'Gửi thông báo hệ thống đến người dùng');
 
 --========================================================
---16. USER_ROLE
+--12. ROLE_PERMISSION
 --========================================================
-INSERT INTO user_role (id, user_id, role_id) VALUES (1, (SELECT id FROM user_account WHERE username = 'salvabm'), (SELECT id FROM role WHERE name = 'ROLE_SYSTEM_ADMIN'));
-INSERT INTO user_role (id, user_id, role_id) VALUES (2, (SELECT id FROM user_account WHERE username = 'owner1'), (SELECT id FROM role WHERE name = 'ROLE_OWNER'));
 
---========================================================
---17. ROLE_PERMISSION
---========================================================
--- 1. ROLE_GUEST (4 quyền) (Khách vãng lai - Chỉ có quyền đọc công khai)
+-- 1. ROLE_GUEST (4 quyền)
 INSERT INTO role_permission (id, role_id, permission_id) VALUES (1, (SELECT id FROM role WHERE name = 'ROLE_GUEST'), (SELECT id FROM permission WHERE name = 'PUBLIC:READ_ALL_OUTLET'));
 INSERT INTO role_permission (id, role_id, permission_id) VALUES (2, (SELECT id FROM role WHERE name = 'ROLE_GUEST'), (SELECT id FROM permission WHERE name = 'PUBLIC:READ_ALL_MENU'));
 INSERT INTO role_permission (id, role_id, permission_id) VALUES (3, (SELECT id FROM role WHERE name = 'ROLE_GUEST'), (SELECT id FROM permission WHERE name = 'PUBLIC:READ_ALL_REVIEW'));
 INSERT INTO role_permission (id, role_id, permission_id) VALUES (4, (SELECT id FROM role WHERE name = 'ROLE_GUEST'), (SELECT id FROM permission WHERE name = 'PUBLIC:SEARCH'));
 
--- 2. ROLE_USER (17 quyền) (Người dùng - Quyền của Guest + Quyền tự quản lý, Booking, Review, Sharing List)
--- Bao gồm các quyền của GUEST
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (5, (SELECT id FROM role WHERE name = 'ROLE_USER'), (SELECT id FROM permission WHERE name = 'PUBLIC:READ_ALL_OUTLET'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (6, (SELECT id FROM role WHERE name = 'ROLE_USER'), (SELECT id FROM permission WHERE name = 'PUBLIC:READ_ALL_MENU'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (7, (SELECT id FROM role WHERE name = 'ROLE_USER'), (SELECT id FROM permission WHERE name = 'PUBLIC:READ_ALL_REVIEW'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (8, (SELECT id FROM role WHERE name = 'ROLE_USER'), (SELECT id FROM permission WHERE name = 'PUBLIC:SEARCH'));
--- Quyền cụ thể của User (Specific)
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (9, (SELECT id FROM role WHERE name = 'ROLE_USER'), (SELECT id FROM permission WHERE name = 'AUTH:MANAGE_TOKEN'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (10, (SELECT id FROM role WHERE name = 'ROLE_USER'), (SELECT id FROM permission WHERE name = 'USER:READ_SELF'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (11, (SELECT id FROM role WHERE name = 'ROLE_USER'), (SELECT id FROM permission WHERE name = 'USER:UPDATE_SELF'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (12, (SELECT id FROM role WHERE name = 'ROLE_USER'), (SELECT id FROM permission WHERE name = 'BOOKING:CREATE'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (13, (SELECT id FROM role WHERE name = 'ROLE_USER'), (SELECT id FROM permission WHERE name = 'BOOKING:CANCEL_SELF'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (14, (SELECT id FROM role WHERE name = 'ROLE_USER'), (SELECT id FROM permission WHERE name = 'PAYMENT:PROCESS'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (15, (SELECT id FROM role WHERE name = 'ROLE_USER'), (SELECT id FROM permission WHERE name = 'PAYMENT:READ_SELF'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (16, (SELECT id FROM role WHERE name = 'ROLE_USER'), (SELECT id FROM permission WHERE name = 'REVIEW:CREATE'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (17, (SELECT id FROM role WHERE name = 'ROLE_USER'), (SELECT id FROM permission WHERE name = 'REVIEW:UPDATE_SELF'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (18, (SELECT id FROM role WHERE name = 'ROLE_USER'), (SELECT id FROM permission WHERE name = 'REVIEW:REACT'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (19, (SELECT id FROM role WHERE name = 'ROLE_USER'), (SELECT id FROM permission WHERE name = 'REVIEW:REPORT'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (20, (SELECT id FROM role WHERE name = 'ROLE_USER'), (SELECT id FROM permission WHERE name = 'SHARING_LIST:MANAGE_SELF'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (21, (SELECT id FROM role WHERE name = 'ROLE_USER'), (SELECT id FROM permission WHERE name = 'MEMBERSHIP:SUBSCRIBE'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (22, (SELECT id FROM role WHERE name = 'ROLE_USER'), (SELECT id FROM permission WHERE name = 'MEMBERSHIP:READ_SELF'));
+-- 2. ROLE_USER (14 quyền)
+INSERT INTO role_permission (id, role_id, permission_id) VALUES (5, (SELECT id FROM role WHERE name = 'ROLE_USER'), (SELECT id FROM permission WHERE name = 'AUTH:MANAGE_TOKEN'));
+INSERT INTO role_permission (id, role_id, permission_id) VALUES (6, (SELECT id FROM role WHERE name = 'ROLE_USER'), (SELECT id FROM permission WHERE name = 'USER:READ_SELF'));
+INSERT INTO role_permission (id, role_id, permission_id) VALUES (7, (SELECT id FROM role WHERE name = 'ROLE_USER'), (SELECT id FROM permission WHERE name = 'USER:UPDATE_SELF'));
+INSERT INTO role_permission (id, role_id, permission_id) VALUES (8, (SELECT id FROM role WHERE name = 'ROLE_USER'), (SELECT id FROM permission WHERE name = 'BOOKING:CREATE'));
+INSERT INTO role_permission (id, role_id, permission_id) VALUES (9, (SELECT id FROM role WHERE name = 'ROLE_USER'), (SELECT id FROM permission WHERE name = 'BOOKING:CANCEL_SELF'));
+INSERT INTO role_permission (id, role_id, permission_id) VALUES (10, (SELECT id FROM role WHERE name = 'ROLE_USER'), (SELECT id FROM permission WHERE name = 'PAYMENT:PROCESS'));
+INSERT INTO role_permission (id, role_id, permission_id) VALUES (11, (SELECT id FROM role WHERE name = 'ROLE_USER'), (SELECT id FROM permission WHERE name = 'PAYMENT:READ_SELF'));
+INSERT INTO role_permission (id, role_id, permission_id) VALUES (12, (SELECT id FROM role WHERE name = 'ROLE_USER'), (SELECT id FROM permission WHERE name = 'REVIEW:CREATE'));
+INSERT INTO role_permission (id, role_id, permission_id) VALUES (13, (SELECT id FROM role WHERE name = 'ROLE_USER'), (SELECT id FROM permission WHERE name = 'REVIEW:UPDATE_SELF'));
+INSERT INTO role_permission (id, role_id, permission_id) VALUES (14, (SELECT id FROM role WHERE name = 'ROLE_USER'), (SELECT id FROM permission WHERE name = 'REVIEW:REACT'));
+INSERT INTO role_permission (id, role_id, permission_id) VALUES (15, (SELECT id FROM role WHERE name = 'ROLE_USER'), (SELECT id FROM permission WHERE name = 'REVIEW:REPORT'));
+INSERT INTO role_permission (id, role_id, permission_id) VALUES (16, (SELECT id FROM role WHERE name = 'ROLE_USER'), (SELECT id FROM permission WHERE name = 'SHARING_LIST:MANAGE_SELF'));
+INSERT INTO role_permission (id, role_id, permission_id) VALUES (17, (SELECT id FROM role WHERE name = 'ROLE_USER'), (SELECT id FROM permission WHERE name = 'MEMBERSHIP:SUBSCRIBE'));
+INSERT INTO role_permission (id, role_id, permission_id) VALUES (18, (SELECT id FROM role WHERE name = 'ROLE_USER'), (SELECT id FROM permission WHERE name = 'MEMBERSHIP:READ_SELF'));
 
--- 3. ROLE_OWNER (34 quyền) (Chủ quán - Quyền của User + Quyền quản lý Outlet, Menu, Booking của mình)
--- Bao gồm các quyền của USER + GUEST
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (23, (SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE name = 'PUBLIC:READ_ALL_OUTLET'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (24, (SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE name = 'PUBLIC:READ_ALL_MENU'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (25, (SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE name = 'PUBLIC:READ_ALL_REVIEW'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (26, (SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE name = 'PUBLIC:SEARCH'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (27, (SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE name = 'AUTH:MANAGE_TOKEN'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (28, (SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE name = 'USER:READ_SELF'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (29, (SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE name = 'USER:UPDATE_SELF'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (30, (SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE name = 'BOOKING:CREATE'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (31, (SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE name = 'BOOKING:CANCEL_SELF'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (32, (SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE name = 'PAYMENT:PROCESS'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (33, (SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE name = 'PAYMENT:READ_SELF'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (34, (SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE name = 'REVIEW:CREATE'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (35, (SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE name = 'REVIEW:UPDATE_SELF'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (36, (SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE name = 'REVIEW:REACT'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (37, (SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE name = 'REVIEW:REPORT'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (38, (SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE name = 'SHARING_LIST:MANAGE_SELF'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (39, (SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE name = 'MEMBERSHIP:SUBSCRIBE'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (40, (SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE name = 'MEMBERSHIP:READ_SELF'));
--- Quyền cụ thể của Owner (Specific)
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (41, (SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE name = 'OUTLET:CREATE'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (42, (SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE name = 'OUTLET:READ_OWN'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (43, (SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE name = 'OUTLET:UPDATE_OWN'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (44, (SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE name = 'OUTLET:ACTIVATE_OWN'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (45, (SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE name = 'OUTLET_IMAGE:MANAGE_OWN'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (46, (SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE name = 'OPERATING_HOURS:MANAGE_OWN'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (47, (SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE name = 'MENU_ITEM:CREATE_OWN'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (48, (SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE name = 'MENU_ITEM:READ_OWN'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (49, (SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE name = 'MENU_ITEM:UPDATE_OWN'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (50, (SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE name = 'MENU_ITEM:DELETE_OWN'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (51, (SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE name = 'MENU_FEATURE:MANAGE_OWN'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (52, (SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE name = 'BOOKING:READ_OWN'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (53, (SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE name = 'BOOKING:UPDATE_STATUS_OWN'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (54, (SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE name = 'REVIEW:REPLY_OWN'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (55, (SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE name = 'ADVERTISEMENT:CREATE_OWN'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (56, (SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE name = 'ADVERTISEMENT:READ_OWN'));
+-- 3. ROLE_OWNER (17 quyền)
+INSERT INTO role_permission (id, role_id, permission_id) VALUES (19, (SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE name = 'OUTLET:CREATE'));
+INSERT INTO role_permission (id, role_id, permission_id) VALUES (20, (SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE name = 'OUTLET:READ_OWN'));
+INSERT INTO role_permission (id, role_id, permission_id) VALUES (21, (SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE name = 'OUTLET:UPDATE_OWN'));
+INSERT INTO role_permission (id, role_id, permission_id) VALUES (22, (SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE name = 'OUTLET:ACTIVATE_OWN'));
+INSERT INTO role_permission (id, role_id, permission_id) VALUES (23, (SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE name = 'OUTLET_IMAGE:MANAGE_OWN'));
+INSERT INTO role_permission (id, role_id, permission_id) VALUES (24, (SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE name = 'OPERATING_HOURS:MANAGE_OWN'));
+INSERT INTO role_permission (id, role_id, permission_id) VALUES (25, (SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE name = 'MENU_ITEM:CREATE_OWN'));
+INSERT INTO role_permission (id, role_id, permission_id) VALUES (26, (SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE name = 'MENU_ITEM:READ_OWN'));
+INSERT INTO role_permission (id, role_id, permission_id) VALUES (27, (SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE name = 'MENU_ITEM:UPDATE_OWN'));
+INSERT INTO role_permission (id, role_id, permission_id) VALUES (28, (SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE name = 'MENU_ITEM:DELETE_OWN'));
+INSERT INTO role_permission (id, role_id, permission_id) VALUES (29, (SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE name = 'MENU_FEATURE:MANAGE_OWN'));
+INSERT INTO role_permission (id, role_id, permission_id) VALUES (30, (SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE name = 'BOOKING:READ_OWN'));
+INSERT INTO role_permission (id, role_id, permission_id) VALUES (31, (SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE name = 'BOOKING:UPDATE_STATUS_OWN'));
+INSERT INTO role_permission (id, role_id, permission_id) VALUES (32, (SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE name = 'REVIEW:REPLY_OWN'));
+INSERT INTO role_permission (id, role_id, permission_id) VALUES (33, (SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE name = 'ADVERTISEMENT:CREATE_OWN'));
+INSERT INTO role_permission (id, role_id, permission_id) VALUES (34, (SELECT id FROM role WHERE name = 'ROLE_OWNER'), (SELECT id FROM permission WHERE name = 'ADVERTISEMENT:READ_OWN'));
 
--- 4. ROLE_ADMIN (23 quyền) (Quản trị viên - Quyền User + Quyền quản lý nội dung/vận hành)
--- Bao gồm các quyền của USER + GUEST
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (57, (SELECT id FROM role WHERE name = 'ROLE_ADMIN'), (SELECT id FROM permission WHERE name = 'PUBLIC:READ_ALL_OUTLET'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (58, (SELECT id FROM role WHERE name = 'ROLE_ADMIN'), (SELECT id FROM permission WHERE name = 'PUBLIC:READ_ALL_MENU'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (59, (SELECT id FROM role WHERE name = 'ROLE_ADMIN'), (SELECT id FROM permission WHERE name = 'PUBLIC:READ_ALL_REVIEW'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (60, (SELECT id FROM role WHERE name = 'ROLE_ADMIN'), (SELECT id FROM permission WHERE name = 'PUBLIC:SEARCH'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (61, (SELECT id FROM role WHERE name = 'ROLE_ADMIN'), (SELECT id FROM permission WHERE name = 'AUTH:MANAGE_TOKEN'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (62, (SELECT id FROM role WHERE name = 'ROLE_ADMIN'), (SELECT id FROM permission WHERE name = 'USER:READ_SELF'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (63, (SELECT id FROM role WHERE name = 'ROLE_ADMIN'), (SELECT id FROM permission WHERE name = 'USER:UPDATE_SELF'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (64, (SELECT id FROM role WHERE name = 'ROLE_ADMIN'), (SELECT id FROM permission WHERE name = 'BOOKING:CREATE'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (65, (SELECT id FROM role WHERE name = 'ROLE_ADMIN'), (SELECT id FROM permission WHERE name = 'BOOKING:CANCEL_SELF'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (66, (SELECT id FROM role WHERE name = 'ROLE_ADMIN'), (SELECT id FROM permission WHERE name = 'PAYMENT:PROCESS'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (67, (SELECT id FROM role WHERE name = 'ROLE_ADMIN'), (SELECT id FROM permission WHERE name = 'PAYMENT:READ_SELF'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (68, (SELECT id FROM role WHERE name = 'ROLE_ADMIN'), (SELECT id FROM permission WHERE name = 'REVIEW:CREATE'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (69, (SELECT id FROM role WHERE name = 'ROLE_ADMIN'), (SELECT id FROM permission WHERE name = 'REVIEW:UPDATE_SELF'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (70, (SELECT id FROM role WHERE name = 'ROLE_ADMIN'), (SELECT id FROM permission WHERE name = 'REVIEW:REACT'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (71, (SELECT id FROM role WHERE name = 'ROLE_ADMIN'), (SELECT id FROM permission WHERE name = 'REVIEW:REPORT'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (72, (SELECT id FROM role WHERE name = 'ROLE_ADMIN'), (SELECT id FROM permission WHERE name = 'SHARING_LIST:MANAGE_SELF'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (73, (SELECT id FROM role WHERE name = 'ROLE_ADMIN'), (SELECT id FROM permission WHERE name = 'MEMBERSHIP:SUBSCRIBE'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (74, (SELECT id FROM role WHERE name = 'ROLE_ADMIN'), (SELECT id FROM permission WHERE name = 'MEMBERSHIP:READ_SELF'));
--- Quyền cụ thể của Admin (Specific)
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (75, (SELECT id FROM role WHERE name = 'ROLE_ADMIN'), (SELECT id FROM permission WHERE name = 'ADMIN:MANAGE_MASTER_DATA'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (76, (SELECT id FROM role WHERE name = 'ROLE_ADMIN'), (SELECT id FROM permission WHERE name = 'ADMIN:MANAGE_CATEGORIES'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (77, (SELECT id FROM role WHERE name = 'ROLE_ADMIN'), (SELECT id FROM permission WHERE name = 'ADMIN:FULL_ACCESS_OUTLET'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (78, (SELECT id FROM role WHERE name = 'ROLE_ADMIN'), (SELECT id FROM permission WHERE name = 'ADMIN:MANAGE_REVIEW_REPORT'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (79, (SELECT id FROM role WHERE name = 'ROLE_ADMIN'), (SELECT id FROM permission WHERE name = 'ADMIN:MANAGE_ADVERTISEMENT'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (80, (SELECT id FROM role WHERE name = 'ROLE_ADMIN'), (SELECT id FROM permission WHERE name = 'ADMIN:MANAGE_MEMBERSHIP'));
+-- 4. ROLE_ADMIN (6 quyền)
+INSERT INTO role_permission (id, role_id, permission_id) VALUES (35, (SELECT id FROM role WHERE name = 'ROLE_ADMIN'), (SELECT id FROM permission WHERE name = 'ADMIN:MANAGE_MASTER_DATA'));
+INSERT INTO role_permission (id, role_id, permission_id) VALUES (36, (SELECT id FROM role WHERE name = 'ROLE_ADMIN'), (SELECT id FROM permission WHERE name = 'ADMIN:MANAGE_CATEGORIES'));
+INSERT INTO role_permission (id, role_id, permission_id) VALUES (37, (SELECT id FROM role WHERE name = 'ROLE_ADMIN'), (SELECT id FROM permission WHERE name = 'ADMIN:FULL_ACCESS_OUTLET'));
+INSERT INTO role_permission (id, role_id, permission_id) VALUES (38, (SELECT id FROM role WHERE name = 'ROLE_ADMIN'), (SELECT id FROM permission WHERE name = 'ADMIN:MANAGE_REVIEW_REPORT'));
+INSERT INTO role_permission (id, role_id, permission_id) VALUES (39, (SELECT id FROM role WHERE name = 'ROLE_ADMIN'), (SELECT id FROM permission WHERE name = 'ADMIN:MANAGE_ADVERTISEMENT'));
+INSERT INTO role_permission (id, role_id, permission_id) VALUES (40, (SELECT id FROM role WHERE name = 'ROLE_ADMIN'), (SELECT id FROM permission WHERE name = 'ADMIN:MANAGE_MEMBERSHIP'));
 
--- 5. ROLE_SYSTEM_ADMIN (Quản trị hệ thống - Toàn quyền (Tất cả 43 Permissions))
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (81, (SELECT id FROM role WHERE name = 'ROLE_SYSTEM_ADMIN'), (SELECT id FROM permission WHERE name = 'AUTH:MANAGE_TOKEN'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (82, (SELECT id FROM role WHERE name = 'ROLE_SYSTEM_ADMIN'), (SELECT id FROM permission WHERE name = 'USER:READ_SELF'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (83, (SELECT id FROM role WHERE name = 'ROLE_SYSTEM_ADMIN'), (SELECT id FROM permission WHERE name = 'USER:UPDATE_SELF'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (84, (SELECT id FROM role WHERE name = 'ROLE_SYSTEM_ADMIN'), (SELECT id FROM permission WHERE name = 'OUTLET:CREATE'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (85, (SELECT id FROM role WHERE name = 'ROLE_SYSTEM_ADMIN'), (SELECT id FROM permission WHERE name = 'OUTLET:READ_OWN'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (86, (SELECT id FROM role WHERE name = 'ROLE_SYSTEM_ADMIN'), (SELECT id FROM permission WHERE name = 'OUTLET:UPDATE_OWN'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (87, (SELECT id FROM role WHERE name = 'ROLE_SYSTEM_ADMIN'), (SELECT id FROM permission WHERE name = 'OUTLET:ACTIVATE_OWN'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (88, (SELECT id FROM role WHERE name = 'ROLE_SYSTEM_ADMIN'), (SELECT id FROM permission WHERE name = 'OUTLET_IMAGE:MANAGE_OWN'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (89, (SELECT id FROM role WHERE name = 'ROLE_SYSTEM_ADMIN'), (SELECT id FROM permission WHERE name = 'OPERATING_HOURS:MANAGE_OWN'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (90, (SELECT id FROM role WHERE name = 'ROLE_SYSTEM_ADMIN'), (SELECT id FROM permission WHERE name = 'MENU_ITEM:CREATE_OWN'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (91, (SELECT id FROM role WHERE name = 'ROLE_SYSTEM_ADMIN'), (SELECT id FROM permission WHERE name = 'MENU_ITEM:READ_OWN'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (92, (SELECT id FROM role WHERE name = 'ROLE_SYSTEM_ADMIN'), (SELECT id FROM permission WHERE name = 'MENU_ITEM:UPDATE_OWN'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (93, (SELECT id FROM role WHERE name = 'ROLE_SYSTEM_ADMIN'), (SELECT id FROM permission WHERE name = 'MENU_ITEM:DELETE_OWN'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (94, (SELECT id FROM role WHERE name = 'ROLE_SYSTEM_ADMIN'), (SELECT id FROM permission WHERE name = 'MENU_FEATURE:MANAGE_OWN'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (95, (SELECT id FROM role WHERE name = 'ROLE_SYSTEM_ADMIN'), (SELECT id FROM permission WHERE name = 'BOOKING:CREATE'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (96, (SELECT id FROM role WHERE name = 'ROLE_SYSTEM_ADMIN'), (SELECT id FROM permission WHERE name = 'BOOKING:CANCEL_SELF'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (97, (SELECT id FROM role WHERE name = 'ROLE_SYSTEM_ADMIN'), (SELECT id FROM permission WHERE name = 'BOOKING:READ_OWN'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (98, (SELECT id FROM role WHERE name = 'ROLE_SYSTEM_ADMIN'), (SELECT id FROM permission WHERE name = 'BOOKING:UPDATE_STATUS_OWN'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (99, (SELECT id FROM role WHERE name = 'ROLE_SYSTEM_ADMIN'), (SELECT id FROM permission WHERE name = 'PAYMENT:PROCESS'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (100, (SELECT id FROM role WHERE name = 'ROLE_SYSTEM_ADMIN'), (SELECT id FROM permission WHERE name = 'PAYMENT:READ_SELF'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (101, (SELECT id FROM role WHERE name = 'ROLE_SYSTEM_ADMIN'), (SELECT id FROM permission WHERE name = 'REVIEW:CREATE'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (102, (SELECT id FROM role WHERE name = 'ROLE_SYSTEM_ADMIN'), (SELECT id FROM permission WHERE name = 'REVIEW:UPDATE_SELF'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (103, (SELECT id FROM role WHERE name = 'ROLE_SYSTEM_ADMIN'), (SELECT id FROM permission WHERE name = 'REVIEW:REACT'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (104, (SELECT id FROM role WHERE name = 'ROLE_SYSTEM_ADMIN'), (SELECT id FROM permission WHERE name = 'REVIEW:REPLY_OWN'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (105, (SELECT id FROM role WHERE name = 'ROLE_SYSTEM_ADMIN'), (SELECT id FROM permission WHERE name = 'REVIEW:REPORT'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (106, (SELECT id FROM role WHERE name = 'ROLE_SYSTEM_ADMIN'), (SELECT id FROM permission WHERE name = 'SHARING_LIST:MANAGE_SELF'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (107, (SELECT id FROM role WHERE name = 'ROLE_SYSTEM_ADMIN'), (SELECT id FROM permission WHERE name = 'MEMBERSHIP:SUBSCRIBE'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (108, (SELECT id FROM role WHERE name = 'ROLE_SYSTEM_ADMIN'), (SELECT id FROM permission WHERE name = 'MEMBERSHIP:READ_SELF'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (109, (SELECT id FROM role WHERE name = 'ROLE_SYSTEM_ADMIN'), (SELECT id FROM permission WHERE name = 'ADVERTISEMENT:CREATE_OWN'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (110, (SELECT id FROM role WHERE name = 'ROLE_SYSTEM_ADMIN'), (SELECT id FROM permission WHERE name = 'ADVERTISEMENT:READ_OWN'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (111, (SELECT id FROM role WHERE name = 'ROLE_SYSTEM_ADMIN'), (SELECT id FROM permission WHERE name = 'PUBLIC:READ_ALL_OUTLET'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (112, (SELECT id FROM role WHERE name = 'ROLE_SYSTEM_ADMIN'), (SELECT id FROM permission WHERE name = 'PUBLIC:READ_ALL_MENU'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (113, (SELECT id FROM role WHERE name = 'ROLE_SYSTEM_ADMIN'), (SELECT id FROM permission WHERE name = 'PUBLIC:READ_ALL_REVIEW'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (114, (SELECT id FROM role WHERE name = 'ROLE_SYSTEM_ADMIN'), (SELECT id FROM permission WHERE name = 'PUBLIC:SEARCH'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (115, (SELECT id FROM role WHERE name = 'ROLE_SYSTEM_ADMIN'), (SELECT id FROM permission WHERE name = 'ADMIN:MANAGE_USER_ACCOUNT'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (116, (SELECT id FROM role WHERE name = 'ROLE_SYSTEM_ADMIN'), (SELECT id FROM permission WHERE name = 'ADMIN:MANAGE_ROLES'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (117, (SELECT id FROM role WHERE name = 'ROLE_SYSTEM_ADMIN'), (SELECT id FROM permission WHERE name = 'ADMIN:MANAGE_MASTER_DATA'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (118, (SELECT id FROM role WHERE name = 'ROLE_SYSTEM_ADMIN'), (SELECT id FROM permission WHERE name = 'ADMIN:MANAGE_CATEGORIES'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (119, (SELECT id FROM role WHERE name = 'ROLE_SYSTEM_ADMIN'), (SELECT id FROM permission WHERE name = 'ADMIN:MANAGE_MENU_MASTER'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (120, (SELECT id FROM role WHERE name = 'ROLE_SYSTEM_ADMIN'), (SELECT id FROM permission WHERE name = 'ADMIN:FULL_ACCESS_OUTLET'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (121, (SELECT id FROM role WHERE name = 'ROLE_SYSTEM_ADMIN'), (SELECT id FROM permission WHERE name = 'ADMIN:MANAGE_REVIEW_REPORT'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (122, (SELECT id FROM role WHERE name = 'ROLE_SYSTEM_ADMIN'), (SELECT id FROM permission WHERE name = 'ADMIN:MANAGE_ADVERTISEMENT'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (123, (SELECT id FROM role WHERE name = 'ROLE_SYSTEM_ADMIN'), (SELECT id FROM permission WHERE name = 'ADMIN:MANAGE_MEMBERSHIP'));
-INSERT INTO role_permission (id, role_id, permission_id) VALUES (124, (SELECT id FROM role WHERE name = 'ROLE_SYSTEM_ADMIN'), (SELECT id FROM permission WHERE name = 'ADMIN:MANAGE_NOTIFICATIONS'));
+-- 5. ROLE_SYSTEM_ADMIN (4 quyền)
+INSERT INTO role_permission (id, role_id, permission_id) VALUES (41, (SELECT id FROM role WHERE name = 'ROLE_SYSTEM_ADMIN'), (SELECT id FROM permission WHERE name = 'ADMIN:MANAGE_USER_ACCOUNT'));
+INSERT INTO role_permission (id, role_id, permission_id) VALUES (42, (SELECT id FROM role WHERE name = 'ROLE_SYSTEM_ADMIN'), (SELECT id FROM permission WHERE name = 'ADMIN:MANAGE_ROLES'));
+INSERT INTO role_permission (id, role_id, permission_id) VALUES (43, (SELECT id FROM role WHERE name = 'ROLE_SYSTEM_ADMIN'), (SELECT id FROM permission WHERE name = 'ADMIN:MANAGE_NOTIFICATIONS'));
+INSERT INTO role_permission (id, role_id, permission_id) VALUES (44, (SELECT id FROM role WHERE name = 'ROLE_SYSTEM_ADMIN'), (SELECT id FROM permission WHERE name = 'ADMIN:MANAGE_MENU_MASTER'));
 
 --========================================================
---18. MEMBERSHIP_PLAN
+--13. USER_ACCOUNT
+--========================================================
+INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active, role_id) VALUES ('10000000-0000-0000-0000-000000000000', 'salvabm', '22022022', 'salvabm@foodgo.com', '0911295205', true, (SELECT id FROM role WHERE name = 'ROLE_SYSTEM_ADMIN'));
+INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active, role_id) VALUES ('10000000-0000-0000-0000-000000000001', 'admin1', 'plain_password_123', 'admin1@example.com', '0901234568', true, (SELECT id FROM role WHERE name = 'ROLE_ADMIN'));
+INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active, role_id) VALUES ('10000000-0000-0000-0000-000000000002', 'owner1', 'plain_password_123', 'owner1@example.com', '0901234587', true, (SELECT id FROM role WHERE name = 'ROLE_OWNER'));
+INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active, role_id) VALUES ('10000000-0000-0000-0000-000000000003', 'user1', 'plain_password_123', 'user1@example.com', '0901234569', true, (SELECT id FROM role WHERE name = 'ROLE_USER'));
+
+--========================================================
+--14. PROFILE
+--========================================================
+INSERT INTO profile (id, user_id, full_name, date_of_birth, address, avatar_url, country_id) VALUES (1, (SELECT id FROM user_account WHERE username = 'salvabm'), 'Lê Văn An', '2005-03-22', 'Quận 8, TP. HCM', 'https://default-avatar.png', (SELECT id FROM country WHERE code = 'VN'));
+INSERT INTO profile (id, user_id, full_name, date_of_birth, address, avatar_url, country_id) VALUES (2, (SELECT id FROM user_account WHERE username = 'admin1'), 'Admin 1', '1995-05-08', 'Quận 1, TP. HCM', 'https://default-avatar.png', (SELECT id FROM country WHERE code = 'VN'));
+INSERT INTO profile (id, user_id, full_name, date_of_birth, address, avatar_url, country_id) VALUES (3, (SELECT id FROM user_account WHERE username = 'owner1'), 'Owner 1', '1995-05-10', 'Quận 3, TP. HCM', 'https://default-avatar.png', (SELECT id FROM country WHERE code = 'VN'));
+INSERT INTO profile (id, user_id, full_name, date_of_birth, address, avatar_url, country_id) VALUES (4, (SELECT id FROM user_account WHERE username = 'user1'), 'User 1', '1995-05-09', 'Quận 2, TP. HCM', 'https://default-avatar.png', (SELECT id FROM country WHERE code = 'VN'));
+
+--========================================================
+--15. REFRESH_TOKEN
+--========================================================
+INSERT INTO refresh_token (id, user_id, token, device_info, ip_address, is_revoked, expires_at, created_at) VALUES (1, (SELECT id FROM user_account WHERE username = 'owner1'), 'refresh-token-sample-1', 'Chrome on Windows', '127.0.0.1', false, NOW() + INTERVAL '14 days', NOW());
+
+--========================================================
+--16. PASSWORD_RESET_TOKEN
+--========================================================
+INSERT INTO password_reset_token (id, user_id, token, expires_at, is_used) VALUES (1, (SELECT id FROM user_account WHERE username = 'owner1'), 'pw-reset-token-1', NOW() + INTERVAL '30 minutes', false);
+
+--========================================================
+--17. MEMBERSHIP_PLAN
 --========================================================
 INSERT INTO membership_plan (id, name, description, price, duration_months, dish_limit, features) VALUES (1, 'Free', 'Gói miễn phí', 0.00, 0, 10, '["basic-listing"]');
 INSERT INTO membership_plan (id, name, description, price, duration_months, dish_limit, features) VALUES (2, 'Basic', 'Gói đăng ký cơ bản dành cho cá nhân.', 9.99, 12, 50, '["basic-listing", "priority-email"]');
@@ -468,27 +375,27 @@ INSERT INTO membership_plan (id, name, description, price, duration_months, dish
 INSERT INTO membership_plan (id, name, description, price, duration_months, dish_limit, features) VALUES (5, 'Enterprise', 'Gói tùy chỉnh dành cho các tổ chức lớn (large organizations).', 99.99, 0, 0, '["all-premium-features", "custom-sla", "account-manager"]');
 
 --========================================================
---19. USER_MEMBERSHIP
+--18. USER_MEMBERSHIP
 --========================================================
 INSERT INTO user_membership (id, user_id, plan_id, start_date, end_date, is_active) VALUES (1, (SELECT id FROM user_account WHERE username = 'user1'), (SELECT id FROM membership_plan WHERE name = 'Free'), CURRENT_DATE, CURRENT_DATE + INTERVAL '30 days', true);
 
 --========================================================
---20. SHARING_LIST
+--19. SHARING_LIST
 --========================================================
 INSERT INTO sharing_list (id, owner_id, name, description, is_public, is_collaborative) VALUES (1, (SELECT id FROM user_account WHERE username = 'user1'), 'My Favorites', 'Danh sách địa điểm yêu thích', false, false);
 
 --========================================================
---21. SHARING_LIST_COLLABORATOR
+--20. SHARING_LIST_COLLABORATOR
 --========================================================
 INSERT INTO sharing_list_collaborator (id, user_id, sharing_list_id) VALUES (1, (SELECT id FROM user_account WHERE username = 'user1'), (SELECT id FROM sharing_list WHERE name = 'My Favorites'));
 
 --========================================================
---22. OUTLET
+--21. OUTLET
 --========================================================
 INSERT INTO outlet (id, owner_id, type_id, name, description, address, email, phone_number, website, district_id, latitude, longitude, price_range, capacity, is_active, average_rating, total_reviews) VALUES ('20000000-0000-0000-0000-000000000001', (SELECT id FROM user_account WHERE username = 'owner1'), (SELECT id FROM outlet_type WHERE name = 'Restaurant'), 'Quán Phở Alice', 'Quán phở ngon, phục vụ nhanh', '123 Lê Lợi, Quận 1, TP.HCM', 'pho.owner1@example.com', '0909000002', 'https://example.com', (SELECT id FROM district WHERE name = 'Quận 1'), 10.775839, 106.700806, 'moderate', 80, true, 4.85, 120);
 
 --========================================================
---23. OUTLET_FEATURE
+--22. OUTLET_FEATURE
 --========================================================
 INSERT INTO outlet_feature (id, name, description) VALUES (1, 'Wifi Miễn Phí', 'Cung cấp truy cập WiFi miễn phí');
 INSERT INTO outlet_feature (id, name, description) VALUES (2, 'Chỗ Đậu Xe', 'Có khu vực đậu xe (ô tô/xe máy)');
@@ -502,7 +409,7 @@ INSERT INTO outlet_feature (id, name, description) VALUES (9, 'Nhạc Sống (Li
 INSERT INTO outlet_feature (id, name, description) VALUES (10, 'Phòng Riêng', 'Có phòng riêng biệt để dùng bữa');
 
 --========================================================
---24. OUTLET_FEATURE_MAPPING
+--23. OUTLET_FEATURE_MAPPING
 --========================================================
 INSERT INTO outlet_feature_mapping (id, outlet_id, feature_id) VALUES (1, (SELECT id FROM outlet WHERE name = 'Quán Phở Alice'), (SELECT id FROM outlet_feature WHERE name = 'Wifi Miễn Phí'));
 INSERT INTO outlet_feature_mapping (id, outlet_id, feature_id) VALUES (2, (SELECT id FROM outlet WHERE name = 'Quán Phở Alice'), (SELECT id FROM outlet_feature WHERE name = 'Khu Vực Ngoài Trời'));
@@ -510,22 +417,22 @@ INSERT INTO outlet_feature_mapping (id, outlet_id, feature_id) VALUES (3, (SELEC
 INSERT INTO outlet_feature_mapping (id, outlet_id, feature_id) VALUES (4, (SELECT id FROM outlet WHERE name = 'Quán Phở Alice'), (SELECT id FROM outlet_feature WHERE name = 'Chỗ Đậu Xe'));
 
 --========================================================
---25. OUTLET_IMAGE
+--24. OUTLET_IMAGE
 --========================================================
 INSERT INTO outlet_image (id, outlet_id, image_url, display_order, is_primary) VALUES (1, (SELECT id FROM outlet WHERE name = 'Quán Phở Alice'), 'https://cdn.example.com/outlet/pho-owner1-1.jpg', 1, true);
 
 --========================================================
---26. OPERATING_HOURS
+--25. OPERATING_HOURS
 --========================================================
 INSERT INTO operating_hours (id, outlet_id, day_of_week, open_time, close_time, is_closed) VALUES (1, (SELECT id FROM outlet WHERE name = 'Quán Phở Alice'), 1, '07:00', '21:00', false);
 
 --========================================================
---27. OUTLET_MENU_ITEM
+--26. OUTLET_MENU_ITEM
 --========================================================
 INSERT INTO outlet_menu_item (id, outlet_id, menu_item_id, name, description, price, image_url, is_available) VALUES (1, (SELECT id FROM outlet WHERE name = 'Quán Phở Alice'),  (SELECT id FROM menu_item WHERE name = 'Phở Bò Tái Gân'), 'Phở Bò Tái Alice', 'Phở bò tái ngon', 75000.00, 'https://cdn.example.com/menu/pho-bo-1.jpg', true);
 
 --========================================================
---28. MENU_ITEM_FEATURE
+--27. MENU_ITEM_FEATURE
 --========================================================
 INSERT INTO menu_item_feature (id, name, feature_type, value_type, possible_values, description) VALUES (1, 'Ăn Chay (Vegetarian)', 'tag', NULL, NULL, 'Phù hợp cho người ăn chay');
 INSERT INTO menu_item_feature (id, name, feature_type, value_type, possible_values, description) VALUES (2, 'Thuần Chay (Vegan)', 'tag', NULL, NULL, 'Phù hợp cho người ăn thuần chay');
@@ -555,52 +462,52 @@ INSERT INTO menu_item_feature (id, name, feature_type, value_type, possible_valu
 INSERT INTO menu_item_feature (id, name, feature_type, value_type, possible_values, description) VALUES (26, 'Độ Ngọt', 'attribute', 'number', '[0,1,2,3,4,5]', 'Mức độ ngọt (0=không ngọt, 5=rất ngọt)');
 
 --========================================================
---29. OUTLET_MENU_ITEM_FEATURE
+--28. OUTLET_MENU_ITEM_FEATURE
 --========================================================
 INSERT INTO outlet_menu_item_feature (id, outlet_menu_item_id, feature_id, value) VALUES (1, (SELECT id FROM outlet_menu_item WHERE id = 1), (SELECT id FROM menu_item_feature WHERE name = 'Độ Cay'), '0');
 
 --========================================================
---30. BOOKING
+--29. BOOKING
 --========================================================
 INSERT INTO booking (id, outlet_id, user_id, booking_date, booking_time, number_of_guests, status, deposit_amount, user_notes, owner_notes) VALUES ('30000000-0000-0000-0000-000000000001', (SELECT id FROM outlet WHERE name = 'Quán Phở Alice'), (SELECT id FROM user_account WHERE username = 'user1'), CURRENT_DATE + INTERVAL '3 days', '19:00', 4, 'PENDING', 100000.00, 'Ngồi tầng 1, gần cửa sổ', NULL);
 
 --========================================================
---31. PAYMENT
+--30. PAYMENT
 --========================================================
 INSERT INTO payment (id, booking_id, amount, payment_method, payment_status, transaction_id) VALUES ('40000000-0000-0000-0000-000000000001', (SELECT id FROM booking WHERE id = '30000000-0000-0000-0000-000000000001'), 100000.00, 'MOMO', 'PENDING', 'TXN123456789');
 
 --========================================================
---32. REVIEW
+--31. REVIEW
 --========================================================
 INSERT INTO review (id, outlet_id, user_id, booking_id, food_rating, service_rating, ambiance_rating, price_rating, overall_rating, comment, likes_count, dislikes_count) VALUES ('50000000-0000-0000-0000-000000000001', (SELECT id FROM outlet WHERE name = 'Quán Phở Alice'), (SELECT id FROM user_account WHERE username = 'user1'), (SELECT id FROM booking WHERE id = '30000000-0000-0000-0000-000000000001'), 5, 5, 4, 4, 5, 'Nước dùng đậm đà, thịt mềm', 3, 0);
 
 --========================================================
---33. REVIEW_IMAGE
+--32. REVIEW_IMAGE
 --========================================================
 INSERT INTO review_image (id, review_id, image_url) VALUES (1, (SELECT id FROM review WHERE comment = 'Nước dùng đậm đà, thịt mềm'), 'https://cdn.example.com/review/5001.jpg');
 
 --========================================================
---34. REVIEW_REPLY
+--33. REVIEW_REPLY
 --========================================================
 INSERT INTO review_reply (id, review_id, owner_id, reply_text) VALUES (1, (SELECT id FROM review WHERE comment = 'Nước dùng đậm đà, thịt mềm'), (SELECT owner_id FROM outlet WHERE name = 'Quán Phở Alice'), 'Cảm ơn bạn đã ủng hộ! ❤️');
 
 --========================================================
---35. REVIEW_REACTION
+--34. REVIEW_REACTION
 --========================================================
 INSERT INTO review_reaction (id, review_id, user_id, reaction_type) VALUES (1, (SELECT id FROM review WHERE comment = 'Nước dùng đậm đà, thịt mềm'), (SELECT id FROM user_account WHERE username = 'user1'), 'like');
 
 --========================================================
---36. REVIEW_REPORT
+--35. REVIEW_REPORT
 --========================================================
 INSERT INTO review_report (id, review_id, reporter_id, reason, status) VALUES (1, (SELECT id FROM review WHERE comment = 'Nước dùng đậm đà, thịt mềm'), (SELECT id FROM user_account WHERE username = 'user1'), 'Nội dung không phù hợp', 'pending');
 
 --========================================================
---37. NOTIFICATION
+--36. NOTIFICATION
 --========================================================
 INSERT INTO notification (id, user_id, type, title, content, related_id, is_read) VALUES (1, (SELECT id FROM user_account WHERE username = 'user1'), 'review', 'Bạn có phản hồi mới!', 'Chủ quán đã trả lời review của bạn.', '50000000-0000-0000-0000-000000000001', false);
 
 --========================================================
---38. ADVERTISEMENT
+--37. ADVERTISEMENT
 --========================================================
 INSERT INTO advertisement (id, outlet_id, position, start_date, end_date, is_active) VALUES (1, (SELECT id FROM outlet WHERE name = 'Quán Phở Alice'), 'featured', CURRENT_DATE, CURRENT_DATE + INTERVAL '7 days', true);
 
@@ -625,83 +532,80 @@ SELECT setval(pg_get_serial_sequence('role', 'id'), (SELECT COALESCE(MAX(id), 0)
 -- 🔑 5. Permission (INTEGER ID)
 SELECT setval(pg_get_serial_sequence('permission', 'id'), (SELECT COALESCE(MAX(id), 0) FROM permission) + 1, false);
 
--- 🔑 6. User Role (BIGINT ID)
-SELECT setval(pg_get_serial_sequence('user_role', 'id'), (SELECT COALESCE(MAX(id), 0) FROM user_role) + 1, false);
-
--- 🔑 7. Role Permission (BIGINT ID)
+-- 🔑 6. Role Permission (BIGINT ID)
 SELECT setval(pg_get_serial_sequence('role_permission', 'id'), (SELECT COALESCE(MAX(id), 0) FROM role_permission) + 1, false);
 
--- 🔑 8. Sharing List (INTEGER ID)
+-- 🔑 7. Sharing List (INTEGER ID)
 SELECT setval(pg_get_serial_sequence('sharing_list', 'id'), (SELECT COALESCE(MAX(id), 0) FROM sharing_list) + 1, false);
 
--- 🔑 9. Sharing List Collaborator (BIGINT ID)
+-- 🔑 8. Sharing List Collaborator (BIGINT ID)
 SELECT setval(pg_get_serial_sequence('sharing_list_collaborator', 'id'), (SELECT COALESCE(MAX(id), 0) FROM sharing_list_collaborator) + 1, false);
 
--- 🔑 10. Outlet Type (INTEGER ID)
+-- 🔑 9. Outlet Type (INTEGER ID)
 SELECT setval(pg_get_serial_sequence('outlet_type', 'id'), (SELECT COALESCE(MAX(id), 0) FROM outlet_type) + 1, false);
 
--- 🔑 11. Outlet Category (INTEGER ID)
+-- 🔑 10. Outlet Category (INTEGER ID)
 SELECT setval(pg_get_serial_sequence('outlet_category', 'id'), (SELECT COALESCE(MAX(id), 0) FROM outlet_category) + 1, false);
 
--- 🔑 12. Outlet Feature (INTEGER ID)
+-- 🔑 11. Outlet Feature (INTEGER ID)
 SELECT setval(pg_get_serial_sequence('outlet_feature', 'id'), (SELECT COALESCE(MAX(id), 0) FROM outlet_feature) + 1, false);
 
--- 🔑 13. Outlet Feature Mapping (INTEGER ID)
+-- 🔑 12. Outlet Feature Mapping (INTEGER ID)
 SELECT setval(pg_get_serial_sequence('outlet_feature_mapping', 'id'), (SELECT COALESCE(MAX(id), 0) FROM outlet_feature_mapping) + 1, false);
 
--- 🔑 14. Outlet Image (INTEGER ID)
+-- 🔑 13. Outlet Image (INTEGER ID)
 SELECT setval(pg_get_serial_sequence('outlet_image', 'id'), (SELECT COALESCE(MAX(id), 0) FROM outlet_image) + 1, false);
 
--- 🔑 15. Operating Hours (INTEGER ID)
+-- 🔑 14. Operating Hours (INTEGER ID)
 SELECT setval(pg_get_serial_sequence('operating_hours', 'id'), (SELECT COALESCE(MAX(id), 0) FROM operating_hours) + 1, false);
 
--- 🔑 16. Menu Item Type (INTEGER ID)
+-- 🔑 15. Menu Item Type (INTEGER ID)
 SELECT setval(pg_get_serial_sequence('menu_item_type', 'id'), (SELECT COALESCE(MAX(id), 0) FROM menu_item_type) + 1, false);
 
--- 🔑 17. Menu Item Category (INTEGER ID)
+-- 🔑 16. Menu Item Category (INTEGER ID)
 SELECT setval(pg_get_serial_sequence('menu_item_category', 'id'), (SELECT COALESCE(MAX(id), 0) FROM menu_item_category) + 1, false);
 
--- 🔑 18. Menu Item Sub Category (INTEGER ID)
+-- 🔑 17. Menu Item Sub Category (INTEGER ID)
 SELECT setval(pg_get_serial_sequence('menu_item_sub_category', 'id'), (SELECT COALESCE(MAX(id), 0) FROM menu_item_sub_category) + 1, false);
 
--- 🔑 19. Outlet Menu Item (INTEGER ID)
+-- 🔑 18. Outlet Menu Item (INTEGER ID)
 SELECT setval(pg_get_serial_sequence('outlet_menu_item', 'id'), (SELECT COALESCE(MAX(id), 0) FROM outlet_menu_item) + 1, false);
 
--- 🔑 20. Menu Item Feature (INTEGER ID)
+-- 🔑 19. Menu Item Feature (INTEGER ID)
 SELECT setval(pg_get_serial_sequence('menu_item_feature', 'id'), (SELECT COALESCE(MAX(id), 0) FROM menu_item_feature) + 1, false);
 
--- 🔑 21. Outlet Menu Item Feature (INTEGER ID)
+-- 🔑 20. Outlet Menu Item Feature (INTEGER ID)
 SELECT setval(pg_get_serial_sequence('outlet_menu_item_feature', 'id'), (SELECT COALESCE(MAX(id), 0) FROM outlet_menu_item_feature) + 1, false);
 
--- 🔑 22. Review Image (INTEGER ID)
+-- 🔑 21. Review Image (INTEGER ID)
 SELECT setval(pg_get_serial_sequence('review_image', 'id'), (SELECT COALESCE(MAX(id), 0) FROM review_image) + 1, false);
 
--- 🔑 23. Review Reply (INTEGER ID)
+-- 🔑 22. Review Reply (INTEGER ID)
 SELECT setval(pg_get_serial_sequence('review_reply', 'id'), (SELECT COALESCE(MAX(id), 0) FROM review_reply) + 1, false);
 
--- 🔑 24. Review Reaction (BIGINT ID)
+-- 🔑 23. Review Reaction (BIGINT ID)
 SELECT setval(pg_get_serial_sequence('review_reaction', 'id'), (SELECT COALESCE(MAX(id), 0) FROM review_reaction) + 1, false);
 
--- 🔑 25. Review Report (INTEGER ID)
+-- 🔑 24. Review Report (INTEGER ID)
 SELECT setval(pg_get_serial_sequence('review_report', 'id'), (SELECT COALESCE(MAX(id), 0) FROM review_report) + 1, false);
 
--- 🔑 26. Notification (BIGINT ID)
+-- 🔑 25. Notification (BIGINT ID)
 SELECT setval(pg_get_serial_sequence('notification', 'id'), (SELECT COALESCE(MAX(id), 0) FROM notification) + 1, false);
 
--- 🔑 27. Membership Plan (INTEGER ID)
+-- 🔑 26. Membership Plan (INTEGER ID)
 SELECT setval(pg_get_serial_sequence('membership_plan', 'id'), (SELECT COALESCE(MAX(id), 0) FROM membership_plan) + 1, false);
 
--- 🔑 28. User Membership (BIGINT ID)
+-- 🔑 27. User Membership (BIGINT ID)
 SELECT setval(pg_get_serial_sequence('user_membership', 'id'), (SELECT COALESCE(MAX(id), 0) FROM user_membership) + 1, false);
 
--- 🔑 29. Advertisement (INTEGER ID)
+-- 🔑 28. Advertisement (INTEGER ID)
 SELECT setval(pg_get_serial_sequence('advertisement', 'id'), (SELECT COALESCE(MAX(id), 0) FROM advertisement) + 1, false);
 
--- 🔑 30. Country (INTEGER ID)
+-- 🔑 29. Country (INTEGER ID)
 SELECT setval(pg_get_serial_sequence('country', 'id'), (SELECT COALESCE(MAX(id), 0) FROM country) + 1, false);
 
--- 🔑 31. Province (INTEGER ID)
+-- 🔑 30. Province (INTEGER ID)
 SELECT setval(pg_get_serial_sequence('province', 'id'), (SELECT COALESCE(MAX(id), 0) FROM province) + 1, false);
 
--- 🔑 32. District (INTEGER ID)
+-- 🔑 31. District (INTEGER ID)
 SELECT setval(pg_get_serial_sequence('district', 'id'), (SELECT COALESCE(MAX(id), 0) FROM district) + 1, false);

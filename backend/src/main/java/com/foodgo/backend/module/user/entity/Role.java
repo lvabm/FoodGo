@@ -21,10 +21,10 @@ public class Role extends BaseIntegerEntity<Integer> {
   @Column(name = "description", length = 255)
   private String description;
 
-  // 1. QUAN HỆ ONE - TO - MANY: Role <--> UserRole
-  // UserRole sở hữu quan hệ (fk_role_id_user_role)
+  // 1. QUAN HỆ ONE - TO - MANY: Role <--> UserAccount
+  // Role sở hữu quan hệ (fk_role_id_user_account)
   @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
-  private List<UserRole> userRoles;
+  private List<UserAccount> users;
 
   // 2. QUAN HỆ ONE - TO - MANY: Role <--> RolePermission
   // RolePermission sở hữu quan hệ (fk_role_id_role_permission)

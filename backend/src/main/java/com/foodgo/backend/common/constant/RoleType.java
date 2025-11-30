@@ -4,11 +4,11 @@ import lombok.Getter;
 
 @Getter
 public enum RoleType {
-  USER("ROLE_USER"),
-  OWNER("ROLE_OWNER"),
-  ADMIN("ROLE_ADMIN"),
-  SYSTEM_ADMIN("ROLE_SYSTEM_ADMIN"),
-  GUEST("ROLE_GUEST");
+  ROLE_USER("ROLE_USER"),
+  ROLE_OWNER("ROLE_OWNER"),
+  ROLE_ADMIN("ROLE_ADMIN"),
+  ROLE_SYSTEM_ADMIN("ROLE_SYSTEM_ADMIN"),
+  ROLE_GUEST("ROLE_GUEST");
 
   private final String name;
 

@@ -1,21 +1,29 @@
 package com.foodgo.backend.module.admin.service;
 
 import com.foodgo.backend.common.dto.PageResponse;
-import com.foodgo.backend.module.admin.dto.user.UserAdminDto;
-import com.foodgo.backend.module.admin.dto.user.UserFilterDto;
+import com.foodgo.backend.module.admin.dto.user.AssignRolesRequest;
+import com.foodgo.backend.module.admin.dto.user.ChangeUserStatusRequest;
+import com.foodgo.backend.module.admin.dto.user.UserAdminResponse;
+import com.foodgo.backend.module.admin.dto.user.UserFilterRequest;
 import org.springframework.data.domain.Pageable;
+
+import java.util.List;
+import java.util.UUID;
 
 public interface AdminUserService {
 
   // Admin: lấy danh sách user (filter + pageable)
-  PageResponse<UserAdminDto> getUsers(UserFilterDto filter, Pageable pageable);
+  PageResponse<UserAdminResponse> getUsers(UserFilterRequest filter, Pageable pageable);
+
+  // Xem chi tiết 1 user theo ID
+  UserAdminResponse getUserById(UUID id);
 
   // Admin: thay đổi trạng thái user
-  UserAdminDto changeUserStatus(Long id, Object changeStatusRequest);
+  UserAdminResponse changeUserStatus(UUID id, ChangeUserStatusRequest changeStatusRequest);
 
   // Admin: gán/thu hồi roles cho user
-  UserAdminDto assignRoles(Long id, Object assignRolesRequest);
+  UserAdminResponse assignRoles(UUID id, AssignRolesRequest assignRolesRequest);
 
   // Admin: soft-delete user
-  void softDeleteUser(Long id);
+  UserAdminResponse softDeleteUser(UUID id);
 }

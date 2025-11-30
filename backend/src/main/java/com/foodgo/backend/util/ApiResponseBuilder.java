@@ -2,7 +2,9 @@ package com.foodgo.backend.util;
 
 import com.foodgo.backend.common.base.BaseResponse;
 import com.foodgo.backend.common.dto.ApiError;
+import com.foodgo.backend.common.dto.PageResponse;
 import lombok.NoArgsConstructor;
+import org.springframework.data.domain.Page;
 
 import java.time.Instant;
 import java.util.List;
@@ -27,5 +29,17 @@ public final class ApiResponseBuilder {
         .details(details)
         .timestamp(Instant.now())
         .build();
+  }
+
+  public static <E, D> PageResponse<D> buildPageResponse(
+      Page<E> page, List<D> content, String message) {
+
+    return new PageResponse<>(
+        page.getNumber(),
+        page.getSize(),
+        page.getTotalElements(),
+        page.getTotalPages(),
+        message,
+        content);
   }
 }

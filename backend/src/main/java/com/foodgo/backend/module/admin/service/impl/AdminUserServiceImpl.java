@@ -1,44 +1,172 @@
 package com.foodgo.backend.module.admin.service.impl;
 
 import com.foodgo.backend.common.dto.PageResponse;
-import com.foodgo.backend.module.admin.dto.user.UserAdminDto;
-import com.foodgo.backend.module.admin.dto.user.UserFilterDto;
+import com.foodgo.backend.exception.ResourceNotFoundException;
+import com.foodgo.backend.module.admin.dto.user.AssignRolesRequest;
+import com.foodgo.backend.module.admin.dto.user.ChangeUserStatusRequest;
+import com.foodgo.backend.module.admin.dto.user.UserAdminResponse;
+import com.foodgo.backend.module.admin.dto.user.UserFilterRequest;
 import com.foodgo.backend.module.admin.service.AdminUserService;
+import com.foodgo.backend.module.user.entity.UserAccount;
+import com.foodgo.backend.module.user.mapper.UserAccountMapper;
+import com.foodgo.backend.module.user.repository.RoleRepository;
 import com.foodgo.backend.module.user.repository.UserAccountRepository;
+import com.foodgo.backend.util.ApiResponseBuilder;
+import jakarta.persistence.criteria.JoinType;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import jakarta.persistence.criteria.Predicate;
+
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class AdminUserServiceImpl implements AdminUserService {
+
   private final UserAccountRepository userAccountRepository;
+  private final RoleRepository roleRepository;
+
+  private final UserAccountMapper userAccountMapper;
+
+  public PageResponse<UserAdminResponse> getUsers(UserFilterRequest filter, Pageable pageable) {
+
+    // 1. Xây dựng Specification dựa trên các trường lọc
+    Specification<UserAccount> spec = UserSpecification.withFilter(filter);
+
+    // 2. Thực hiện truy vấn và phân trang
+    Page<UserAccount> userPage = userAccountRepository.findAll(spec, pageable);
+
+    List<UserAdminResponse> content =
+        userPage.getContent().stream().map(userAccountMapper::toUserAdminDto).toList();
+
+    return ApiResponseBuilder.buildPageResponse(userPage, content, "Toàn bộ User (phân trang)");
+  }
 
   @Override
-  public PageResponse<UserAdminDto> getUsers(UserFilterDto filter, Pageable pageable) {
-    // TODO: query repository with role/status/q filters, map to UserAdminDto and build PageResponse
-    throw new UnsupportedOperationException("Not implemented");
+  @Transactional(readOnly = true)
+  public UserAdminResponse getUserById(UUID id) {
+    var userAccount =
+        userAccountRepository
+            .findById(id)
+            .orElseThrow(
+                () -> new ResourceNotFoundException("Không tìm thấy UserAccount với id = " + id));
+
+    return userAccountMapper.toUserAdminDto(userAccount);
   }
 
   @Override
   @Transactional
-  public UserAdminDto changeUserStatus(Long id, Object changeStatusRequest) {
-    // TODO: update status (active/deactivate/ban), return updated admin dto
-    throw new UnsupportedOperationException("Not implemented");
+  public UserAdminResponse changeUserStatus(UUID id, ChangeUserStatusRequest changeStatusRequest) {
+    var updatedStatusUserAccount =
+        userAccountRepository
+            .findById(id)
+            .orElseThrow(
+                () -> new ResourceNotFoundException("Không tìm thấy UserAccount với id = " + id));
+
+    // Thay đổi trạng thái hoạt động
+    updatedStatusUserAccount.setActive(changeStatusRequest.isActive());
+
+    return userAccountMapper.toUserAdminDto(updatedStatusUserAccount);
   }
 
   @Override
   @Transactional
-  public UserAdminDto assignRoles(Long id, Object assignRolesRequest) {
-    // TODO: assign/revoke roles, create audit record
-    throw new UnsupportedOperationException("Not implemented");
+  public UserAdminResponse assignRoles(UUID id, AssignRolesRequest assignRolesRequest) {
+    // 0. Tìm User đang thao tác
+    var assignRolesUserAccount =
+        userAccountRepository
+            .findById(id)
+            .orElseThrow(
+                () -> new ResourceNotFoundException("Không tìm thấy UserAccount với id = " + id));
+
+    // 1. Lấy Role Entity dựa trên các tên role
+    var newRole =
+        roleRepository
+            .findByName(assignRolesRequest.roleType().getName())
+            .orElseThrow(
+                () ->
+                    new ResourceNotFoundException(
+                        "Không tìm thấy Role với tên = "
+                            + assignRolesRequest.roleType().getName()));
+
+    // 2. Gán và lưu
+    assignRolesUserAccount.setRole(newRole);
+    var savedUser = userAccountRepository.save(assignRolesUserAccount);
+
+    return userAccountMapper.toUserAdminDto(savedUser);
   }
 
   @Override
   @Transactional
-  public void softDeleteUser(Long id) {
-    // TODO: set soft-delete flag, preserve data
-    throw new UnsupportedOperationException("Not implemented");
+  public UserAdminResponse softDeleteUser(UUID id) {
+    var deletedUserAccount =
+        userAccountRepository
+            .findById(id)
+            .orElseThrow(
+                () -> new ResourceNotFoundException("Không tìm thấy UserAccount với id = " + id));
+
+    // Xóa mềm người dùng (Đảo ngược trạng thái)
+    deletedUserAccount.setActive(!deletedUserAccount.isActive());
+
+    return userAccountMapper.toUserAdminDto(deletedUserAccount);
+  }
+
+  public static class UserSpecification {
+
+    public static Specification<UserAccount> withFilter(UserFilterRequest filter) {
+      return (root, query, criteriaBuilder) -> {
+
+        // BƯỚC 1: XỬ LÝ N+1 VÀ LAZY LOADING
+        if (query.getResultType() != Long.class && query.getResultType() != long.class) {
+          // Khắc phục lỗi Lazy Loading Roles
+          root.fetch("role", JoinType.LEFT);
+          // Khắc phục lỗi Lazy Loading Profile
+          root.fetch("profile", JoinType.LEFT);
+        }
+
+        List<Predicate> predicates = new ArrayList<>();
+
+        // 1. Lọc theo trạng thái hoạt động (isActive)
+        if (filter.isActive() != null) {
+          predicates.add(criteriaBuilder.equal(root.get("isActive"), filter.isActive()));
+        }
+
+        // 2. Lọc theo vai trò (roleName)
+        if (StringUtils.hasText(filter.roleName())) {
+          //  KHẮC PHỤC PATH: JOIN trực tiếp qua thuộc tính "role"
+          predicates.add(
+              criteriaBuilder.equal(
+                  root.join("role", JoinType.INNER).get("name"), filter.roleName()));
+        }
+
+        // 3. Lọc theo searchTerm (Tên hoặc Email)
+        if (StringUtils.hasText(filter.searchTerm())) {
+          String searchPattern = "%" + filter.searchTerm().toLowerCase() + "%";
+
+          // Giả định 'firstName' nằm trong Entity Profile (Quan hệ OneToOne)
+          Predicate searchPredicate =
+              criteriaBuilder.or(
+                  criteriaBuilder.like(
+                      criteriaBuilder.lower(root.join("profile").get("fullName")),
+                      searchPattern), // Cần join Profile nếu firstName nằm trong Profile
+                  criteriaBuilder.like(criteriaBuilder.lower(root.get("email")), searchPattern));
+          predicates.add(searchPredicate);
+        }
+
+        if (query.getResultType() != Long.class && query.getResultType() != long.class) {
+          query.distinct(true);
+        }
+
+        return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+      };
+    }
   }
 }

@@ -5,6 +5,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
@@ -71,7 +73,7 @@ public class SecurityConfig {
     return authProvider;
   }
 
-  // 3. Cấu hình Password Encoder (Giữ nguyên)
+  // 3. Cấu hình Password Encoder
   @Bean
   public PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
@@ -82,5 +84,21 @@ public class SecurityConfig {
       AuthenticationProvider authenticationProvider) {
     // Dùng ProviderManager để quản lý AuthenticationProvider đã cấu hình
     return new ProviderManager(Collections.singletonList(authenticationProvider));
+  }
+
+  // 4. Cấu hình Role Hierarchy
+  @Bean
+  public RoleHierarchy roleHierarchy() {
+    RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
+
+    // Đảm bảo chuỗi phân cấp phản ánh chính xác mô hình của bạn
+    String hierarchy =
+        "ROLE_SYSTEM_ADMIN > ROLE_ADMIN \n"
+            + "ROLE_ADMIN > ROLE_OWNER \n"
+            + "ROLE_OWNER > ROLE_USER \n"
+            + "ROLE_USER > ROLE_GUEST";
+
+    roleHierarchy.setHierarchy(hierarchy);
+    return roleHierarchy;
   }
 }

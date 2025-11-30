@@ -7,7 +7,6 @@ import com.foodgo.backend.module.auth.dto.*;
 import com.foodgo.backend.module.auth.service.AuthService;
 import com.foodgo.backend.module.auth.service.JwtService;
 import com.foodgo.backend.module.user.entity.UserAccount;
-import com.foodgo.backend.module.user.entity.UserRole;
 import com.foodgo.backend.module.user.mapper.ProfileMapper;
 import com.foodgo.backend.module.user.mapper.UserAccountMapper;
 import com.foodgo.backend.module.user.repository.RoleRepository;
@@ -49,22 +48,20 @@ public class AuthServiceImpl implements AuthService {
 
     var defaultRole =
         roleRepository
-            .findByName(RoleType.USER.getName())
+            .findByName(RoleType.ROLE_USER.getName())
             .orElseThrow(
                 () -> new DataConflictException("Role mặc định (ROLE_USER) không tồn tại."));
 
     var userAccount = userAccountMapper.toEntity(request);
+    var profile = profileMapper.toEntity(request);
+
     userAccount.setUsername(RandomUtil.generateUniqueUsername());
     userAccount.setPasswordHash(passwordEncoder.encode(request.plainTextPassword()));
 
-    var profile = profileMapper.toEntity(request);
-    var userRole = UserRole.builder().role(defaultRole).build();
-
     // Map 2 chiều (One to One)
     userAccount.setProfile(profile);
-    userAccount.setUserRoles(List.of(userRole));
+    userAccount.setRole(defaultRole);
     profile.setUserAccount(userAccount);
-    userRole.setUserAccount(userAccount);
 
     var savedUser = userAccountRepository.save(userAccount);
 
@@ -74,7 +71,7 @@ public class AuthServiceImpl implements AuthService {
   @Override
   @Transactional
   public AuthResponse login(LoginRequest request) {
-    // 0. TÌM USERNAME TỪ EMAIL
+    // 0. TÌM USER DÙNG @EntityGraph
     var user =
         userAccountRepository
             .findByEmail(request.email())

@@ -1,3 +1,5 @@
 package com.foodgo.backend.module.admin.dto.user;
 
-public class AssignRolesRequest {}
+import com.foodgo.backend.common.constant.RoleType;
+
+public record AssignRolesRequest(RoleType roleType) {}

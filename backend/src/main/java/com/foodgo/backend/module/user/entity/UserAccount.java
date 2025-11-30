@@ -47,12 +47,13 @@ public class UserAccount extends BaseUUIDEntity implements UserDetails {
   @Builder.Default
   private boolean isActive = true;
 
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "role_id", nullable = false)
+  private Role role;
+
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    return this.userRoles.stream()
-        .map(UserRole::getRole)
-        .map(role -> new SimpleGrantedAuthority(role.getName()))
-        .collect(Collectors.toList());
+    return List.of(new SimpleGrantedAuthority(role.getName()));
   }
 
   @Override
@@ -60,68 +61,62 @@ public class UserAccount extends BaseUUIDEntity implements UserDetails {
     return passwordHash;
   }
 
-  // 1. QUAN HỆ ONE - TO - ONE: userAccount <--> Profile
+  // 1. QUAN HỆ ONE - TO - ONE: UserAccount <--> Profile
   // Profile sở hữu quan hệ (fk_user_account_id_profile)
   @OneToOne(mappedBy = "userAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private Profile profile;
 
-  // 2. QUAN HỆ ONE - TO - MANY: UserAccount <--> UserRole
-  // UserRole sở hữu quan hệ (fk_user_account_id_user_role)
-  @OneToMany(mappedBy = "userAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  @Builder.Default
-  private List<UserRole> userRoles = new ArrayList<>();
-
-  // 3. QUAN HỆ ONE - TO - MANY: UserAccount <--> Booking
+  // 2. QUAN HỆ ONE - TO - MANY: UserAccount <--> Booking
   // Booking sở hữu quan hệ (fk_user_account_id_booking)
   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private List<Booking> bookings;
 
-  // 4. QUAN HỆ ONE - TO - MANY: UserAccount <--> Review
+  // 3. QUAN HỆ ONE - TO - MANY: UserAccount <--> Review
   // Review sở hữu quan hệ (fk_user_account_id_review)
   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private List<Review> reviews;
 
-  // 5. QUAN HỆ ONE - TO - MANY: UserAccount <--> PasswordResetToken
+  // 4. QUAN HỆ ONE - TO - MANY: UserAccount <--> PasswordResetToken
   // PasswordResetToken sở hữu quan hệ (fk_user_account_id_password_reset_token)
   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private List<PasswordResetToken> passwordResetTokens;
 
-  // 6. QUAN HỆ ONE - TO - MANY: UserAccount <--> RefreshToken
+  // 5. QUAN HỆ ONE - TO - MANY: UserAccount <--> RefreshToken
   // RefreshToken sở hữu quan hệ (fk_user_account_id_refresh_token)
   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private List<RefreshToken> refreshTokens;
 
-  // 7. QUAN HỆ ONE - TO - MANY: UserAccount <--> Outlet
+  // 6. QUAN HỆ ONE - TO - MANY: UserAccount <--> Outlet
   // Outlet sở hữu quan hệ (fk_user_account_id_outlet)
   @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private List<Outlet> outlets;
 
-  // 8. QUAN HỆ ONE - TO - MANY: UserAccount <--> ReviewReply
+  // 7. QUAN HỆ ONE - TO - MANY: UserAccount <--> ReviewReply
   // ReviewReply sở hữu quan hệ (fk_user_account_id_review_reply)
   @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private List<ReviewReply> reviewReplies;
 
-  // 9. QUAN HỆ ONE - TO - MANY: UserAccount <--> ReviewReaction
+  // 8. QUAN HỆ ONE - TO - MANY: UserAccount <--> ReviewReaction
   // ReviewReaction sở hữu quan hệ (fk_user_account_id_review_reaction)
   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private List<ReviewReaction> reviewReactions;
 
-  // 10. QUAN HỆ ONE - TO - MANY: UserAccount <--> ReviewReport
+  // 9. QUAN HỆ ONE - TO - MANY: UserAccount <--> ReviewReport
   // ReviewReport sở hữu quan hệ (fk_user_account_id_review_report)
   @OneToMany(mappedBy = "reporter", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private List<ReviewReport> reviewReports;
 
-  // 11. QUAN HỆ ONE - TO - MANY: UserAccount <--> Notification
+  // 10. QUAN HỆ ONE - TO - MANY: UserAccount <--> Notification
   // Notification sở hữu quan hệ (fk_user_account_id_notification)
   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private List<Notification> notifications;
 
-  // 12. QUAN HỆ ONE - TO - MANY: UserAccount <--> UserMembership
+  // 11. QUAN HỆ ONE - TO - MANY: UserAccount <--> UserMembership
   // UserMembership sở hữu quan hệ (fk_user_account_id_user_membership)
   @OneToMany(mappedBy = "userAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private List<UserMembership> userMemberships;
 
-  // 13. QUAN HỆ ONE - TO - MANY: UserAccount <--> SharingListCollaborator
+  // 12. QUAN HỆ ONE - TO - MANY: UserAccount <--> SharingListCollaborator
   // SharingListCollaborator sở hữu quan hệ
   // (fk_user_account_id_sharing_list_collaborator)
   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
