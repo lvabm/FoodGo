@@ -2,7 +2,7 @@ package com.foodgo.backend.module.auth.service.impl;
 
 import com.foodgo.backend.common.constant.RoleType;
 import com.foodgo.backend.exception.BadRequestException;
-import com.foodgo.backend.exception.ConflictException;
+import com.foodgo.backend.exception.DataConflictException;
 import com.foodgo.backend.module.auth.dto.*;
 import com.foodgo.backend.module.auth.service.AuthService;
 import com.foodgo.backend.module.auth.service.JwtService;
@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -41,7 +40,7 @@ public class AuthServiceImpl implements AuthService {
   @Transactional
   public AuthResponse register(RegisterRequest request) {
     if (userAccountRepository.existsByEmail(request.email())) {
-      throw new ConflictException("Email đã tồn tại");
+      throw new DataConflictException("Email đã tồn tại");
     }
 
     if (!request.plainTextPassword().equals(request.passwordConfirmation())) {
@@ -51,7 +50,8 @@ public class AuthServiceImpl implements AuthService {
     var defaultRole =
         roleRepository
             .findByName(RoleType.USER.getName())
-            .orElseThrow(() -> new ConflictException("Role mặc định (ROLE_USER) không tồn tại."));
+            .orElseThrow(
+                () -> new DataConflictException("Role mặc định (ROLE_USER) không tồn tại."));
 
     var userAccount = userAccountMapper.toEntity(request);
     userAccount.setUsername(RandomUtil.generateUniqueUsername());
@@ -78,7 +78,8 @@ public class AuthServiceImpl implements AuthService {
     var user =
         userAccountRepository
             .findByEmail(request.email())
-            .orElseThrow(() -> new ConflictException("Email chưa có tài khoản hoặc không hợp lệ"));
+            .orElseThrow(
+                () -> new DataConflictException("Email chưa có tài khoản hoặc không hợp lệ"));
 
     // 1. XÁC THỰC (Authentication)
     var authentication =

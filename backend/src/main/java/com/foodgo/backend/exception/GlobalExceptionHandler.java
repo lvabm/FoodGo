@@ -1,163 +1,111 @@
 package com.foodgo.backend.exception;
 
-import jakarta.servlet.http.HttpServletRequest;
+import com.foodgo.backend.common.dto.ApiError;
+import com.foodgo.backend.util.ApiResponseBuilder;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError; // 👈 Import cần thiết
+import org.springframework.web.bind.MethodArgumentNotValidException; // 👈 Import cần thiết
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
 
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors; // 👈 Import cần thiết
 
 @RestControllerAdvice
-public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+public class GlobalExceptionHandler {
 
-  // 1 Bắt lỗi validation (DTO & Entity) | ErrorCode : 400
-  @Override
-  protected ResponseEntity<Object> handleMethodArgumentNotValid(
-          MethodArgumentNotValidException ex,
-          HttpHeaders headers,
-          HttpStatusCode status,
-          WebRequest request) {
-    String path = request.getDescription(false);
+  // Giả định các lớp Custom Exception khác nằm trong package com.foodgo.backend.exception.
+  // Ví dụ: InvalidInputException, DataConflictException, NotEnoughBalanceException
 
-    Map<String, Object> body = new LinkedHashMap<>();
-    body.put("timestamp", LocalDateTime.now());
-    body.put("status", status.value());
+  /** 1. Xử lý các lỗi Validation (@Valid) - HTTP Status 400 Bad Request */
+  @ExceptionHandler(MethodArgumentNotValidException.class)
+  public ResponseEntity<ApiError> handleValidationExceptions(
+      MethodArgumentNotValidException ex, WebRequest request) {
 
-    List<String> errors = ex.getBindingResult().getAllErrors()
-            .stream()
-            .map(DefaultMessageSourceResolvable::getDefaultMessage)
+    // 🔑 Lấy tất cả thông báo lỗi chi tiết từ các trường bị lỗi
+    List<String> errors =
+        ex.getBindingResult().getAllErrors().stream()
+            .map(
+                error -> {
+                  String fieldName =
+                      (error instanceof FieldError) ? ((FieldError) error).getField() : "object";
+                  return fieldName + ": " + error.getDefaultMessage();
+                })
             .collect(Collectors.toList());
 
-    body.put("errors", errors);
-    body.put("path", path);
-    return new ResponseEntity<>(body, status);
+    ApiError errorResponse =
+        ApiResponseBuilder.error(
+            "VALIDATION_ERROR",
+            "Dữ liệu đầu vào không hợp lệ.",
+            errors); // 🔑 errors chứa danh sách chi tiết lỗi
+
+    return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST); // 400
   }
 
-  // 2 Bắt lỗi dữ liệu ràng buộc trong Controller, không cần gọi thủ công, hàm này tự động được gọi khi sử dụng các Annotation sau: (@NotNull | @Size | @Min | @Max | @Email) - (Controller) | ErrorCode : 400
-  @ExceptionHandler(ConstraintViolationException.class)
-  public ResponseEntity<Object> handleConstraintViolation(
-          ConstraintViolationException ex,
-          HttpServletRequest request) {
-    ex.setPath(request.getRequestURI());
-    Map<String, Object> body = new LinkedHashMap<>();
-    body.put("timestamp", LocalDateTime.now());
-    body.put("status", ex.getHttpStatus().value());
-    body.put("errorCode", ex.getErrorCode());
-    body.put("message", ex.getMessage());
-    body.put("path",ex.getPath());
-    return new ResponseEntity<>(body, ex.getHttpStatus());
+  // --- Nhóm 4xx (Client Errors) ---
+
+  /** 2. Xử lý CHUNG các Custom Business Exceptions (400, 409, etc.) */
+  @ExceptionHandler({
+    BadRequestException.class, // 400 - Dữ liệu yêu cầu thiếu/sai
+    DataConflictException.class, // 409 - Xung đột khóa (ví dụ: email đã tồn tại)
+    // Thêm các Custom Exception khác (ví dụ: ForbiddenException.class, UnauthorizedException.class)
+  })
+  public ResponseEntity<ApiError> handleBusinessExceptions(
+      RuntimeException ex, WebRequest request) {
+
+    // 🔑 Phân loại trạng thái HTTP dựa trên loại Exception cụ thể
+    HttpStatus status = HttpStatus.BAD_REQUEST; // Mặc định là 400
+    String errorCode = "BAD_REQUEST";
+
+    if (ex instanceof DataConflictException) {
+      status = HttpStatus.CONFLICT;
+      errorCode = "DATA_CONFLICT";
+    }
+    // Thêm các phân loại khác (ví dụ: if (ex instanceof UnauthorizedException) status =
+    // HttpStatus.UNAUTHORIZED;)
+
+    ApiError errorResponse =
+        ApiResponseBuilder.error(
+            errorCode,
+            ex.getMessage(), // Sử dụng thông báo chi tiết từ Service
+            Collections.singletonList("Xảy ra lỗi nghiệp vụ: " + ex.getMessage()));
+
+    return new ResponseEntity<>(errorResponse, status);
   }
 
-  // 3 Bắt lỗi dữ liệu không tìm thấy - (Service) | ErrorCode : 400
-  @ExceptionHandler(EntityNotFoundException.class)
-  public ResponseEntity<Object> handleEntityNotFound(
-          EntityNotFoundException ex,
-          HttpServletRequest request) {
-    ex.setPath(request.getRequestURI());
-    Map<String, Object> body = new LinkedHashMap<>();
-    body.put("timestamp", LocalDateTime.now());
-    body.put("status", ex.getHttpStatus().value());
-    body.put("errorCode", ex.getErrorCode());
-    body.put("message", ex.getMessage());
-    body.put("path",ex.getPath());
-    return new ResponseEntity<>(body, ex.getHttpStatus());
+  /** 3. Xử lý 404 Not Found (Tách riêng để đảm bảo trạng thái HTTP) */
+  @ExceptionHandler({ResourceNotFoundException.class})
+  public ResponseEntity<ApiError> handleNotFoundExceptions(
+      RuntimeException ex, WebRequest request) {
+
+    ApiError errorResponse =
+        ApiResponseBuilder.error(
+            "RESOURCE_NOT_FOUND",
+            ex.getMessage(),
+            Collections.singletonList("The requested resource could not be found."));
+
+    return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND); // 404
   }
 
-  // 4 Bắt lỗi dữ liệu đầu vào không hợp lệ (sai định dạng, thiếu tham số bắt buộc, vd : Password >= 6 kí tự ) - (Service) | ErrorCode : 400
-  @ExceptionHandler(BadRequestException.class)
-  public ResponseEntity<Object> handleBadRequest(
-          BadRequestException ex,
-          HttpServletRequest request) {
-    ex.setPath(request.getRequestURI());
-    Map<String, Object> body = new LinkedHashMap<>();
-    body.put("timestamp", LocalDateTime.now());
-    body.put("status", ex.getHttpStatus().value());
-    body.put("errorCode", ex.getErrorCode());
-    body.put("message", ex.getMessage());
-    body.put("path",ex.getPath());
-    return new ResponseEntity<>(body, ex.getHttpStatus());
-  }
+  // --- Lỗi Server ---
 
-  // 5 Bắt lỗi xung đột dữ liệu (Dữ liệu trùng, xung đột) - (Service) | ErrorCode : 409
-  @ExceptionHandler(ConflictException.class)
-  public ResponseEntity<Object> handleConflict(
-          ConflictException ex,
-          HttpServletRequest request) {
-    ex.setPath(request.getRequestURI());
-    Map<String, Object> body = new LinkedHashMap<>();
-    body.put("timestamp", LocalDateTime.now());
-    body.put("status", ex.getHttpStatus().value());
-    body.put("errorCode", ex.getErrorCode());
-    body.put("message", ex.getMessage());
-    body.put("path",ex.getPath());
-    return new ResponseEntity<>(body, ex.getHttpStatus());
-  }
-
-  // 6 Bắt lỗi không có quyền truy cập (UserDetail ko có quyền truy cập URL) - (Service) | ErrorCode : 403
-  @ExceptionHandler(ForbiddenException.class)
-  public ResponseEntity<Object> handleForbidden(
-          ForbiddenException ex,
-          HttpServletRequest request) {
-    ex.setPath(request.getRequestURI());
-    Map<String, Object> body = new LinkedHashMap<>();
-    body.put("timestamp", LocalDateTime.now());
-    body.put("status", ex.getHttpStatus().value());
-    body.put("errorCode", ex.getErrorCode());
-    body.put("message", ex.getMessage());
-    body.put("path",ex.getPath());
-    return new ResponseEntity<>(body, ex.getHttpStatus());
-  }
-
-  // 7 Bắt lỗi client yêu cầu một entity, record, hoặc tài nguyên mà không tồn tại trong hệ thống (VD: /users/100 nhưng user ID 100 không có trong DB) - (Service) | ErrorCode : 404
-  @ExceptionHandler(ResourceNotFoundException.class)
-  public ResponseEntity<Object> handleResourceNotFound(
-          ResourceNotFoundException ex,
-          HttpServletRequest request) {
-    ex.setPath(request.getRequestURI());
-    Map<String, Object> body = new LinkedHashMap<>();
-    body.put("timestamp", LocalDateTime.now());
-    body.put("status", ex.getHttpStatus().value());
-    body.put("errorCode", ex.getErrorCode());
-    body.put("message", ex.getMessage());
-    body.put("path",ex.getPath());
-    return new ResponseEntity<>(body, ex.getHttpStatus());
-  }
-
-  // 7 Bắt lỗi UserDetail chưa đăng nhập  - (Service) | ErrorCode : 401
-  @ExceptionHandler(UnauthorizedException.class)
-  public ResponseEntity<Object> handleUnauthorized(
-          UnauthorizedException ex,
-          HttpServletRequest request) {
-    ex.setPath(request.getRequestURI());
-    Map<String, Object> body = new LinkedHashMap<>();
-    body.put("timestamp", LocalDateTime.now());
-    body.put("status", ex.getHttpStatus().value());
-    body.put("errorCode", ex.getErrorCode());
-    body.put("message", ex.getMessage());
-    body.put("path",ex.getPath());
-    return new ResponseEntity<>(body, ex.getHttpStatus());
-  }
-
-  // 8 Bắt tất cả lỗi còn lại
+  /** 4. Xử lý lỗi hệ thống chung (500 Internal Server Error) */
   @ExceptionHandler(Exception.class)
-  public ResponseEntity<Object> handleAll(Exception ex, HttpServletRequest request) {
-    Map<String, Object> body = new LinkedHashMap<>();
-    body.put("timestamp", LocalDateTime.now());
-    body.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
-    body.put("message", ex.getMessage());
-    body.put("path", request.getRequestURI());
-    return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
+  public ResponseEntity<ApiError> handleGlobalException(Exception ex, WebRequest request) {
+
+    // ⚠️ Luôn log chi tiết lỗi 500 ở đây (System log)
+
+    ApiError errorResponse =
+        ApiResponseBuilder.error(
+            "INTERNAL_SERVER_ERROR",
+            "Đã xảy ra lỗi hệ thống không mong muốn.",
+            Collections.singletonList(
+                "Please contact support with timestamp.")); // Không nên expose lỗi chi tiết 500 ra
+    // ngoài
+
+    return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR); // 500
   }
 }
-
-
-

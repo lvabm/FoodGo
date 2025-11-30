@@ -461,7 +461,11 @@ INSERT INTO role_permission (id, role_id, permission_id) VALUES (124, (SELECT id
 --========================================================
 --18. MEMBERSHIP_PLAN
 --========================================================
-INSERT INTO membership_plan (id, name, description, price, duration_months, dish_limit, features) VALUES (1, 'Free', 'Free plan', 0.00, 0, 10, '["basic-listing"]');
+INSERT INTO membership_plan (id, name, description, price, duration_months, dish_limit, features) VALUES (1, 'Free', 'Gói miễn phí', 0.00, 0, 10, '["basic-listing"]');
+INSERT INTO membership_plan (id, name, description, price, duration_months, dish_limit, features) VALUES (2, 'Basic', 'Gói đăng ký cơ bản dành cho cá nhân.', 9.99, 12, 50, '["basic-listing", "priority-email"]');
+INSERT INTO membership_plan (id, name, description, price, duration_months, dish_limit, features) VALUES (3, 'Standard', 'Gói tiêu chuẩn, phù hợp cho các nhóm nhỏ (small teams).', 29.99, 12, 100, '["basic-listing", "priority-email", "analytics-dashboard"]');
+INSERT INTO membership_plan (id, name, description, price, duration_months, dish_limit, features) VALUES (4, 'Premium', 'Gói cao cấp với đầy đủ tính năng và hỗ trợ chuyên biệt (dedicated support).', 49.99, 12, 300, '["all-standard-features", "dedicated-support", "early-access-features"]');
+INSERT INTO membership_plan (id, name, description, price, duration_months, dish_limit, features) VALUES (5, 'Enterprise', 'Gói tùy chỉnh dành cho các tổ chức lớn (large organizations).', 99.99, 0, 0, '["all-premium-features", "custom-sla", "account-manager"]');
 
 --========================================================
 --19. USER_MEMBERSHIP

@@ -1,3 +1,13 @@
 package com.foodgo.backend.module.membership.service;
 
-public interface MembershipService {}
+import com.foodgo.backend.module.membership.dto.MembershipRequest;
+import com.foodgo.backend.module.membership.dto.MembershipResponse;
+import java.util.List;
+
+public interface MembershipService {
+  MembershipResponse createMembership(MembershipRequest request);
+
+  List<MembershipResponse> getAllMemberships();
+
+  MembershipResponse getMembershipById(Long id);
+}

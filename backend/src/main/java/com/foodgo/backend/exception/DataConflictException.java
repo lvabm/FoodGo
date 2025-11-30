@@ -4,12 +4,12 @@ import com.foodgo.backend.common.base.BaseException;
 import com.foodgo.backend.common.constant.ErrorCode;
 import org.springframework.http.HttpStatus;
 
-public class ConflictException extends BaseException {
-  public ConflictException(String message) {
+public class DataConflictException extends BaseException {
+  public DataConflictException(String message) {
     super(ErrorCode.CONFLICT, message, HttpStatus.CONFLICT);
   }
 
-  public ConflictException(ErrorCode errorCode, String message) {
+  public DataConflictException(ErrorCode errorCode, String message) {
     super(errorCode, message, HttpStatus.CONFLICT);
   }
 }

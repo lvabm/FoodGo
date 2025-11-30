@@ -1,3 +1,11 @@
 package com.foodgo.backend.module.membership.dto;
 
-public class MembershipRequest {}
+import java.math.BigDecimal;
+
+public record MembershipRequest(
+    String name,
+    String description,
+    BigDecimal price,
+    Integer durationMonths,
+    Integer dishLimit,
+    String features) {}
