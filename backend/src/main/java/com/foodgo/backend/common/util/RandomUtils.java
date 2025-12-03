@@ -1,8 +1,8 @@
-package com.foodgo.backend.util;
+package com.foodgo.backend.common.util;
 
 import java.util.UUID;
 
-public class RandomUtil {
+public class RandomUtils {
   private static final String PREFIX = "foodgo_";
 
   public static String generateUniqueUsername() {

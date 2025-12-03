@@ -33,17 +33,10 @@ public class UserController {
     return ResponseEntity.ok(body);
   }
 
-  @Operation(summary = "Xem thông tin người dùng theo ID")
+  @Operation(summary = "Xem thông tin người dùng khác theo ID")
   @GetMapping("/{id}")
-  public ResponseEntity<BaseResponse<UserResponse>> getUserById(@PathVariable Long id) {
-    UserResponse data = userService.getUserById(id);
-    BaseResponse<UserResponse> body =
-        BaseResponse.<UserResponse>builder()
-            .success(true)
-            .message("Lấy thông tin người dùng")
-            .data(data)
-            .build();
-    return ResponseEntity.ok(body);
+  public UserResponse getUserById(@PathVariable Long id) {
+    return userService.getOtherUserById(id);
   }
 
   @Operation(summary = "Cập nhật hồ sơ cá nhân")

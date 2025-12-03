@@ -1,4 +1,4 @@
-package com.foodgo.backend.config;
+package com.foodgo.backend.security.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

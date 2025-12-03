@@ -1,4 +1,4 @@
-package com.foodgo.backend.module.auth.service.impl;
+package com.foodgo.backend.security.jwt.impl;
 
 import com.foodgo.backend.module.user.repository.UserAccountRepository;
 import lombok.RequiredArgsConstructor;

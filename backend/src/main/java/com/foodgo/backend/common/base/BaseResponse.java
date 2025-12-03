@@ -12,8 +12,8 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BaseResponse<T> {
-    private boolean success;
-    private String message;
-    private T data;
-    private Instant timestamp = Instant.now();
+  private boolean success;
+  private String message;
+  private T data;
+  @Builder.Default private Instant timestamp = Instant.now();
 }

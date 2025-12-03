@@ -8,8 +8,8 @@ public interface UserService {
   // Lấy profile người đang đăng nhập
   UserResponse getCurrentUser();
 
-  // Lấy profile theo id (public/admin view tuỳ role)
-  UserResponse getUserById(Long id);
+  // Lấy profile theo id (public view tuỳ role)
+  UserResponse getOtherUserById(Long id);
 
   // Cập nhật hồ sơ (validate owner or admin)
   UserResponse updateProfile(Long id, UpdateProfileRequest request);

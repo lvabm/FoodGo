@@ -1,4 +1,4 @@
-package com.foodgo.backend.exception;
+package com.foodgo.backend.common.exception;
 
 import com.foodgo.backend.common.base.BaseException;
 import com.foodgo.backend.common.constant.ErrorCode;

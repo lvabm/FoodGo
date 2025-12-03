@@ -1,6 +1,6 @@
-package com.foodgo.backend.config;
+package com.foodgo.backend.security.config;
 
-import com.foodgo.backend.security.JwtAuthenticationFilter;
+import com.foodgo.backend.security.filter.JwtAuthenticationFilter;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

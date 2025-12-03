@@ -1,18 +1,15 @@
 package com.foodgo.backend.module.admin.controller;
 
-import com.foodgo.backend.common.base.BaseResponse;
-import com.foodgo.backend.common.dto.PageResponse;
 import com.foodgo.backend.module.admin.dto.user.AssignRolesRequest;
 import com.foodgo.backend.module.admin.dto.user.ChangeUserStatusRequest;
 import com.foodgo.backend.module.admin.dto.user.UserAdminResponse;
 import com.foodgo.backend.module.admin.dto.user.UserFilterRequest;
 import com.foodgo.backend.module.admin.service.AdminUserService;
-import com.foodgo.backend.util.ApiResponseBuilder;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -26,42 +23,34 @@ public class AdminUserController {
 
   @Operation(summary = "Danh sách người dùng (admin)")
   @GetMapping
-  public ResponseEntity<BaseResponse<PageResponse<UserAdminResponse>>> getUsers(
-      @Valid UserFilterRequest filter, Pageable pageable) {
-    PageResponse<UserAdminResponse> data = adminUserService.getUsers(filter, pageable);
-    return ResponseEntity.ok(
-        ApiResponseBuilder.success("Lấy danh sách người dùng thành công", data));
+  public Page<UserAdminResponse> getUsers(@Valid UserFilterRequest filter, Pageable pageable) {
+    return adminUserService.getUsers(filter, pageable);
   }
 
   @Operation(summary = "Xem thông tin người dùng theo ID (admin)")
   @GetMapping("/{id}")
-  public ResponseEntity<BaseResponse<UserAdminResponse>> getUserById(@PathVariable UUID id) {
-    UserAdminResponse data = adminUserService.getUserById(id);
-    return ResponseEntity.ok(
-        ApiResponseBuilder.success("Lấy thông tin người dùng thành công", data));
+  public UserAdminResponse getUserById(@PathVariable UUID id) {
+    return adminUserService.getUserById(id);
   }
 
   @Operation(summary = "Thay đổi trạng thái hoạt động (admin)")
   @PatchMapping("/{id}/status")
-  public ResponseEntity<BaseResponse<UserAdminResponse>> changeStatus(
+  public UserAdminResponse changeStatus(
       @PathVariable UUID id, @RequestBody @Valid ChangeUserStatusRequest request) {
-    UserAdminResponse data = adminUserService.changeUserStatus(id, request);
-    return ResponseEntity.ok(ApiResponseBuilder.success("Thay đổi trạng thái thành công", data));
+    return adminUserService.changeUserStatus(id, request);
   }
 
   @Operation(summary = "Gán quyền cho người dùng (admin)")
   @PatchMapping("/{id}/roles")
-  public ResponseEntity<BaseResponse<UserAdminResponse>> assignRoles(
+  public UserAdminResponse assignRoles(
       @PathVariable UUID id, @RequestBody @Valid AssignRolesRequest request) {
-    UserAdminResponse data = adminUserService.assignRoles(id, request);
-    return ResponseEntity.ok(ApiResponseBuilder.success("Cập nhật quyền thành công", data));
+    return adminUserService.assignRoles(id, request);
   }
 
   // Hiện tại để đơn giản dùng chung thay đổi trạng thái, không thêm trường isDelete (boolean)
   @Operation(summary = "Xóa người dùng (soft delete) (admin)")
   @DeleteMapping("/{id}")
-  public ResponseEntity<BaseResponse<UserAdminResponse>> softDelete(@PathVariable UUID id) {
-    UserAdminResponse data = adminUserService.softDeleteUser(id);
-    return ResponseEntity.ok(ApiResponseBuilder.success("Xóa người dùng thành công (soft)", data));
+  public UserAdminResponse softDelete(@PathVariable UUID id) {
+    return adminUserService.softDeleteUser(id);
   }
 }

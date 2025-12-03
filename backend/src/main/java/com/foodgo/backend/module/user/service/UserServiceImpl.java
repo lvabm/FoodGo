@@ -19,7 +19,7 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public UserResponse getUserById(Long id) {
+  public UserResponse getOtherUserById(Long id) {
     // TODO: fetch user; nếu admin trả full view, nếu public trả public view
     throw new UnsupportedOperationException("Not implemented");
   }

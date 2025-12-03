@@ -3,10 +3,10 @@ package com.foodgo.backend.module.auth.controller;
 import com.foodgo.backend.common.base.BaseResponse;
 import com.foodgo.backend.module.auth.dto.*;
 import com.foodgo.backend.module.auth.service.AuthService;
-import com.foodgo.backend.util.ApiResponseBuilder;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,18 +19,15 @@ public class AuthController {
 
   @Operation(summary = "Đăng ký tài khoản")
   @PostMapping("/register")
-  public ResponseEntity<BaseResponse<AuthResponse>> register(
-      @Valid @RequestBody RegisterRequest request) {
-    AuthResponse data = authService.register(request);
-    return ResponseEntity.ok(ApiResponseBuilder.success("Đăng ký tài khoản mới thành công", data));
+  @ResponseStatus(HttpStatus.CREATED)
+  public AuthResponse register(@Valid @RequestBody RegisterRequest request) {
+    return authService.register(request);
   }
 
   @Operation(summary = "Đăng nhập")
   @PostMapping("/login")
-  public ResponseEntity<BaseResponse<AuthResponse>> login(
-      @Valid @RequestBody LoginRequest request) {
-    AuthResponse data = authService.login(request);
-    return ResponseEntity.ok(ApiResponseBuilder.success("Đăng nhập thành công", data));
+  public AuthResponse login(@Valid @RequestBody LoginRequest request) {
+    return authService.login(request);
   }
 
   @Operation(summary = "Làm mới token (refresh)")

@@ -1,6 +1,8 @@
 package com.foodgo.backend.module.membership.service;
 
-import com.foodgo.backend.exception.ResourceNotFoundException;
+import com.foodgo.backend.common.constant.EntityName;
+import com.foodgo.backend.common.context.SuccessMessageContext;
+import com.foodgo.backend.common.exception.ResourceNotFoundException;
 import com.foodgo.backend.module.membership.mapper.MembershipPlanMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional
 public class MembershipServiceImpl implements MembershipService {
+  private final String membershipPlanEntityName = EntityName.MEMBERSHIP_PLAN.getFriendlyName();
+
   private final MembershipPlanRepository membershipPlanRepository;
   private final MembershipPlanMapper membershipPlanMapper;
 
@@ -24,12 +28,23 @@ public class MembershipServiceImpl implements MembershipService {
   public MembershipResponse createMembership(MembershipRequest request) {
     MembershipPlan plan = membershipPlanMapper.toEntity(request);
     MembershipPlan savedPlan = membershipPlanRepository.save(plan);
+
+    SuccessMessageContext.setMessage(
+        String.format(
+            SuccessMessageContext.CREATE_SUCCESS,
+            membershipPlanEntityName,
+            plan.getId().toString()));
+
     return membershipPlanMapper.toResponse(savedPlan);
   }
 
   @Override
   @Transactional(readOnly = true)
   public List<MembershipResponse> getAllMemberships() {
+
+    SuccessMessageContext.setMessage(
+        String.format(SuccessMessageContext.FETCH_SUCCESS, membershipPlanEntityName));
+
     return membershipPlanRepository.findAll().stream()
         .map(membershipPlanMapper::toResponse)
         .collect(Collectors.toList());
@@ -42,7 +57,14 @@ public class MembershipServiceImpl implements MembershipService {
         membershipPlanRepository
             .findById(id)
             .orElseThrow(
-                () -> new ResourceNotFoundException("Membership not found with id: " + id));
+                () ->
+                    new ResourceNotFoundException("Membership Plan không tìm thấy với id: " + id));
+
+    SuccessMessageContext.setMessage(
+        String.format(
+            SuccessMessageContext.FETCH_DETAIL_SUCCESS,
+            membershipPlanEntityName,
+            plan.getId().toString()));
 
     return membershipPlanMapper.toResponse(plan);
   }

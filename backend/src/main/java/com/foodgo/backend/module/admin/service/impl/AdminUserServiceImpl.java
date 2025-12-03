@@ -1,7 +1,8 @@
 package com.foodgo.backend.module.admin.service.impl;
 
-import com.foodgo.backend.common.dto.PageResponse;
-import com.foodgo.backend.exception.ResourceNotFoundException;
+import com.foodgo.backend.common.constant.EntityName;
+import com.foodgo.backend.common.context.SuccessMessageContext;
+import com.foodgo.backend.common.exception.ResourceNotFoundException;
 import com.foodgo.backend.module.admin.dto.user.AssignRolesRequest;
 import com.foodgo.backend.module.admin.dto.user.ChangeUserStatusRequest;
 import com.foodgo.backend.module.admin.dto.user.UserAdminResponse;
@@ -11,7 +12,6 @@ import com.foodgo.backend.module.user.entity.UserAccount;
 import com.foodgo.backend.module.user.mapper.UserAccountMapper;
 import com.foodgo.backend.module.user.repository.RoleRepository;
 import com.foodgo.backend.module.user.repository.UserAccountRepository;
-import com.foodgo.backend.util.ApiResponseBuilder;
 import jakarta.persistence.criteria.JoinType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -30,13 +30,15 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class AdminUserServiceImpl implements AdminUserService {
+  private final String userAccountEntityName =
+      EntityName.USER_ACCOUNT.getFriendlyName() + " (Admin)";
 
   private final UserAccountRepository userAccountRepository;
   private final RoleRepository roleRepository;
 
   private final UserAccountMapper userAccountMapper;
 
-  public PageResponse<UserAdminResponse> getUsers(UserFilterRequest filter, Pageable pageable) {
+  public Page<UserAdminResponse> getUsers(UserFilterRequest filter, Pageable pageable) {
 
     // 1. Xây dựng Specification dựa trên các trường lọc
     Specification<UserAccount> spec = UserSpecification.withFilter(filter);
@@ -44,10 +46,17 @@ public class AdminUserServiceImpl implements AdminUserService {
     // 2. Thực hiện truy vấn và phân trang
     Page<UserAccount> userPage = userAccountRepository.findAll(spec, pageable);
 
-    List<UserAdminResponse> content =
-        userPage.getContent().stream().map(userAccountMapper::toUserAdminDto).toList();
+    // 3. Mapping nội dung (Content)
+    // Sử dụng phương thức map() của Page để mapping mà không làm mất thông tin phân trang
+    Page<UserAdminResponse> userAdminResponsePage = userPage.map(userAccountMapper::toUserAdminDto);
 
-    return ApiResponseBuilder.buildPageResponse(userPage, content, "Toàn bộ User (phân trang)");
+    // 4. Đặt Message vào Context
+    SuccessMessageContext.setMessage(
+        String.format(SuccessMessageContext.FETCH_SUCCESS, userAccountEntityName));
+
+    // 5. Trả về đối tượng Page<T> của Spring Data
+    // GlobalResponseWrapper sẽ bắt đối tượng Page này và tự động bọc thành PageResponse
+    return userAdminResponsePage;
   }
 
   @Override
@@ -58,6 +67,12 @@ public class AdminUserServiceImpl implements AdminUserService {
             .findById(id)
             .orElseThrow(
                 () -> new ResourceNotFoundException("Không tìm thấy UserAccount với id = " + id));
+
+    SuccessMessageContext.setMessage(
+        String.format(
+            SuccessMessageContext.FETCH_DETAIL_SUCCESS,
+            userAccountEntityName,
+            userAccount.getId()));
 
     return userAccountMapper.toUserAdminDto(userAccount);
   }
@@ -74,7 +89,13 @@ public class AdminUserServiceImpl implements AdminUserService {
     // Thay đổi trạng thái hoạt động
     updatedStatusUserAccount.setActive(changeStatusRequest.isActive());
 
-    return userAccountMapper.toUserAdminDto(updatedStatusUserAccount);
+    var savedUser = userAccountRepository.save(updatedStatusUserAccount);
+
+    SuccessMessageContext.setMessage(
+        String.format(
+            SuccessMessageContext.UPDATE_SUCCESS, userAccountEntityName, savedUser.getId()));
+
+    return userAccountMapper.toUserAdminDto(savedUser);
   }
 
   @Override
@@ -101,6 +122,10 @@ public class AdminUserServiceImpl implements AdminUserService {
     assignRolesUserAccount.setRole(newRole);
     var savedUser = userAccountRepository.save(assignRolesUserAccount);
 
+    SuccessMessageContext.setMessage(
+        String.format(
+            SuccessMessageContext.UPDATE_SUCCESS, userAccountEntityName, savedUser.getId()));
+
     return userAccountMapper.toUserAdminDto(savedUser);
   }
 
@@ -115,8 +140,13 @@ public class AdminUserServiceImpl implements AdminUserService {
 
     // Xóa mềm người dùng (Đảo ngược trạng thái)
     deletedUserAccount.setActive(!deletedUserAccount.isActive());
+    var savedUser = userAccountRepository.save(deletedUserAccount);
 
-    return userAccountMapper.toUserAdminDto(deletedUserAccount);
+    SuccessMessageContext.setMessage(
+        String.format(
+            SuccessMessageContext.SOFT_DELETE_SUCCESS, userAccountEntityName, savedUser.getId()));
+
+    return userAccountMapper.toUserAdminDto(savedUser);
   }
 
   public static class UserSpecification {

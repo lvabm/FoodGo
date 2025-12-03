@@ -1,7 +1,7 @@
-package com.foodgo.backend.security;
+package com.foodgo.backend.security.filter;
 
-import com.foodgo.backend.module.auth.service.JwtService;
-import com.foodgo.backend.module.auth.service.impl.JpaUserDetailsServiceImpl;
+import com.foodgo.backend.security.jwt.JwtService;
+import com.foodgo.backend.security.jwt.impl.JpaUserDetailsServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

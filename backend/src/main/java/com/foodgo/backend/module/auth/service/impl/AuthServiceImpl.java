@@ -1,17 +1,19 @@
 package com.foodgo.backend.module.auth.service.impl;
 
+import com.foodgo.backend.common.constant.EntityName;
 import com.foodgo.backend.common.constant.RoleType;
-import com.foodgo.backend.exception.BadRequestException;
-import com.foodgo.backend.exception.DataConflictException;
+import com.foodgo.backend.common.context.SuccessMessageContext;
+import com.foodgo.backend.common.exception.BadRequestException;
+import com.foodgo.backend.common.exception.DataConflictException;
 import com.foodgo.backend.module.auth.dto.*;
 import com.foodgo.backend.module.auth.service.AuthService;
-import com.foodgo.backend.module.auth.service.JwtService;
+import com.foodgo.backend.security.jwt.JwtService;
 import com.foodgo.backend.module.user.entity.UserAccount;
 import com.foodgo.backend.module.user.mapper.ProfileMapper;
 import com.foodgo.backend.module.user.mapper.UserAccountMapper;
 import com.foodgo.backend.module.user.repository.RoleRepository;
 import com.foodgo.backend.module.user.repository.UserAccountRepository;
-import com.foodgo.backend.util.RandomUtil;
+import com.foodgo.backend.common.util.RandomUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,6 +27,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
+
   private final PasswordEncoder passwordEncoder;
   private final AuthenticationManager authenticationManager;
   private final JwtService jwtService;
@@ -55,7 +58,7 @@ public class AuthServiceImpl implements AuthService {
     var userAccount = userAccountMapper.toEntity(request);
     var profile = profileMapper.toEntity(request);
 
-    userAccount.setUsername(RandomUtil.generateUniqueUsername());
+    userAccount.setUsername(RandomUtils.generateUniqueUsername());
     userAccount.setPasswordHash(passwordEncoder.encode(request.plainTextPassword()));
 
     // Map 2 chiều (One to One)
@@ -64,6 +67,9 @@ public class AuthServiceImpl implements AuthService {
     profile.setUserAccount(userAccount);
 
     var savedUser = userAccountRepository.save(userAccount);
+
+    SuccessMessageContext.setMessage(
+        String.format(SuccessMessageContext.REGISTRATION_SUCCESS, savedUser.getId()));
 
     return generateAuthResponse(savedUser);
   }
@@ -86,6 +92,9 @@ public class AuthServiceImpl implements AuthService {
 
     // 2. LẤY USER
     var loginUser = (UserAccount) authentication.getPrincipal();
+
+    SuccessMessageContext.setMessage(
+        String.format(SuccessMessageContext.LOGIN_SUCCESSFUL, loginUser.getId()));
 
     return generateAuthResponse(loginUser);
   }
