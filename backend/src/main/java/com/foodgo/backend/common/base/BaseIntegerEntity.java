@@ -16,4 +16,7 @@ public abstract class BaseIntegerEntity<ID extends Serializable> implements Seri
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id", updatable = false, nullable = false)
   private ID id;
+
+  @Column(nullable = false)
+  private Boolean isDeleted = false;
 }

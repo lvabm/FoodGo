@@ -18,4 +18,7 @@ public abstract class BaseUUIDEntity implements Serializable {
   @UuidGenerator(style = UuidGenerator.Style.AUTO)
   @Column(name = "id", updatable = false, nullable = false)
   private UUID id;
+
+  @Column(nullable = false)
+  private Boolean isDeleted = false;
 }

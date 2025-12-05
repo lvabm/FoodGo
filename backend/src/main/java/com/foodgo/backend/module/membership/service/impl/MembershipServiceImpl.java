@@ -1,9 +1,10 @@
-package com.foodgo.backend.module.membership.service;
+package com.foodgo.backend.module.membership.service.impl;
 
 import com.foodgo.backend.common.constant.EntityName;
 import com.foodgo.backend.common.context.SuccessMessageContext;
 import com.foodgo.backend.common.exception.ResourceNotFoundException;
 import com.foodgo.backend.module.membership.mapper.MembershipPlanMapper;
+import com.foodgo.backend.module.membership.service.MembershipService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
