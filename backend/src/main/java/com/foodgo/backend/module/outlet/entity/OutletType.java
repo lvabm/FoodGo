@@ -4,7 +4,7 @@ import com.foodgo.backend.common.base.BaseIntegerEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "outlet_type")
@@ -23,10 +23,10 @@ public class OutletType extends BaseIntegerEntity<Integer> {
   // 1. QUAN HỆ ONE - TO - MANY: OutletType <--> Outlet
   // Outlet sở hữu quan hệ (fk_outlet_type_id_outlet)
   @OneToMany(mappedBy = "type", fetch = FetchType.LAZY)
-  private List<Outlet> outlets;
+  private Set<Outlet> outlets;
 
   // 2. QUAN HỆ ONE - TO - MANY: OutletType <--> OutletCategory
   // OutletCategory sở hữu quan hệ (fk_outlet_type_id_outlet_category)
   @OneToMany(mappedBy = "type", fetch = FetchType.LAZY)
-  private List<OutletCategory> outletCategories;
+  private Set<OutletCategory> outletCategories;
 }

@@ -152,50 +152,38 @@ public class AdminUserServiceImpl implements AdminUserService {
   public static class UserSpecification {
 
     public static Specification<UserAccount> withFilter(UserFilterRequest filter) {
-      return (root, query, criteriaBuilder) -> {
+      return (root, query, cb) -> {
+        if (filter == null) {
+          return cb.conjunction();
+        }
 
-        // BƯỚC 1: XỬ LÝ N+1 VÀ LAZY LOADING
-        if (query.getResultType() != Long.class && query.getResultType() != long.class) {
-          // Khắc phục lỗi Lazy Loading Roles
+        boolean isCountQuery = query.getResultType().equals(Long.class);
+
+        if (!isCountQuery) {
           root.fetch("role", JoinType.LEFT);
-          // Khắc phục lỗi Lazy Loading Profile
           root.fetch("profile", JoinType.LEFT);
+          query.distinct(true);
         }
 
         List<Predicate> predicates = new ArrayList<>();
 
-        // 1. Lọc theo trạng thái hoạt động (isActive)
         if (filter.isActive() != null) {
-          predicates.add(criteriaBuilder.equal(root.get("isActive"), filter.isActive()));
+          predicates.add(cb.equal(root.get("isActive"), filter.isActive()));
         }
 
-        // 2. Lọc theo vai trò (roleName)
         if (StringUtils.hasText(filter.roleName())) {
-          //  KHẮC PHỤC PATH: JOIN trực tiếp qua thuộc tính "role"
-          predicates.add(
-              criteriaBuilder.equal(
-                  root.join("role", JoinType.INNER).get("name"), filter.roleName()));
+          predicates.add(cb.equal(root.get("role").get("name"), filter.roleName()));
         }
 
-        // 3. Lọc theo searchTerm (Tên hoặc Email)
         if (StringUtils.hasText(filter.searchTerm())) {
-          String searchPattern = "%" + filter.searchTerm().toLowerCase() + "%";
-
-          // Giả định 'firstName' nằm trong Entity Profile (Quan hệ OneToOne)
-          Predicate searchPredicate =
-              criteriaBuilder.or(
-                  criteriaBuilder.like(
-                      criteriaBuilder.lower(root.join("profile").get("fullName")),
-                      searchPattern), // Cần join Profile nếu firstName nằm trong Profile
-                  criteriaBuilder.like(criteriaBuilder.lower(root.get("email")), searchPattern));
-          predicates.add(searchPredicate);
+          String pattern = "%" + filter.searchTerm().toLowerCase() + "%";
+          predicates.add(
+              cb.or(
+                  cb.like(cb.lower(root.get("profile").get("fullName")), pattern),
+                  cb.like(cb.lower(root.get("email")), pattern)));
         }
 
-        if (query.getResultType() != Long.class && query.getResultType() != long.class) {
-          query.distinct(true);
-        }
-
-        return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        return cb.and(predicates.toArray(new Predicate[0]));
       };
     }
   }

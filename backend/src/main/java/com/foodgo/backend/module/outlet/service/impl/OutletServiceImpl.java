@@ -1,10 +1,11 @@
-package com.foodgo.backend.module.outlet.service;
+package com.foodgo.backend.module.outlet.service.impl;
 
 import com.foodgo.backend.module.menu.repository.MenuItemRepository;
 import com.foodgo.backend.module.menu.repository.OutletMenuItemRepository;
 import com.foodgo.backend.module.outlet.dto.*;
 import com.foodgo.backend.common.base.PageResponse;
 import com.foodgo.backend.module.outlet.repository.OutletRepository;
+import com.foodgo.backend.module.outlet.service.OutletService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;

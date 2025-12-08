@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/search")
+@RequestMapping("/api/v1/searchKeyword")
 public class SearchController {
   @Operation(summary = "Tìm kiếm")
   @GetMapping()
