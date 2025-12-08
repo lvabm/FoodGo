@@ -3,6 +3,7 @@ package com.foodgo.backend.module.location.service.impl;
 import com.foodgo.backend.common.base.service.ReadOnlyServiceImpl;
 import com.foodgo.backend.common.base.service.ReadableMapper;
 
+import com.foodgo.backend.common.constant.EntityName;
 import com.foodgo.backend.module.location.criteria.ProvinceSpecification;
 import com.foodgo.backend.module.location.dto.ProvinceFilterRequest;
 import com.foodgo.backend.module.location.dto.ProvinceResponse;
@@ -15,15 +16,14 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class ProvinceServiceImpl
     extends ReadOnlyServiceImpl<Province, ProvinceResponse, Integer, ProvinceFilterRequest>
     implements ProvinceService {
 
+  private final String provinceEntityName = EntityName.PROVINCE.getFriendlyName();
   private final ProvinceRepository repository;
   private final ProvinceMapper mapper;
 
@@ -46,7 +46,7 @@ public class ProvinceServiceImpl
 
   @Override
   protected String getEntityName() {
-    return "Province";
+    return provinceEntityName;
   }
 
   // Triển khai logic Specification
