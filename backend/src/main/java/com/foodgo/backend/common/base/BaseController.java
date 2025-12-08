@@ -1,38 +1,16 @@
 package com.foodgo.backend.common.base;
 
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
-import java.util.List;
+public interface BaseController<CreateRequest, UpdateRequest, FilterRequest, Response, ID> {
+  Response create(CreateRequest request);
 
-@RequiredArgsConstructor
-public abstract class BaseController<Request, Response, ID> {
+  Response update(ID id, UpdateRequest request);
 
-  protected final BaseService<Request, Response, ID> service;
+  Response detail(ID id);
 
-  @PostMapping
-  public Response create(@Valid @RequestBody Request request) {
-    return service.create(request);
-  }
+  Page<Response> getPage(FilterRequest filter, Pageable pageable);
 
-  @PutMapping("/{id}")
-  public Response update(@PathVariable ID id, @Valid @RequestBody Request request) {
-    return service.update(id, request);
-  }
-
-  @GetMapping("/{id}")
-  public Response detail(@PathVariable ID id) {
-    return service.getDetail(id);
-  }
-
-  @GetMapping
-  public List<Response> getAll() {
-    return service.getAll();
-  }
-
-  @DeleteMapping("/{id}")
-  public Response delete(@PathVariable ID id) {
-    return service.softDelete(id);
-  }
+  Response delete(ID id);
 }

@@ -1,4 +1,4 @@
-package com.foodgo.backend.common.dto;
+package com.foodgo.backend.common.base;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,9 +13,9 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ApiError {
-    private boolean success = false;
-    private String errorCode;
-    private String message;
-    private List<String> details;
-    private Instant timestamp = Instant.now();
+  private boolean success = false;
+  private String errorCode;
+  private String message;
+  private List<String> details;
+  private Instant timestamp = Instant.now();
 }

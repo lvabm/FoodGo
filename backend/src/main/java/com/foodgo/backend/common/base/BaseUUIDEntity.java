@@ -19,6 +19,6 @@ public abstract class BaseUUIDEntity implements Serializable {
   @Column(name = "id", updatable = false, nullable = false)
   private UUID id;
 
-  @Column(nullable = false)
+  @Column(nullable = true)
   private Boolean isDeleted = false;
 }

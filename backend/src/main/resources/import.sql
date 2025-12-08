@@ -393,6 +393,7 @@ INSERT INTO sharing_list_collaborator (id, user_id, sharing_list_id) VALUES (1, 
 --21. OUTLET
 --========================================================
 INSERT INTO outlet (id, owner_id, type_id, name, description, address, email, phone_number, website, district_id, latitude, longitude, price_range, capacity, is_active, average_rating, total_reviews) VALUES ('20000000-0000-0000-0000-000000000001', (SELECT id FROM user_account WHERE username = 'owner1'), (SELECT id FROM outlet_type WHERE name = 'Restaurant'), 'Quán Phở Alice', 'Quán phở ngon, phục vụ nhanh', '123 Lê Lợi, Quận 1, TP.HCM', 'pho.owner1@example.com', '0909000002', 'https://example.com', (SELECT id FROM district WHERE name = 'Quận 1'), 10.775839, 106.700806, 'moderate', 80, true, 4.85, 120);
+INSERT INTO outlet (id, owner_id, type_id, name, description, address, email, phone_number, website, district_id, latitude, longitude, price_range, capacity, is_active, average_rating, total_reviews) VALUES ('20000000-0000-0000-0000-000000000002', (SELECT id FROM user_account WHERE username = 'owner1'), (SELECT id FROM outlet_type WHERE name = 'Restaurant'), 'Quán Phở Isa', 'Quán phở ngon, phục vụ tốt', '22 Lê Lợi, Quận 1, TP.HCM', 'pho.owner1@example.com', '0909000002', 'https://example.com', (SELECT id FROM district WHERE name = 'Quận 1'), 10.775839, 106.700806, 'moderate', 80, true, 4.85, 120);
 
 --========================================================
 --22. OUTLET_FEATURE

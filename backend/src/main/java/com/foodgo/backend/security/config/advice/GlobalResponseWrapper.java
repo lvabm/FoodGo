@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.foodgo.backend.common.base.BaseResponse;
 import com.foodgo.backend.common.context.SuccessMessageContext;
-import com.foodgo.backend.common.dto.PageResponse;
+import com.foodgo.backend.common.base.PageResponse;
 import org.springframework.core.MethodParameter;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;

@@ -1,8 +1,6 @@
-package com.foodgo.backend.common.dto;
+package com.foodgo.backend.common.base;
 
-import com.foodgo.backend.common.base.BaseResponse;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;

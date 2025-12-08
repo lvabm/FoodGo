@@ -1,7 +1,7 @@
 package com.foodgo.backend.module.outlet.controller;
 
 import com.foodgo.backend.common.base.BaseResponse;
-import com.foodgo.backend.common.dto.PageResponse;
+import com.foodgo.backend.common.base.PageResponse;
 import com.foodgo.backend.module.outlet.dto.*;
 import com.foodgo.backend.module.outlet.service.OutletService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,11 +26,12 @@ public class OutletController {
   public ResponseEntity<BaseResponse<OutletResponse>> createOutlet(
       @Valid @RequestBody CreateOutletRequest request) {
     OutletResponse data = outletService.createOutlet(request);
-    BaseResponse<OutletResponse> body = BaseResponse.<OutletResponse>builder()
-        .success(true)
-        .message("Tạo quán ăn thành công")
-        .data(data)
-        .build();
+    BaseResponse<OutletResponse> body =
+        BaseResponse.<OutletResponse>builder()
+            .success(true)
+            .message("Tạo quán ăn thành công")
+            .data(data)
+            .build();
     return ResponseEntity.status(HttpStatus.CREATED).body(body);
   }
 
@@ -39,11 +40,12 @@ public class OutletController {
   public ResponseEntity<BaseResponse<OutletResponse>> updateOutlet(
       @PathVariable UUID id, @Valid @RequestBody UpdateOutletRequest request) {
     OutletResponse data = outletService.updateOutlet(id, request);
-    BaseResponse<OutletResponse> body = BaseResponse.<OutletResponse>builder()
-        .success(true)
-        .message("Cập nhật quán thành công")
-        .data(data)
-        .build();
+    BaseResponse<OutletResponse> body =
+        BaseResponse.<OutletResponse>builder()
+            .success(true)
+            .message("Cập nhật quán thành công")
+            .data(data)
+            .build();
     return ResponseEntity.ok(body);
   }
 
@@ -51,11 +53,12 @@ public class OutletController {
   @GetMapping("/{id}")
   public ResponseEntity<BaseResponse<OutletDetailResponse>> getOutletDetail(@PathVariable UUID id) {
     OutletDetailResponse data = outletService.getOutletDetail(id);
-    BaseResponse<OutletDetailResponse> body = BaseResponse.<OutletDetailResponse>builder()
-        .success(true)
-        .message("Chi tiết quán")
-        .data(data)
-        .build();
+    BaseResponse<OutletDetailResponse> body =
+        BaseResponse.<OutletDetailResponse>builder()
+            .success(true)
+            .message("Chi tiết quán")
+            .data(data)
+            .build();
     return ResponseEntity.ok(body);
   }
 
@@ -72,11 +75,12 @@ public class OutletController {
   public ResponseEntity<BaseResponse<OutletResponse>> updateHours(
       @PathVariable UUID id, @Valid @RequestBody OperatingHoursRequest request) {
     OutletResponse data = outletService.updateOperatingHours(id, request);
-    BaseResponse<OutletResponse> body = BaseResponse.<OutletResponse>builder()
-        .success(true)
-        .message("Cập nhật giờ hoạt động thành công")
-        .data(data)
-        .build();
+    BaseResponse<OutletResponse> body =
+        BaseResponse.<OutletResponse>builder()
+            .success(true)
+            .message("Cập nhật giờ hoạt động thành công")
+            .data(data)
+            .build();
     return ResponseEntity.ok(body);
   }
 
@@ -85,11 +89,12 @@ public class OutletController {
   public ResponseEntity<BaseResponse<OutletImageResponse>> uploadImage(
       @PathVariable UUID id, @RequestPart("file") MultipartFile file) {
     OutletImageResponse data = outletService.uploadOutletImage(id, file);
-    BaseResponse<OutletImageResponse> body = BaseResponse.<OutletImageResponse>builder()
-        .success(true)
-        .message("Upload ảnh thành công")
-        .data(data)
-        .build();
+    BaseResponse<OutletImageResponse> body =
+        BaseResponse.<OutletImageResponse>builder()
+            .success(true)
+            .message("Upload ảnh thành công")
+            .data(data)
+            .build();
     return ResponseEntity.status(HttpStatus.CREATED).body(body);
   }
 
@@ -98,11 +103,12 @@ public class OutletController {
   public ResponseEntity<BaseResponse<OutletImageResponse>> setPrimaryImage(
       @PathVariable UUID id, @PathVariable Long imageId) {
     OutletImageResponse data = outletService.setPrimaryImage(id, imageId);
-    BaseResponse<OutletImageResponse> body = BaseResponse.<OutletImageResponse>builder()
-        .success(true)
-        .message("Đặt ảnh đại diện thành công")
-        .data(data)
-        .build();
+    BaseResponse<OutletImageResponse> body =
+        BaseResponse.<OutletImageResponse>builder()
+            .success(true)
+            .message("Đặt ảnh đại diện thành công")
+            .data(data)
+            .build();
     return ResponseEntity.ok(body);
   }
 
@@ -111,11 +117,12 @@ public class OutletController {
   public ResponseEntity<BaseResponse<OutletResponse>> changeStatus(
       @PathVariable UUID id, @RequestBody Object changeOutletStatusRequest) {
     OutletResponse data = outletService.changeOutletStatus(id, changeOutletStatusRequest);
-    BaseResponse<OutletResponse> body = BaseResponse.<OutletResponse>builder()
-        .success(true)
-        .message("Thay đổi trạng thái quán thành công")
-        .data(data)
-        .build();
+    BaseResponse<OutletResponse> body =
+        BaseResponse.<OutletResponse>builder()
+            .success(true)
+            .message("Thay đổi trạng thái quán thành công")
+            .data(data)
+            .build();
     return ResponseEntity.ok(body);
   }
 

@@ -1,7 +1,7 @@
 package com.foodgo.backend.module.admin.controller;
 
 import com.foodgo.backend.common.base.BaseResponse;
-import com.foodgo.backend.common.dto.PageResponse;
+import com.foodgo.backend.common.base.PageResponse;
 import com.foodgo.backend.module.admin.dto.outlet.OutletAdminDto;
 import com.foodgo.backend.module.admin.service.AdminOutletService;
 import com.foodgo.backend.module.outlet.dto.OutletResponse;

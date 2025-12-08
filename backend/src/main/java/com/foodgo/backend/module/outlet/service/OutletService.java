@@ -1,6 +1,6 @@
 package com.foodgo.backend.module.outlet.service;
 
-import com.foodgo.backend.common.dto.PageResponse;
+import com.foodgo.backend.common.base.PageResponse;
 import com.foodgo.backend.module.outlet.dto.*;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;

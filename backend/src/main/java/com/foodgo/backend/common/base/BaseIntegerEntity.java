@@ -17,6 +17,6 @@ public abstract class BaseIntegerEntity<ID extends Serializable> implements Seri
   @Column(name = "id", updatable = false, nullable = false)
   private ID id;
 
-  @Column(nullable = false)
+  @Column(nullable = true)
   private Boolean isDeleted = false;
 }
