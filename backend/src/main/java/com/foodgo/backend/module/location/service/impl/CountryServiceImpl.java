@@ -28,6 +28,8 @@ public class CountryServiceImpl
   private final CountryRepository repository;
   private final CountryMapper mapper;
 
+  // --- Triển khai các phương thức trừu tượng từ ReadOnlyServiceImpl ---
+
   @Override
   protected JpaRepository<Country, Integer> getRepository() {
     return repository;
@@ -48,6 +50,7 @@ public class CountryServiceImpl
     return countryEntityName;
   }
 
+  // Triển khai logic Specification
   @Override
   protected Specification<Country> buildSpecification(CountryFilterRequest filter) {
     return new CountrySpecification(filter);

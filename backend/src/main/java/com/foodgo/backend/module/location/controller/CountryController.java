@@ -18,24 +18,24 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CountryController {
 
-  private final CountryService countryService;
+  private final CountryService service;
 
   @GetMapping
   @Operation(summary = "Lấy tất cả Quốc gia (Không phân trang)")
   public List<CountryResponse> getAll() {
-    return countryService.getAll();
+    return service.getAll();
   }
 
   @GetMapping("/{id}")
   @Operation(summary = "Lấy chi tiết Quốc gia theo ID")
   public CountryResponse getDetail(@PathVariable Integer id) {
-    return countryService.getDetail(id);
+    return service.getDetail(id);
   }
 
   @GetMapping("/search")
   @Operation(summary = "Tìm kiếm và phân trang Quốc gia")
   public Page<CountryResponse> search(
       @ModelAttribute CountryFilterRequest filter, Pageable pageable) {
-    return countryService.getPage(filter, pageable);
+    return service.getPage(filter, pageable);
   }
 }

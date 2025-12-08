@@ -5,7 +5,6 @@ import com.foodgo.backend.module.outlet.dto.OutletTypeResponse;
 import com.foodgo.backend.module.outlet.entity.OutletType;
 import com.foodgo.backend.module.outlet.repository.projection.OutletTypeCountProjection;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 
 import java.util.List;
