@@ -2,7 +2,7 @@ package com.foodgo.backend.module.outlet.entity;
 
 import com.foodgo.backend.common.base.BaseUUIDEntity;
 import com.foodgo.backend.module.booking.entity.Booking;
-import com.foodgo.backend.module.fnb.entity.OutletMenuItem;
+import com.foodgo.backend.module.menu.entity.OutletMenuItem;
 import com.foodgo.backend.module.location.entity.District;
 import com.foodgo.backend.module.review.entity.Review;
 import com.foodgo.backend.module.user.entity.UserAccount;

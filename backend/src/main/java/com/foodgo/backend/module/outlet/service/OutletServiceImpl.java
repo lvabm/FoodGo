@@ -1,7 +1,7 @@
 package com.foodgo.backend.module.outlet.service;
 
-import com.foodgo.backend.module.fnb.repository.MenuItemRepository;
-import com.foodgo.backend.module.fnb.repository.OutletMenuItemRepository;
+import com.foodgo.backend.module.menu.repository.MenuItemRepository;
+import com.foodgo.backend.module.menu.repository.OutletMenuItemRepository;
 import com.foodgo.backend.module.outlet.dto.*;
 import com.foodgo.backend.common.base.PageResponse;
 import com.foodgo.backend.module.outlet.repository.OutletRepository;
