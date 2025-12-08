@@ -13,10 +13,4 @@ import java.util.List;
     componentModel = "spring",
     unmappedTargetPolicy = ReportingPolicy.IGNORE // 🔑 Cấu hình quan trọng nhất!
     )
-public interface OutletTypeMapper extends ReadableMapper<OutletType, OutletTypeResponse> {
-
-  OutletTypeResponse toResponseFromProjection(OutletTypeCountProjection projection);
-
-  List<OutletTypeResponse> toResponseListFromProjection(
-      List<OutletTypeCountProjection> projections);
-}
+public interface OutletTypeMapper extends ReadableMapper<OutletType, OutletTypeResponse> {}

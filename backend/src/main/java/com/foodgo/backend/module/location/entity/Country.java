@@ -5,7 +5,7 @@ import com.foodgo.backend.module.user.entity.Profile;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "country")
@@ -24,10 +24,10 @@ public class Country extends BaseIntegerEntity<Integer> {
   // 1. QUAN HỆ ONE - TO - MANY: Country <--> Province
   // Province sở hữu quan hệ (fk_country_id_province)
   @OneToMany(mappedBy = "country", fetch = FetchType.LAZY)
-  private List<Province> provinces;
+  private Set<Province> provinces;
 
   // 2. QUAN HỆ ONE - TO - MANY: Country <--> Profile
   // Profile sở hữu quan hệ (fk_country_id_profile)
   @OneToMany(mappedBy = "country", fetch = FetchType.LAZY)
-  private List<Profile> profiles;
+  private Set<Profile> profiles;
 }

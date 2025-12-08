@@ -1,3 +1,9 @@
 package com.foodgo.backend.module.outlet.dto;
 
-public record OutletTypeFilterRequest(String name, String searchKeyword) {}
+import java.util.Optional;
+
+public record OutletTypeFilterRequest(String name) {
+  public Optional<String> optionalName() {
+    return Optional.ofNullable(name).filter(s -> !s.isBlank());
+  }
+}

@@ -5,7 +5,7 @@ import com.foodgo.backend.module.menu.entity.MenuItem;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "province")
@@ -27,10 +27,10 @@ public class Province extends BaseIntegerEntity<Integer> {
   // 2. QUAN HỆ ONE - TO - MANY: Province <--> District
   // District sở hữu quan hệ (fk_province_id_district)
   @OneToMany(mappedBy = "province", fetch = FetchType.LAZY)
-  private List<District> districts;
+  private Set<District> districts;
 
   // 3. QUAN HỆ ONE - TO - MANY: Province <--> MenuItem
   // MenuItem sở hữu quan hệ (fk_province_id_menu_item)
   @OneToMany(mappedBy = "province", fetch = FetchType.LAZY)
-  private List<MenuItem> menuItems;
+  private Set<MenuItem> menuItems;
 }

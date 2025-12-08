@@ -5,7 +5,7 @@ import com.foodgo.backend.module.outlet.entity.Outlet;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "district")
@@ -27,5 +27,5 @@ public class District extends BaseIntegerEntity<Integer> {
   // 2. QUAN HỆ ONE - TO - MANY: District <--> Outlet
   // Outlet sở hữu quan hệ (fk_district_id_outlet)
   @OneToMany(mappedBy = "district", fetch = FetchType.LAZY)
-  private List<Outlet> outlets;
+  private Set<Outlet> outlets;
 }

@@ -12,32 +12,32 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Tag(
+    name = "Outlet Type Management (Read Only)",
+    description = "Quản lý dữ liệu Loại hình Cơ sở (Chỉ đọc)")
 @RestController
 @RequestMapping("/api/v1/outlet-types")
 @RequiredArgsConstructor
-@Tag(
-    name = "Loại Cơ Sở (Outlet Types)",
-    description = "APIs quản lý các loại hình cơ sở kinh doanh")
 public class OutletTypeController {
 
-  private final OutletTypeService service;
+  private final OutletTypeService outletTypeService;
 
   @GetMapping
-  @Operation(summary = "Lấy tất cả các loại cơ sở (Outlet Types)")
+  @Operation(summary = "Lấy tất cả Loại hình Cơ sở (Không phân trang)")
   public List<OutletTypeResponse> getAll() {
-    return service.getAll();
+    return outletTypeService.getAll();
   }
 
   @GetMapping("/{id}")
-  @Operation(summary = "Lấy tất cả các loại cơ sở (Outlet Types)")
+  @Operation(summary = "Lấy chi tiết Loại hình Cơ sở theo ID")
   public OutletTypeResponse getDetail(@PathVariable Integer id) {
-    return service.getDetail(id);
+    return outletTypeService.getDetail(id);
   }
 
   @GetMapping("/search")
-  @Operation(summary = "Tìm kiếm + phân trang Outlet Types")
+  @Operation(summary = "Tìm kiếm và phân trang Loại hình Cơ sở")
   public Page<OutletTypeResponse> search(
       @ModelAttribute OutletTypeFilterRequest filter, Pageable pageable) {
-    return service.getPage(filter, pageable);
+    return outletTypeService.getPage(filter, pageable);
   }
 }
