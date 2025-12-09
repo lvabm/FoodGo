@@ -1,12 +1,10 @@
-package com.foodgo.backend.module.outlet.mapper;
+package com.foodgo.backend.module.outlet.dto.mapper;
 
 import com.foodgo.backend.common.base.service.ReadableMapper;
-import com.foodgo.backend.module.outlet.dto.OutletTypeResponse;
+import com.foodgo.backend.module.outlet.dto.response.OutletTypeResponse;
 import com.foodgo.backend.module.outlet.entity.OutletType;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
-
-import java.util.List;
 
 @Mapper(
     componentModel = "spring",

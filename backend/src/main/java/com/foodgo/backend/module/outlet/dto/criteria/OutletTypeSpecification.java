@@ -1,6 +1,6 @@
-package com.foodgo.backend.module.outlet.criteria;
+package com.foodgo.backend.module.outlet.dto.criteria;
 
-import com.foodgo.backend.module.outlet.dto.OutletTypeFilterRequest;
+import com.foodgo.backend.module.outlet.dto.request.OutletTypeFilterRequest;
 import com.foodgo.backend.module.outlet.entity.OutletType;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
