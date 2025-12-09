@@ -2,9 +2,7 @@ package com.foodgo.backend.common.base.service;
 
 import com.foodgo.backend.common.base.BaseIntegerEntity;
 import com.foodgo.backend.common.base.BaseUUIDEntity;
-import com.foodgo.backend.common.context.SuccessMessageContext;
 import com.foodgo.backend.common.exception.ResourceNotFoundException;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -14,8 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.stream.Collectors;
 
-@Slf4j
 @Transactional(readOnly = true)
 public abstract class BaseServiceImpl<
         Entity, CreateRequest, UpdateRequest, FilterRequest, Response, Id extends Serializable>
@@ -25,6 +23,9 @@ public abstract class BaseServiceImpl<
 
   protected abstract JpaRepository<Entity, Id> getRepository();
 
+  // Giữ lại JpaSpecificationExecutor riêng để đảm bảo tính tường minh
+  protected abstract JpaSpecificationExecutor<Entity> getSpecRepository();
+
   protected abstract BaseMapper<Entity, CreateRequest, UpdateRequest, Response> getMapper();
 
   protected abstract String getEntityName();
@@ -32,7 +33,7 @@ public abstract class BaseServiceImpl<
   // ==================== II. HOOK METHODS (CÓ THỂ GHI ĐÈ) ====================
 
   protected Specification<Entity> buildSpecification(FilterRequest filterRequest) {
-    return null;
+    return (root, query, cb) -> cb.conjunction();
   }
 
   protected void validateBeforeCreate(CreateRequest createRequest) {
@@ -56,8 +57,6 @@ public abstract class BaseServiceImpl<
   @Override
   @Transactional
   public Response create(CreateRequest createRequest) {
-    log.debug("Đang tạo mới {}: {}", getEntityName(), createRequest);
-
     validateBeforeCreate(createRequest);
 
     Entity entity = getMapper().toEntity(createRequest);
@@ -65,20 +64,12 @@ public abstract class BaseServiceImpl<
 
     afterCreate(savedEntity);
 
-    Object entityId = getIdFromEntity(savedEntity);
-    log.info("Đã tạo {} thành công với ID: {}", getEntityName(), entityId);
-
-    SuccessMessageContext.setMessage(
-        String.format(SuccessMessageContext.CREATE_SUCCESS, getEntityName(), entityId));
-
     return getMapper().toResponse(savedEntity);
   }
 
   @Override
   @Transactional
   public Response update(Id id, UpdateRequest updateRequest) {
-    log.debug("Đang cập nhật {} với ID {}: {}", getEntityName(), id, updateRequest);
-
     validateBeforeUpdate(id, updateRequest);
 
     Entity entity = findByIdOrThrow(id);
@@ -87,80 +78,37 @@ public abstract class BaseServiceImpl<
 
     afterUpdate(updatedEntity);
 
-    log.info("Đã cập nhật {} thành công với ID: {}", getEntityName(), id);
-
-    SuccessMessageContext.setMessage(
-        String.format(SuccessMessageContext.UPDATE_SUCCESS, getEntityName(), id));
-
     return getMapper().toResponse(updatedEntity);
   }
 
   @Override
+  @Transactional(readOnly = true)
   public Response getDetail(Id id) {
-    log.debug("Đang lấy chi tiết {} với ID: {}", getEntityName(), id);
-    Entity entity = findByIdOrThrow(id);
-
-    SuccessMessageContext.setMessage(
-        String.format(SuccessMessageContext.FETCH_DETAIL_SUCCESS, getEntityName(), id));
-    return getMapper().toResponse(entity);
+    return getRepository()
+        .findById(id)
+        .map(getMapper()::toResponse)
+        .orElseThrow(
+            () -> new ResourceNotFoundException(getEntityName() + " not found with ID: " + id));
   }
 
   @Override
+  @Transactional(readOnly = true)
   public List<Response> getAll() {
-    log.debug("Đang lấy tất cả {}", getEntityName());
-    List<Entity> entities = getRepository().findAll();
-    log.debug("Tìm thấy {} thực thể {}", entities.size(), getEntityName());
-
-    SuccessMessageContext.setMessage(
-        String.format(SuccessMessageContext.FETCH_SUCCESS, getEntityName()));
-
-    return getMapper().toResponseList(entities);
+    return getRepository().findAll().stream()
+        .map(getMapper()::toResponse)
+        .collect(Collectors.toList());
   }
 
   @Override
+  @Transactional(readOnly = true)
   public Page<Response> getPage(FilterRequest filterRequest, Pageable pageable) {
-    log.debug(
-        "Đang lấy trang của {} với bộ lọc: {}, thông số phân trang: {}",
-        getEntityName(),
-        filterRequest,
-        pageable);
-
-    Page<Entity> entityPage;
-
-    // Kiểm tra và sử dụng Specification thông qua JpaSpecificationExecutor trong Repository
-    if (getRepository() instanceof JpaSpecificationExecutor) {
-      var spec = buildSpecification(filterRequest);
-      if (spec != null) {
-        entityPage = ((JpaSpecificationExecutor<Entity>) getRepository()).findAll(spec, pageable);
-      } else {
-        entityPage = getRepository().findAll(pageable);
-      }
-    } else {
-      entityPage = getRepository().findAll(pageable);
-    }
-
-    log.debug(
-        "Tìm thấy {} thực thể {} (trang {} trên tổng {})",
-        entityPage.getNumberOfElements(),
-        getEntityName(),
-        entityPage.getNumber() + 1,
-        entityPage.getTotalPages());
-
-    SuccessMessageContext.setMessage(
-        String.format(
-            SuccessMessageContext.FETCH_SUCCESS_PAGE,
-            getEntityName(),
-            entityPage.getNumber() + 1,
-            entityPage.getTotalPages()));
-
-    return entityPage.map(getMapper()::toResponse);
+    Specification<Entity> spec = buildSpecification(filterRequest);
+    return getSpecRepository().findAll(spec, pageable).map(getMapper()::toResponse);
   }
 
   @Override
   @Transactional
   public Response softDelete(Id id) {
-    log.debug("Đang xóa mềm {} với ID: {}", getEntityName(), id);
-
     Entity entity = findByIdOrThrow(id);
 
     // Logic Soft Delete: Sử dụng instanceof để truy cập setter isDeleted
@@ -169,17 +117,10 @@ public abstract class BaseServiceImpl<
     } else if (entity instanceof BaseIntegerEntity) {
       ((BaseIntegerEntity<?>) entity).setIsDeleted(true);
     } else {
-      // Cảnh báo nếu Entity không có cơ chế Soft Delete
-      log.error("{} không hỗ trợ Soft Delete vì không kế thừa Base Entity.", getEntityName());
       throw new UnsupportedOperationException(getEntityName() + " không hỗ trợ Soft Delete");
     }
 
     Entity deletedEntity = getRepository().save(entity);
-
-    log.info("Đã xóa mềm {} thành công với ID: {}", getEntityName(), id);
-
-    SuccessMessageContext.setMessage(
-        String.format(SuccessMessageContext.SOFT_DELETE_SUCCESS, getEntityName(), id));
 
     return getMapper().toResponse(deletedEntity);
   }
@@ -187,17 +128,10 @@ public abstract class BaseServiceImpl<
   @Override
   @Transactional
   public void hardDelete(Id id) {
-    log.debug("Đang xóa cứng {} với ID: {}", getEntityName(), id);
-
     if (!existsById(id)) {
       throw new ResourceNotFoundException(getEntityName() + " không tìm thấy với ID: " + id);
     }
-
     getRepository().deleteById(id);
-    log.warn("Đã xóa cứng {} với ID: {}", getEntityName(), id);
-
-    SuccessMessageContext.setMessage(
-        String.format(SuccessMessageContext.HARD_DELETE_SUCCESS, getEntityName(), id));
   }
 
   @Override
@@ -212,18 +146,5 @@ public abstract class BaseServiceImpl<
         .findById(id)
         .orElseThrow(
             () -> new ResourceNotFoundException(getEntityName() + " không tìm thấy với ID: " + id));
-  }
-
-  protected Entity findByIdOrNull(Id id) {
-    return getRepository().findById(id).orElse(null);
-  }
-
-  private Object getIdFromEntity(Entity entity) {
-    if (entity instanceof BaseUUIDEntity) {
-      return ((BaseUUIDEntity) entity).getId();
-    } else if (entity instanceof BaseIntegerEntity) {
-      return ((BaseIntegerEntity<?>) entity).getId();
-    }
-    return "N/A";
   }
 }

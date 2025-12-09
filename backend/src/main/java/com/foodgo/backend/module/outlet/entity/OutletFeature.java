@@ -14,13 +14,13 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class OutletFeature extends BaseIntegerEntity<Integer> {
-    @Column(name = "name", nullable = false, unique = true, length = 100)
-    private String name;
+  @Column(name = "name", nullable = false, unique = true, length = 100)
+  private String name;
 
-    @Column(name = "description", length = 255)
-    private String description;
+  @Column(name = "description", length = 255)
+  private String description;
 
-    // QUAN HỆ ONE - TO - MANY: OutletFeature <--> OutletHasFeature
-    @OneToMany(mappedBy = "feature", fetch = FetchType.LAZY)
-    private List<OutletHasFeature> outletHasFeatures;
+  // QUAN HỆ ONE - TO - MANY: OutletFeature <--> OutletHasFeature
+  @OneToMany(mappedBy = "feature", fetch = FetchType.LAZY)
+  private List<OutletFeatureMapping> outletFeatureMappings;
 }

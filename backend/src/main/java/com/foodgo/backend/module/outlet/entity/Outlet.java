@@ -10,7 +10,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "outlet")
@@ -73,35 +73,35 @@ public class Outlet extends BaseUUIDEntity {
   @JoinColumn(name = "district_id", nullable = false)
   private District district;
 
-  // 3. QUAN HỆ ONE - TO - MANY: Outlet <--> OutletHasFeature
-  // OutletHasFeature sở hữu quan hệ (fk_outlet_id_outlet_has_feature)
+  // 3. QUAN HỆ ONE - TO - MANY: Outlet <--> OutletFeatureMapping
+  // OutletFeatureMapping sở hữu quan hệ (fk_outlet_id_outlet_has_feature)
   @OneToMany(mappedBy = "outlet", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  private List<OutletHasFeature> outletHasFeatures;
+  private Set<OutletFeatureMapping> outletFeatureMappings;
 
   // 4. QUAN HỆ ONE - TO - MANY: Outlet <--> OperatingHours
   // OperatingHours sở hữu quan hệ (fk_outlet_id_operating_hours)
   @OneToMany(mappedBy = "outlet", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  private List<OperatingHours> operatingHours;
+  private Set<OperatingHours> operatingHours;
 
   // 5. QUAN HỆ ONE - TO - MANY: Outlet <--> Review
   // Review sở hữu quan hệ (fk_outlet_id_review)
   @OneToMany(mappedBy = "outlet", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  private List<Review> reviews;
+  private Set<Review> reviews;
 
   // 6. QUAN HỆ ONE - TO - MANY: Outlet <--> Booking
   // Booking sở hữu quan hệ (fk_outlet_id_booking)
   @OneToMany(mappedBy = "outlet", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  private List<Booking> bookings;
+  private Set<Booking> bookings;
 
   // 7. QUAN HỆ ONE - TO - MANY: Outlet <--> OutletImage
   // OutletImage sở hữu quan hệ (fk_outlet_id_outlet_image)
   @OneToMany(mappedBy = "outlet", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  private List<OutletImage> outletImages;
+  private Set<OutletImage> outletImages;
 
   // 8. QUAN HỆ ONE - TO - MANY: Outlet <--> OutletMenuItem
   // OutletMenuItem sở hữu quan hệ (fk_outlet_id_outlet_menu_item)
   @OneToMany(mappedBy = "outlet", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  private List<OutletMenuItem> outletMenuItems;
+  private Set<OutletMenuItem> outletMenuItems;
 
   // 9. QUAN HỆ MANY - TO - ONE: OutletType <--> Outlet
   // Outlet sở hữu quan hệ (fk_outlet_type_id_outlet)
