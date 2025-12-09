@@ -4,11 +4,11 @@ import com.foodgo.backend.common.base.service.ReadOnlyServiceImpl;
 import com.foodgo.backend.common.base.service.ReadableMapper;
 
 import com.foodgo.backend.common.constant.EntityName;
-import com.foodgo.backend.module.location.criteria.ProvinceSpecification;
-import com.foodgo.backend.module.location.dto.ProvinceFilterRequest;
-import com.foodgo.backend.module.location.dto.ProvinceResponse;
+import com.foodgo.backend.module.location.dto.criteria.ProvinceSpecification;
+import com.foodgo.backend.module.location.dto.request.ProvinceFilterRequest;
+import com.foodgo.backend.module.location.dto.response.ProvinceResponse;
 import com.foodgo.backend.module.location.entity.Province;
-import com.foodgo.backend.module.location.mapper.ProvinceMapper;
+import com.foodgo.backend.module.location.dto.mapper.ProvinceMapper;
 import com.foodgo.backend.module.location.repository.ProvinceRepository;
 import com.foodgo.backend.module.location.service.ProvinceService;
 import lombok.RequiredArgsConstructor;

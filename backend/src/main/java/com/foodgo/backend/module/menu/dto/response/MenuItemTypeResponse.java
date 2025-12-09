@@ -1,12 +1,3 @@
 package com.foodgo.backend.module.menu.dto.response;
 
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-@Setter
-public class MenuItemTypeResponse {
-  private Integer id;
-  private String name;
-  private String description;
-}
+public record MenuItemTypeResponse(Integer id, String name, String description) {}

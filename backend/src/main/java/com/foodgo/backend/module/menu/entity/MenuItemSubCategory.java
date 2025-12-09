@@ -4,7 +4,7 @@ import com.foodgo.backend.common.base.BaseIntegerEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "menu_item_sub_category")
@@ -27,5 +27,5 @@ public class MenuItemSubCategory extends BaseIntegerEntity<Integer> {
 
   // 2. QUAN HỆ ONE - TO - MANY: MenuItemSubCategory <--> MenuItem
   @OneToMany(mappedBy = "subCategory", fetch = FetchType.LAZY)
-  private List<MenuItem> menuItems;
+  private Set<MenuItem> menuItems;
 }

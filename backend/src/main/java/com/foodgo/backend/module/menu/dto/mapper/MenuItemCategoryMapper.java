@@ -1,41 +1,18 @@
 package com.foodgo.backend.module.menu.dto.mapper;
 
-import com.foodgo.backend.module.menu.dto.request.MenuItemCategoryCreateRequest;
-import com.foodgo.backend.module.menu.dto.request.MenuItemCategoryUpdateRequest;
+import com.foodgo.backend.common.base.service.ReadableMapper;
 import com.foodgo.backend.module.menu.dto.response.MenuItemCategoryResponse;
 import com.foodgo.backend.module.menu.entity.MenuItemCategory;
-import com.foodgo.backend.module.menu.entity.MenuItemType;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
 
-@Component
-public class MenuItemCategoryMapper {
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+public interface MenuItemCategoryMapper
+    extends ReadableMapper<MenuItemCategory, MenuItemCategoryResponse> {
 
-  public MenuItemCategoryResponse toResponseDTO(MenuItemCategory entity) {
-    if (entity == null) return null;
-    MenuItemCategoryResponse dto = new MenuItemCategoryResponse();
-    dto.setId(entity.getId());
-    dto.setName(entity.getName());
-    dto.setDescription(entity.getDescription());
-    if (entity.getType() != null) {
-      dto.setTypeId(entity.getType().getId());
-    }
-    return dto;
-  }
-
-  public MenuItemCategory toEntity(MenuItemCategoryCreateRequest dto, MenuItemType type) {
-    if (dto == null) return null;
-    MenuItemCategory entity = new MenuItemCategory();
-    entity.setName(dto.getName());
-    entity.setDescription(dto.getDescription());
-    entity.setType(type);
-    return entity;
-  }
-
-  public void updateEntityFromDTO(
-      MenuItemCategory entity, MenuItemCategoryUpdateRequest dto, MenuItemType type) {
-    if (dto == null) return;
-    entity.setName(dto.getName());
-    entity.setDescription(dto.getDescription());
-    entity.setType(type);
-  }
+  @Override
+  @Mapping(target = "typeId", source = "type.id")
+  @Mapping(target = "typeName", source = "type.name") // Mapping từ quan hệ MenuItemType
+  MenuItemCategoryResponse toResponse(MenuItemCategory entity);
 }

@@ -1,7 +1,7 @@
 package com.foodgo.backend.module.location.controller;
 
-import com.foodgo.backend.module.location.dto.CountryFilterRequest;
-import com.foodgo.backend.module.location.dto.CountryResponse;
+import com.foodgo.backend.module.location.dto.request.CountryFilterRequest;
+import com.foodgo.backend.module.location.dto.response.CountryResponse;
 import com.foodgo.backend.module.location.service.CountryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

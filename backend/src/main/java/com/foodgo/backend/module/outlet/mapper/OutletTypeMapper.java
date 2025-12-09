@@ -3,7 +3,6 @@ package com.foodgo.backend.module.outlet.mapper;
 import com.foodgo.backend.common.base.service.ReadableMapper;
 import com.foodgo.backend.module.outlet.dto.OutletTypeResponse;
 import com.foodgo.backend.module.outlet.entity.OutletType;
-import com.foodgo.backend.module.outlet.repository.projection.OutletTypeCountProjection;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 

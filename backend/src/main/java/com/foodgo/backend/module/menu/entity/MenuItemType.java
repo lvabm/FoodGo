@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "menu_item_type")
@@ -22,5 +23,5 @@ public class MenuItemType extends BaseIntegerEntity<Integer> {
 
   // 1. QUAN HỆ ONE - TO - MANY: MenuItemType <--> MenuItemCategory
   @OneToMany(mappedBy = "type", fetch = FetchType.LAZY)
-  private List<MenuItemCategory> menuItemCategories;
+  private Set<MenuItemCategory> menuItemCategories;
 }
