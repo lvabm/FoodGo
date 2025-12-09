@@ -7,10 +7,7 @@ import com.foodgo.backend.module.outlet.dto.response.OutletResponse;
 import com.foodgo.backend.module.outlet.entity.Outlet;
 import org.mapstruct.*;
 
-@Mapper(
-    componentModel = "spring",
-    unmappedTargetPolicy = ReportingPolicy.IGNORE,
-    nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 // Kế thừa BaseMapper cho CRUD
 public interface OutletMapper
     extends BaseMapper<Outlet, OutletRequest, OutletUpdateRequest, OutletResponse> {

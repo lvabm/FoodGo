@@ -9,7 +9,6 @@ import org.springframework.data.jpa.domain.Specification;
 import java.util.ArrayList;
 import java.util.List;
 
-// YÊU CẦU 11B: Specification/Criteria API
 public record OutletSearchSpecification(OutletFilterRequest request)
     implements Specification<Outlet> {
 
@@ -54,9 +53,9 @@ public record OutletSearchSpecification(OutletFilterRequest request)
         .ifPresent(
             featureIds -> {
               // Sử dụng Join qua bảng mapping OutletHasFeature (giả định tên trường là
-              // "outletHasFeatures")
+              // "outletFeatureMappings")
               Join<Outlet, OutletFeatureMapping> featureMappingJoin =
-                  root.join("outletHasFeatures", JoinType.INNER);
+                  root.join("outletFeatureMappings", JoinType.INNER);
               Join<OutletFeatureMapping, Object> featureJoin =
                   featureMappingJoin.join("feature", JoinType.INNER);
 

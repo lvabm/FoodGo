@@ -1,0 +1,22 @@
+package com.foodgo.backend.module.outlet.dto.mapper;
+
+import com.foodgo.backend.common.base.service.CreatableMapper;
+import com.foodgo.backend.common.base.service.ReadableMapper;
+import com.foodgo.backend.module.outlet.dto.request.OutletFeatureMappingRequest;
+import com.foodgo.backend.module.outlet.dto.response.OutletFeatureMappingResponse;
+import com.foodgo.backend.module.outlet.entity.OutletFeatureMapping;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.ReportingPolicy;
+
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+public interface OutletFeatureMappingMapper
+    extends CreatableMapper<OutletFeatureMapping, OutletFeatureMappingRequest>,
+        ReadableMapper<OutletFeatureMapping, OutletFeatureMappingResponse> {
+
+  @Override
+  @Mapping(target = "outletId", source = "outlet.id")
+  @Mapping(target = "featureId", source = "feature.id")
+  @Mapping(target = "featureName", source = "feature.name")
+  OutletFeatureMappingResponse toResponse(OutletFeatureMapping entity);
+}
