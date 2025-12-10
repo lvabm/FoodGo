@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 
-public record OutletRequest(
+public record OutletCreateRequest(
     @NotBlank @Size(max = 255) String name,
     String description,
     @NotBlank String address,
