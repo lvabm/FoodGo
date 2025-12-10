@@ -1,4 +1,4 @@
-package com.foodgo.backend.module.outlet.service.impl;
+package com.foodgo.backend.module.menu.service.impl;
 
 import com.foodgo.backend.common.base.mapper.BaseMapper;
 import com.foodgo.backend.common.base.service.BaseServiceImpl;
@@ -10,15 +10,15 @@ import com.foodgo.backend.module.menu.entity.MenuItem;
 import com.foodgo.backend.module.menu.entity.OutletMenuItem;
 import com.foodgo.backend.module.menu.repository.MenuItemRepository;
 import com.foodgo.backend.module.menu.repository.OutletMenuItemRepository;
-import com.foodgo.backend.module.outlet.dto.criteria.OutletMenuItemSearchSpecification;
-import com.foodgo.backend.module.outlet.dto.mapper.OutletMenuItemMapper;
-import com.foodgo.backend.module.outlet.dto.request.create.OutletMenuItemCreateRequest;
+import com.foodgo.backend.module.menu.dto.criteria.OutletMenuItemSearchSpecification;
+import com.foodgo.backend.module.menu.dto.mapper.OutletMenuItemMapper;
+import com.foodgo.backend.module.menu.dto.request.OutletMenuItemCreateRequest;
 import com.foodgo.backend.module.outlet.dto.request.filter.OutletMenuItemFilterRequest;
 import com.foodgo.backend.module.outlet.dto.request.update.OutletMenuItemUpdateRequest;
-import com.foodgo.backend.module.outlet.dto.response.OutletMenuItemResponse;
+import com.foodgo.backend.module.menu.dto.response.OutletMenuItemResponse;
 import com.foodgo.backend.module.outlet.entity.Outlet;
 import com.foodgo.backend.module.outlet.repository.OutletRepository;
-import com.foodgo.backend.module.outlet.service.OutletMenuItemService;
+import com.foodgo.backend.module.menu.service.OutletMenuItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -46,6 +46,7 @@ public class OutletMenuItemServiceImpl
   private final OutletMenuItemMapper outletMenuItemMapper;
   private final OutletRepository outletRepository;
   private final MenuItemRepository menuItemRepository;
+
   private final String outletMenuItemEntityName = EntityName.OUTLET_MENU_ITEM.getFriendlyName();
 
   // --- Abstract Methods ---

@@ -1,7 +1,8 @@
 package com.foodgo.backend.module.outlet.service.impl;
 
+import com.foodgo.backend.common.base.service.BaseMappingServiceImpl;
+import com.foodgo.backend.common.constant.EntityName;
 import com.foodgo.backend.common.context.SecurityContext;
-import com.foodgo.backend.common.context.SuccessMessageContext;
 import com.foodgo.backend.common.exception.ResourceNotFoundException;
 import com.foodgo.backend.module.outlet.dto.mapper.OutletFeatureMappingMapper;
 import com.foodgo.backend.module.outlet.dto.request.create.OutletFeatureMappingCreateRequest;
@@ -13,103 +14,120 @@ import com.foodgo.backend.module.outlet.repository.OutletFeatureMappingRepositor
 import com.foodgo.backend.module.outlet.repository.OutletFeatureRepository;
 import com.foodgo.backend.module.outlet.repository.OutletRepository;
 import com.foodgo.backend.module.outlet.service.OutletFeatureMappingService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class OutletFeatureMappingServiceImpl implements OutletFeatureMappingService {
+public class OutletFeatureMappingServiceImpl
+    extends BaseMappingServiceImpl<
+        Outlet,
+        OutletFeature,
+        OutletFeatureMapping,
+        OutletFeatureMappingCreateRequest,
+        OutletFeatureMappingResponse>
+    implements OutletFeatureMappingService {
 
   private final OutletFeatureMappingRepository mappingRepository;
   private final OutletRepository outletRepository;
   private final OutletFeatureRepository featureRepository;
   private final OutletFeatureMappingMapper mappingMapper;
 
-  private final String entityName = "Outlet Feature Mapping";
+  private final String outletFeatureMappingEntityName =
+      EntityName.OUTLET_FEATURE_MAPPING.getFriendlyName();
 
-  // --- Helper Logic (Security) ---
+  // --- Triển khai Abstract Methods từ BaseMappingServiceImpl ---
 
-  /** Kiểm tra quyền Owner/Admin của Outlet và trả về Outlet Entity */
-  private Outlet findOutletAndEnsurePermission(UUID outletId) {
+  @Override
+  protected Outlet findMainEntityAndEnsurePermission(Object mainEntityId) {
+    UUID outletId = (UUID) mainEntityId;
     Outlet outlet =
         outletRepository
             .findById(outletId)
-            .orElseThrow(() -> new ResourceNotFoundException("Outlet" + "id: " + outletId));
+            .orElseThrow(() -> new ResourceNotFoundException("Outlet" + " id: " + outletId));
 
     UUID currentUserId = SecurityContext.getCurrentUserId();
 
-    // 1. Admin Bypass
-    if (SecurityContext.isAdmin()) {
-      return outlet;
-    }
-
-    // 2. Ownership Check
+    if (SecurityContext.isAdmin()) return outlet;
     if (!outlet.getOwner().getId().equals(currentUserId)) {
-      throw new AccessDeniedException("Bạn không có quyền thao tác Outlet" + " id: " + outletId);
+      throw new ResourceNotFoundException("Outlet" + " id: " + outletId);
     }
     return outlet;
   }
 
-  private OutletFeature findFeatureOrThrow(Integer featureId) {
+  @Override
+  protected OutletFeature findExtendEntityOrThrow(Integer extendEntityId) {
     return featureRepository
-        .findById(featureId)
-        .orElseThrow(() -> new ResourceNotFoundException("OutletFeature" + " id: " + featureId));
+        .findById(extendEntityId)
+        .orElseThrow(
+            () -> new ResourceNotFoundException("OutletFeature" + " id " + extendEntityId));
   }
 
-  // ==================== I. ADD FEATURE (CREATE) ====================
-
   @Override
-  public OutletFeatureMappingResponse addFeatureToOutlet(
-      UUID outletId, OutletFeatureMappingCreateRequest request) {
-    // 1. Kiểm tra quyền sở hữu Outlet
-    Outlet outlet = findOutletAndEnsurePermission(outletId);
-
-    // 2. Kiểm tra sự tồn tại của Feature
-    OutletFeature feature = findFeatureOrThrow(request.featureId());
-
-    // 3. Kiểm tra trùng lặp
-    if (mappingRepository.existsByOutletIdAndFeatureId(outletId, request.featureId())) {
-      throw new IllegalArgumentException(String.format("Outlet %s đã có đặc điểm này.", outletId));
-    }
-
-    // 4. Mapping và Gán
-    OutletFeatureMapping mapping = mappingMapper.toEntity(request);
-    mapping.setOutlet(outlet);
-    mapping.setFeature(feature);
-
-    OutletFeatureMapping savedMapping = mappingRepository.save(mapping);
-
-    // HARD RULE: Success Message
-    SuccessMessageContext.setMessage(
-        String.format(SuccessMessageContext.CREATE_SUCCESS, entityName, savedMapping.getId()));
-
-    return mappingMapper.toResponse(savedMapping);
+  protected boolean existsMapping(Object mainEntityId, Integer extendEntityId) {
+    return mappingRepository.existsByOutletIdAndFeatureId((UUID) mainEntityId, extendEntityId);
   }
 
-  // ==================== II. REMOVE FEATURE (HARD DELETE) ====================
+  @Override
+  protected OutletFeatureMapping createMappingEntity(OutletFeatureMappingCreateRequest request) {
+    // MapStruct cho việc tạo Entity Mapping
+    return mappingMapper.toEntity(request);
+  }
 
   @Override
-  public void removeFeatureFromOutlet(UUID outletId, Integer featureId) {
-    // 1. Kiểm tra quyền sở hữu Outlet
-    findOutletAndEnsurePermission(outletId);
+  protected void setEntities(
+      OutletFeatureMapping mapping, Outlet mainEntity, OutletFeature extendEntity) {
+    mapping.setOutlet(mainEntity);
+    mapping.setFeature(extendEntity);
+  }
 
-    // 2. Tìm Mapping để xóa
-    OutletFeatureMapping mapping =
-        mappingRepository
-            .findByOutletIdAndFeatureId(outletId, featureId)
-            .orElseThrow(
-                () -> new ResourceNotFoundException(entityName + " featureId: " + featureId));
+  @Override
+  protected OutletFeatureMapping saveMapping(OutletFeatureMapping mapping) {
+    return mappingRepository.save(mapping);
+  }
 
-    // 3. Xóa
+  @Override
+  protected OutletFeatureMappingResponse toResponse(OutletFeatureMapping mapping) {
+    return mappingMapper.toResponse(mapping);
+  }
+
+  @Override
+  protected OutletFeatureMapping findMapping(Object mainEntityId, Integer extendEntityId) {
+    return mappingRepository
+        .findByOutletIdAndFeatureId((UUID) mainEntityId, extendEntityId)
+        .orElseThrow(
+            () -> new ResourceNotFoundException(getEntityName() + " featureId " + extendEntityId));
+  }
+
+  @Override
+  protected void deleteMapping(OutletFeatureMapping mapping) {
     mappingRepository.delete(mapping);
+  }
 
-    // HARD RULE: Success Message (Dùng Hard Delete Message)
-    SuccessMessageContext.setMessage(
-        String.format(SuccessMessageContext.HARD_DELETE_SUCCESS, entityName, featureId));
+  @Override
+  protected String getEntityName() {
+    return outletFeatureMappingEntityName;
+  }
+
+  @Override
+  protected Object getId(OutletFeatureMapping mapping) {
+    return mapping.getId();
+  }
+
+  @Override
+  protected Integer getExtendEntityId(OutletFeatureMappingCreateRequest request) {
+    return request.featureId();
+  }
+
+  @Override
+  protected List<OutletFeatureMapping> findAllMappingsByMainEntityId(Object mainEntityId) {
+    return mappingRepository.findAllByOutletId((UUID) mainEntityId);
   }
 }

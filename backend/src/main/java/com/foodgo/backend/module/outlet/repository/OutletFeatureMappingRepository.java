@@ -4,6 +4,7 @@ import com.foodgo.backend.module.outlet.entity.OutletFeatureMapping;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -16,4 +17,6 @@ public interface OutletFeatureMappingRepository
 
   // Kiểm tra sự tồn tại (tùy chọn)
   boolean existsByOutletIdAndFeatureId(UUID outletId, Integer featureId);
+
+  List<OutletFeatureMapping> findAllByOutletId(UUID outletId);
 }

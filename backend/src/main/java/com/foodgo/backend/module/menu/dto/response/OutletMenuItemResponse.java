@@ -1,4 +1,4 @@
-package com.foodgo.backend.module.outlet.dto.response;
+package com.foodgo.backend.module.menu.dto.response;
 
 import java.math.BigDecimal;
 import java.util.UUID;

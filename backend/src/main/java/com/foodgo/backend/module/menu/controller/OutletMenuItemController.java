@@ -1,10 +1,10 @@
-package com.foodgo.backend.module.outlet.controller;
+package com.foodgo.backend.module.menu.controller;
 
-import com.foodgo.backend.module.outlet.dto.request.create.OutletMenuItemCreateRequest;
+import com.foodgo.backend.module.menu.dto.request.OutletMenuItemCreateRequest;
 import com.foodgo.backend.module.outlet.dto.request.filter.OutletMenuItemFilterRequest;
 import com.foodgo.backend.module.outlet.dto.request.update.OutletMenuItemUpdateRequest;
-import com.foodgo.backend.module.outlet.dto.response.OutletMenuItemResponse;
-import com.foodgo.backend.module.outlet.service.OutletMenuItemService;
+import com.foodgo.backend.module.menu.dto.response.OutletMenuItemResponse;
+import com.foodgo.backend.module.menu.service.OutletMenuItemService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

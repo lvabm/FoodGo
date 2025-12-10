@@ -23,9 +23,10 @@ public class MenuItemCategoryServiceImpl
         MenuItemCategory, MenuItemCategoryResponse, Integer, MenuItemCategoryFilterRequest>
     implements MenuItemCategoryService {
 
-  private final String menuItemCategoryEntityName = EntityName.MENU_ITEM_CATEGORY.getFriendlyName();
   private final MenuItemCategoryRepository repository;
   private final MenuItemCategoryMapper mapper;
+
+  private final String menuItemCategoryEntityName = EntityName.MENU_ITEM_CATEGORY.getFriendlyName();
 
   // --- Triển khai các phương thức trừu tượng từ ReadOnlyServiceImpl ---
 

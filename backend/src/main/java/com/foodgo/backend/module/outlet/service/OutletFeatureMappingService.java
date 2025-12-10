@@ -1,16 +1,18 @@
 package com.foodgo.backend.module.outlet.service;
 
+import com.foodgo.backend.common.base.service.BaseMappingService;
 import com.foodgo.backend.module.outlet.dto.request.create.OutletFeatureMappingCreateRequest;
 import com.foodgo.backend.module.outlet.dto.response.OutletFeatureMappingResponse;
+import com.foodgo.backend.module.outlet.entity.Outlet;
+import com.foodgo.backend.module.outlet.entity.OutletFeature;
+import com.foodgo.backend.module.outlet.entity.OutletFeatureMapping;
 
 import java.util.UUID;
 
-public interface OutletFeatureMappingService {
-
-  // Thêm một Feature vào Outlet
-  OutletFeatureMappingResponse addFeatureToOutlet(
-      UUID outletId, OutletFeatureMappingCreateRequest request);
-
-  // Xóa một Feature khỏi Outlet (dùng hard delete cho bảng mapping)
-  void removeFeatureFromOutlet(UUID outletId, Integer featureId);
-}
+public interface OutletFeatureMappingService
+    extends BaseMappingService<
+        Outlet,
+        OutletFeature,
+        OutletFeatureMapping,
+        OutletFeatureMappingCreateRequest,
+        OutletFeatureMappingResponse> {}

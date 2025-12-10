@@ -40,12 +40,13 @@ public class OutletServiceImpl
         Outlet, OutletCreateRequest, OutletUpdateRequest, OutletFilterRequest, OutletResponse, UUID>
     implements OutletService {
 
-  private final String outletEntityName = EntityName.OUTLET.getFriendlyName();
   private final OutletRepository outletRepository;
   private final OutletMapper outletMapper;
   private final UserAccountRepository userAccountRepository; // Cần để tải Owner
   private final DistrictRepository districtRepository;
   private final OutletTypeRepository outletTypeRepository;
+
+  private final String outletEntityName = EntityName.OUTLET.getFriendlyName();
 
   // --- Abstract Methods ---
   @Override

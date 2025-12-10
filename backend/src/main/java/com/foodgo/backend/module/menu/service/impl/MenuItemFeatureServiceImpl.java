@@ -23,9 +23,10 @@ public class MenuItemFeatureServiceImpl
         MenuItemFeature, MenuItemFeatureResponse, Integer, MenuItemFeatureFilterRequest>
     implements MenuItemFeatureService {
 
-  private final String menuItemFeatureEntityName = EntityName.MENU_ITEM_FEATURE.getFriendlyName();
   private final MenuItemFeatureRepository repository;
   private final MenuItemFeatureMapper mapper;
+
+  private final String menuItemFeatureEntityName = EntityName.MENU_ITEM_FEATURE.getFriendlyName();
 
   // --- Triển khai các phương thức trừu tượng từ ReadOnlyServiceImpl ---
 

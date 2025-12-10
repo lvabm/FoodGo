@@ -23,9 +23,10 @@ public class MenuItemTypeServiceImpl
         MenuItemType, MenuItemTypeResponse, Integer, MenuItemTypeFilterRequest>
     implements MenuItemTypeService {
 
-  private final String menuItemTypeEntityName = EntityName.MENU_ITEM_TYPE.getFriendlyName();
   private final MenuItemTypeRepository repository;
   private final MenuItemTypeMapper mapper;
+
+  private final String menuItemTypeEntityName = EntityName.MENU_ITEM_TYPE.getFriendlyName();
 
   // --- Triển khai các phương thức trừu tượng từ ReadOnlyServiceImpl ---
 

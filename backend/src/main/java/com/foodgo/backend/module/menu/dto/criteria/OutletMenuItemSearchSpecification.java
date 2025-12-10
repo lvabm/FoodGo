@@ -1,4 +1,4 @@
-package com.foodgo.backend.module.outlet.dto.criteria;
+package com.foodgo.backend.module.menu.dto.criteria;
 
 import com.foodgo.backend.module.menu.entity.OutletMenuItem;
 import com.foodgo.backend.module.outlet.dto.request.filter.OutletMenuItemFilterRequest;

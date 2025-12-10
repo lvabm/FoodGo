@@ -22,9 +22,10 @@ public class OutletTypeServiceImpl
     extends ReadOnlyServiceImpl<OutletType, OutletTypeResponse, Integer, OutletTypeFilterRequest>
     implements OutletTypeService {
 
-  private final String outletTypeEntityName = EntityName.OUTLET_TYPE.getFriendlyName();
   private final OutletTypeRepository repository;
   private final OutletTypeMapper mapper;
+
+  private final String outletTypeEntityName = EntityName.OUTLET_TYPE.getFriendlyName();
 
   // --- Triển khai các phương thức trừu tượng từ ReadOnlyServiceImpl ---
 
