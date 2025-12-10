@@ -43,7 +43,15 @@ public class SecurityConfig {
         // 3. Phân quyền Request (Authorization)
         .authorizeHttpRequests(
             auth ->
-                auth.requestMatchers("/api/v1/auth/**").permitAll().anyRequest().authenticated())
+                auth.requestMatchers(
+                        "/api/v1/auth/**", // Đường dẫn hiện tại
+                        "/v3/api-docs/**", // Đường dẫn tài liệu OpenAPI
+                        "/swagger-ui/**", // Đường dẫn giao diện Swagger UI
+                        "/swagger-ui.html" // File HTML chính
+                        )
+                    .permitAll()
+                    .anyRequest()
+                    .authenticated())
         // 4. Cấu hình Provider
         .authenticationProvider(authenticationProvider())
         // 5. Xử lý Ngoại lệ (Authentication/Access Denied)

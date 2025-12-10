@@ -202,12 +202,12 @@ INSERT INTO menu_item_sub_category (id, category_id, name, description) VALUES (
 --========================================================
 --9. MENU_ITEM (Level 4): Biến thế của các món ăn hiện hữu
 --========================================================
-INSERT INTO menu_item (id, sub_category_id, province_id, name, description, is_popular) VALUES ('60000000-0000-0000-0000-000000000001', (SELECT id FROM menu_item_sub_category WHERE name = 'Phở'), (SELECT id FROM province WHERE name = 'Hồ Chí Minh'), 'Phở Bò Tái Gân', 'Phở được nấu từ xương bò 8 tiếng, kèm gân bò giòn', false);
-INSERT INTO menu_item (id, sub_category_id, province_id, name, description, is_popular) VALUES ('60000000-0000-0000-0000-000000000002', (SELECT id FROM menu_item_sub_category WHERE name = 'Nước Ngọt Có Ga'), (SELECT id FROM province WHERE name = 'Hồ Chí Minh'), 'Coca Cola Lon', 'Nước ngọt có ga Coca Cola dạng lon 330ml',true);
-INSERT INTO menu_item (id, sub_category_id, province_id, name, description, is_popular) VALUES ('60000000-0000-0000-0000-000000000003', (SELECT id FROM menu_item_sub_category WHERE name = 'Cơm Chiên'), (SELECT id FROM province WHERE name = 'Hồ Chí Minh'), 'Cơm Chiên Dương Châu Đặc Biệt', 'Cơm chiên tơi xốp với trứng, tôm, lạp xưởng', true);
-INSERT INTO menu_item (id, sub_category_id, province_id, name, description, is_popular) VALUES ('60000000-0000-0000-0000-000000000004', (SELECT id FROM menu_item_sub_category WHERE name = 'Trà Sữa'), (SELECT id FROM province WHERE name = 'Hồ Chí Minh'), 'Trà Sữa Trân Châu Đường Đen', 'Trà sữa thơm béo, trân châu dai giòn', true);
-INSERT INTO menu_item (id, sub_category_id, province_id, name, description, is_popular) VALUES ('60000000-0000-0000-0000-000000000005', (SELECT id FROM menu_item_sub_category WHERE name = 'Bánh Kem Mousse'), (SELECT id FROM province WHERE name = 'Hồ Chí Minh'), 'Bánh Mousse Chanh Leo', 'Bánh Mousse vị chanh leo chua ngọt, mát lạnh', false);
-INSERT INTO menu_item (id, sub_category_id, province_id, name, description, is_popular) VALUES ('60000000-0000-0000-0000-000000000006', (SELECT id FROM menu_item_sub_category WHERE name = 'Phở'), (SELECT id FROM province WHERE name = 'Hồ Chí Minh'), 'Phở Bò Viên Nước Trong', 'Phở truyền thống với thịt bò viên dai ngon và nước dùng trong', false);
+INSERT INTO menu_item (id, sub_category_id, province_id, name, description, is_popular, is_deleted) VALUES ('60000000-0000-0000-0000-000000000001', (SELECT id FROM menu_item_sub_category WHERE name = 'Phở'), (SELECT id FROM province WHERE name = 'Hồ Chí Minh'), 'Phở Bò Tái Gân', 'Phở được nấu từ xương bò 8 tiếng, kèm gân bò giòn', false, false);
+INSERT INTO menu_item (id, sub_category_id, province_id, name, description, is_popular, is_deleted) VALUES ('60000000-0000-0000-0000-000000000002', (SELECT id FROM menu_item_sub_category WHERE name = 'Nước Ngọt Có Ga'), (SELECT id FROM province WHERE name = 'Hồ Chí Minh'), 'Coca Cola Lon', 'Nước ngọt có ga Coca Cola dạng lon 330ml',true, false);
+INSERT INTO menu_item (id, sub_category_id, province_id, name, description, is_popular, is_deleted) VALUES ('60000000-0000-0000-0000-000000000003', (SELECT id FROM menu_item_sub_category WHERE name = 'Cơm Chiên'), (SELECT id FROM province WHERE name = 'Hồ Chí Minh'), 'Cơm Chiên Dương Châu Đặc Biệt', 'Cơm chiên tơi xốp với trứng, tôm, lạp xưởng', true, false);
+INSERT INTO menu_item (id, sub_category_id, province_id, name, description, is_popular, is_deleted) VALUES ('60000000-0000-0000-0000-000000000004', (SELECT id FROM menu_item_sub_category WHERE name = 'Trà Sữa'), (SELECT id FROM province WHERE name = 'Hồ Chí Minh'), 'Trà Sữa Trân Châu Đường Đen', 'Trà sữa thơm béo, trân châu dai giòn', true, false);
+INSERT INTO menu_item (id, sub_category_id, province_id, name, description, is_popular, is_deleted) VALUES ('60000000-0000-0000-0000-000000000005', (SELECT id FROM menu_item_sub_category WHERE name = 'Bánh Kem Mousse'), (SELECT id FROM province WHERE name = 'Hồ Chí Minh'), 'Bánh Mousse Chanh Leo', 'Bánh Mousse vị chanh leo chua ngọt, mát lạnh', false, false);
+INSERT INTO menu_item (id, sub_category_id, province_id, name, description, is_popular, is_deleted) VALUES ('60000000-0000-0000-0000-000000000006', (SELECT id FROM menu_item_sub_category WHERE name = 'Phở'), (SELECT id FROM province WHERE name = 'Hồ Chí Minh'), 'Phở Bò Viên Nước Trong', 'Phở truyền thống với thịt bò viên dai ngon và nước dùng trong', false, false);
 
 --========================================================
 --10. ROLE
@@ -340,12 +340,12 @@ INSERT INTO role_permission (id, role_id, permission_id) VALUES (43, (SELECT id 
 INSERT INTO role_permission (id, role_id, permission_id) VALUES (44, (SELECT id FROM role WHERE name = 'ROLE_SYSTEM_ADMIN'), (SELECT id FROM permission WHERE name = 'ADMIN:MANAGE_MENU_MASTER'));
 
 --========================================================
---13. USER_ACCOUNT
+--13. USER_ACCOUNT (Tạm dùng DevDataSeeder)
 --========================================================
-INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active, role_id) VALUES ('10000000-0000-0000-0000-000000000000', 'salvabm', '22022022', 'salvabm@foodgo.com', '0911295205', true, (SELECT id FROM role WHERE name = 'ROLE_SYSTEM_ADMIN'));
-INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active, role_id) VALUES ('10000000-0000-0000-0000-000000000001', 'admin1', 'plain_password_123', 'admin1@example.com', '0901234568', true, (SELECT id FROM role WHERE name = 'ROLE_ADMIN'));
-INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active, role_id) VALUES ('10000000-0000-0000-0000-000000000002', 'owner1', 'plain_password_123', 'owner1@example.com', '0901234587', true, (SELECT id FROM role WHERE name = 'ROLE_OWNER'));
-INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active, role_id) VALUES ('10000000-0000-0000-0000-000000000003', 'user1', 'plain_password_123', 'user1@example.com', '0901234569', true, (SELECT id FROM role WHERE name = 'ROLE_USER'));
+INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active, role_id) VALUES ('10000000-0000-0000-0000-000000000000', 'salvabm', 'PLAINTEXT_123', 'salvabm@foodgo.com', '0911295205', true, (SELECT id FROM role WHERE name = 'ROLE_SYSTEM_ADMIN'));
+INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active, role_id) VALUES ('10000000-0000-0000-0000-000000000001', 'admin1', 'PLAINTEXT_123', 'admin1@example.com', '0901234568', true, (SELECT id FROM role WHERE name = 'ROLE_ADMIN'));
+INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active, role_id) VALUES ('10000000-0000-0000-0000-000000000002', 'owner1', 'PLAINTEXT_123', 'owner1@example.com', '0901234587', true, (SELECT id FROM role WHERE name = 'ROLE_OWNER'));
+INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active, role_id) VALUES ('10000000-0000-0000-0000-000000000003', 'user1', 'PLAINTEXT_123', 'user1@example.com', '0901234569', true, (SELECT id FROM role WHERE name = 'ROLE_USER'));
 
 --========================================================
 --14. PROFILE
