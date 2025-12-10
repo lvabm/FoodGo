@@ -1,6 +1,8 @@
 package com.foodgo.backend.module.user.repository;
 
 import com.foodgo.backend.module.user.entity.UserAccount;
+
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -20,4 +22,7 @@ public interface UserAccountRepository
   Optional<UserAccount> findByEmail(String email);
 
   Boolean existsByEmail(String email);
+
+  /// Chỉ dùng findByPasswordHash cho PasswordUpdateRunner
+  List<UserAccount> findByPasswordHash(String passwordHash);
 }
