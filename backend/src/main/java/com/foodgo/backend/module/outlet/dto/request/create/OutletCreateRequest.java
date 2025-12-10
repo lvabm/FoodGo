@@ -1,4 +1,4 @@
-package com.foodgo.backend.module.outlet.dto.request;
+package com.foodgo.backend.module.outlet.dto.request.create;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

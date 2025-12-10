@@ -1,6 +1,6 @@
 package com.foodgo.backend.module.outlet.controller;
 
-import com.foodgo.backend.module.outlet.dto.request.OutletFeatureMappingCreateRequest;
+import com.foodgo.backend.module.outlet.dto.request.create.OutletFeatureMappingCreateRequest;
 import com.foodgo.backend.module.outlet.dto.response.OutletFeatureMappingResponse;
 import com.foodgo.backend.module.outlet.service.OutletFeatureMappingService;
 import io.swagger.v3.oas.annotations.Operation;

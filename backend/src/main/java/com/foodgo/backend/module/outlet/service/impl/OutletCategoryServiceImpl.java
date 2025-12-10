@@ -4,9 +4,9 @@ import com.foodgo.backend.common.base.service.ReadOnlyServiceImpl;
 import com.foodgo.backend.common.base.mapper.ReadableMapper;
 
 import com.foodgo.backend.common.constant.EntityName;
-import com.foodgo.backend.module.outlet.dto.criteria.OutletCategorySpecification;
+import com.foodgo.backend.module.outlet.dto.criteria.OutletCategorySearchSpecification;
 import com.foodgo.backend.module.outlet.dto.mapper.OutletCategoryMapper;
-import com.foodgo.backend.module.outlet.dto.request.OutletCategoryFilterRequest;
+import com.foodgo.backend.module.outlet.dto.request.filter.OutletCategoryFilterRequest;
 import com.foodgo.backend.module.outlet.dto.response.OutletCategoryResponse;
 import com.foodgo.backend.module.outlet.entity.OutletCategory;
 import com.foodgo.backend.module.outlet.repository.OutletCategoryRepository;
@@ -53,6 +53,6 @@ public class OutletCategoryServiceImpl
   // Triển khai logic Specification
   @Override
   protected Specification<OutletCategory> buildSpecification(OutletCategoryFilterRequest filter) {
-    return new OutletCategorySpecification(filter);
+    return new OutletCategorySearchSpecification(filter);
   }
 }

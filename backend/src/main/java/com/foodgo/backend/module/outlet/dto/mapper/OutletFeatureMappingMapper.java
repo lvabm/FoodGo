@@ -2,7 +2,7 @@ package com.foodgo.backend.module.outlet.dto.mapper;
 
 import com.foodgo.backend.common.base.mapper.CreatableMapper;
 import com.foodgo.backend.common.base.mapper.ReadableMapper;
-import com.foodgo.backend.module.outlet.dto.request.OutletFeatureMappingCreateRequest;
+import com.foodgo.backend.module.outlet.dto.request.create.OutletFeatureMappingCreateRequest;
 import com.foodgo.backend.module.outlet.dto.response.OutletFeatureMappingResponse;
 import com.foodgo.backend.module.outlet.entity.OutletFeatureMapping;
 import org.mapstruct.Mapper;

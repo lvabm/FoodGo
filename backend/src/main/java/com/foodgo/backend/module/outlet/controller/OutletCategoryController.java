@@ -1,6 +1,6 @@
 package com.foodgo.backend.module.outlet.controller;
 
-import com.foodgo.backend.module.outlet.dto.request.OutletCategoryFilterRequest;
+import com.foodgo.backend.module.outlet.dto.request.filter.OutletCategoryFilterRequest;
 import com.foodgo.backend.module.outlet.dto.response.OutletCategoryResponse;
 import com.foodgo.backend.module.outlet.service.OutletCategoryService;
 import io.swagger.v3.oas.annotations.Operation;

@@ -4,7 +4,7 @@ import com.foodgo.backend.common.context.SecurityContext;
 import com.foodgo.backend.common.context.SuccessMessageContext;
 import com.foodgo.backend.common.exception.ResourceNotFoundException;
 import com.foodgo.backend.module.outlet.dto.mapper.OutletFeatureMappingMapper;
-import com.foodgo.backend.module.outlet.dto.request.OutletFeatureMappingCreateRequest;
+import com.foodgo.backend.module.outlet.dto.request.create.OutletFeatureMappingCreateRequest;
 import com.foodgo.backend.module.outlet.dto.response.OutletFeatureMappingResponse;
 import com.foodgo.backend.module.outlet.entity.Outlet;
 import com.foodgo.backend.module.outlet.entity.OutletFeature;

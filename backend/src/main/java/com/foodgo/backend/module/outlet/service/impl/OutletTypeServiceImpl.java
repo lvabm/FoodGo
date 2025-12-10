@@ -3,8 +3,8 @@ package com.foodgo.backend.module.outlet.service.impl;
 import com.foodgo.backend.common.base.service.ReadOnlyServiceImpl;
 import com.foodgo.backend.common.base.mapper.ReadableMapper;
 import com.foodgo.backend.common.constant.EntityName;
-import com.foodgo.backend.module.outlet.dto.criteria.OutletTypeSpecification;
-import com.foodgo.backend.module.outlet.dto.request.OutletTypeFilterRequest;
+import com.foodgo.backend.module.outlet.dto.criteria.OutletTypeSearchSpecification;
+import com.foodgo.backend.module.outlet.dto.request.filter.OutletTypeFilterRequest;
 import com.foodgo.backend.module.outlet.dto.response.OutletTypeResponse;
 import com.foodgo.backend.module.outlet.entity.OutletType;
 import com.foodgo.backend.module.outlet.dto.mapper.OutletTypeMapper;
@@ -51,6 +51,6 @@ public class OutletTypeServiceImpl
   // Triển khai logic Specification
   @Override
   protected Specification<OutletType> buildSpecification(OutletTypeFilterRequest filter) {
-    return new OutletTypeSpecification(filter);
+    return new OutletTypeSearchSpecification(filter);
   }
 }

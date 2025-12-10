@@ -1,6 +1,6 @@
 package com.foodgo.backend.module.outlet.dto.criteria;
 
-import com.foodgo.backend.module.outlet.dto.request.OutletFilterRequest;
+import com.foodgo.backend.module.outlet.dto.request.filter.OutletFilterRequest;
 import com.foodgo.backend.module.outlet.entity.Outlet;
 import com.foodgo.backend.module.outlet.entity.OutletFeatureMapping;
 import jakarta.persistence.criteria.*;

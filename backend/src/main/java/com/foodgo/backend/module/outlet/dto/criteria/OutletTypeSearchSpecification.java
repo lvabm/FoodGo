@@ -1,6 +1,6 @@
 package com.foodgo.backend.module.outlet.dto.criteria;
 
-import com.foodgo.backend.module.outlet.dto.request.OutletTypeFilterRequest;
+import com.foodgo.backend.module.outlet.dto.request.filter.OutletTypeFilterRequest;
 import com.foodgo.backend.module.outlet.entity.OutletType;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -11,7 +11,7 @@ import org.springframework.data.jpa.domain.Specification;
 import java.util.ArrayList;
 import java.util.List;
 
-public record OutletTypeSpecification(OutletTypeFilterRequest filter)
+public record OutletTypeSearchSpecification(OutletTypeFilterRequest filter)
     implements Specification<OutletType> {
 
   @Override

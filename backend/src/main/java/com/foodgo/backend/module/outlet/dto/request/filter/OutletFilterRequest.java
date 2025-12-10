@@ -1,4 +1,4 @@
-package com.foodgo.backend.module.outlet.dto.request;
+package com.foodgo.backend.module.outlet.dto.request.filter;
 
 import java.util.List;
 import java.util.Optional;

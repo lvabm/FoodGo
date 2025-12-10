@@ -1,6 +1,6 @@
 package com.foodgo.backend.module.outlet.service;
 
-import com.foodgo.backend.module.outlet.dto.request.OutletFeatureMappingCreateRequest;
+import com.foodgo.backend.module.outlet.dto.request.create.OutletFeatureMappingCreateRequest;
 import com.foodgo.backend.module.outlet.dto.response.OutletFeatureMappingResponse;
 
 import java.util.UUID;

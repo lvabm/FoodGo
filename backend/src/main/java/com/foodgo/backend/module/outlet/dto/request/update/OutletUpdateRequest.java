@@ -1,4 +1,4 @@
-package com.foodgo.backend.module.outlet.dto.request;
+package com.foodgo.backend.module.outlet.dto.request.update;
 
 import java.math.BigDecimal;
 import java.util.Optional;

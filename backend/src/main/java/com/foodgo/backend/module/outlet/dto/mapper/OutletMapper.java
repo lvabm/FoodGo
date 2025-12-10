@@ -1,8 +1,8 @@
 package com.foodgo.backend.module.outlet.dto.mapper;
 
 import com.foodgo.backend.common.base.mapper.BaseMapper;
-import com.foodgo.backend.module.outlet.dto.request.OutletCreateRequest;
-import com.foodgo.backend.module.outlet.dto.request.OutletUpdateRequest;
+import com.foodgo.backend.module.outlet.dto.request.create.OutletCreateRequest;
+import com.foodgo.backend.module.outlet.dto.request.update.OutletUpdateRequest;
 import com.foodgo.backend.module.outlet.dto.response.OutletResponse;
 import com.foodgo.backend.module.outlet.entity.Outlet;
 import org.mapstruct.*;

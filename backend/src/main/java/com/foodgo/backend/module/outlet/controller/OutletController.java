@@ -1,8 +1,8 @@
 package com.foodgo.backend.module.outlet.controller;
 
-import com.foodgo.backend.module.outlet.dto.request.OutletCreateRequest;
-import com.foodgo.backend.module.outlet.dto.request.OutletFilterRequest;
-import com.foodgo.backend.module.outlet.dto.request.OutletUpdateRequest;
+import com.foodgo.backend.module.outlet.dto.request.create.OutletCreateRequest;
+import com.foodgo.backend.module.outlet.dto.request.filter.OutletFilterRequest;
+import com.foodgo.backend.module.outlet.dto.request.update.OutletUpdateRequest;
 import com.foodgo.backend.module.outlet.dto.response.OutletResponse;
 import com.foodgo.backend.module.outlet.service.OutletService;
 import io.swagger.v3.oas.annotations.Operation;
