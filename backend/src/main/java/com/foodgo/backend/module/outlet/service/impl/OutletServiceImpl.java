@@ -24,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -83,8 +84,8 @@ public class OutletServiceImpl
     // 2. Kiểm tra Ownership (Rule: Owner có thể modify own data)
     if (!entity.getOwner().getId().equals(currentUserId)) {
       // Ném lỗi 404 để ẩn thông tin về quyền sở hữu (Security by obscurity)
-      throw new ResourceNotFoundException(
-          getEntityName() + " không tìm thấy với ID: " + entity.getId());
+      throw new AccessDeniedException(
+          "Bạn không có quyền thao tác Outlet" + " id: " + entity.getId());
     }
   }
 
@@ -170,7 +171,6 @@ public class OutletServiceImpl
 
   @Override
   protected Specification<Outlet> buildSpecification(OutletFilterRequest filterRequest) {
-    // Giả định đã có OutletSearchSpecification
     return new OutletSearchSpecification(filterRequest);
   }
 }

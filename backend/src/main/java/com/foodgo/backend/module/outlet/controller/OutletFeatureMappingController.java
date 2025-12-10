@@ -1,7 +1,6 @@
 package com.foodgo.backend.module.outlet.controller;
 
-import com.foodgo.backend.common.context.SecurityContext;
-import com.foodgo.backend.module.outlet.dto.request.OutletFeatureMappingRequest;
+import com.foodgo.backend.module.outlet.dto.request.OutletFeatureMappingCreateRequest;
 import com.foodgo.backend.module.outlet.dto.response.OutletFeatureMappingResponse;
 import com.foodgo.backend.module.outlet.service.OutletFeatureMappingService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,24 +22,24 @@ public class OutletFeatureMappingController {
 
   private final OutletFeatureMappingService service;
 
+  // 1. ADD FEATURE (CREATE)
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   @Operation(
       summary = "Thêm đặc điểm (Feature) cho Outlet",
-      description = "Owner có thể gán một đặc điểm mới (ví dụ: 'Có Wifi') cho Outlet.")
+      description = "Owner/Admin có thể gán một đặc điểm mới (ví dụ: 'Có Wifi') cho Outlet.")
   public OutletFeatureMappingResponse addFeature(
-      @PathVariable UUID outletId, @Valid @RequestBody OutletFeatureMappingRequest request) {
-    UUID ownerId = SecurityContext.getCurrentUserId();
-    return service.addFeatureToOutlet(outletId, request, ownerId);
+      @PathVariable UUID outletId, @Valid @RequestBody OutletFeatureMappingCreateRequest request) {
+    return service.addFeatureToOutlet(outletId, request);
   }
 
+  // 2. REMOVE FEATURE (HARD DELETE - Dùng cho bảng mapping)
   @DeleteMapping("/{featureId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @Operation(
       summary = "Xóa đặc điểm (Feature) khỏi Outlet",
-      description = "Owner có thể loại bỏ một đặc điểm khỏi Outlet.")
+      description = "Owner/Admin có thể loại bỏ một đặc điểm khỏi Outlet.")
   public void removeFeature(@PathVariable UUID outletId, @PathVariable Integer featureId) {
-    UUID ownerId = SecurityContext.getCurrentUserId();
-    service.removeFeatureFromOutlet(outletId, featureId, ownerId);
+    service.removeFeatureFromOutlet(outletId, featureId);
   }
 }
