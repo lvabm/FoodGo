@@ -1,6 +1,6 @@
 package com.foodgo.backend.module.admin.service;
 
-import com.foodgo.backend.common.base.PageResponse;
+import com.foodgo.backend.common.base.dto.PageResponse;
 import com.foodgo.backend.module.admin.dto.outlet.OutletAdminDto;
 import com.foodgo.backend.module.outlet.dto.OutletResponse;
 import org.springframework.data.domain.Pageable;

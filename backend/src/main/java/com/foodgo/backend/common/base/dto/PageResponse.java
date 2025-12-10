@@ -1,4 +1,4 @@
-package com.foodgo.backend.common.base;
+package com.foodgo.backend.common.base.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,7 +1,7 @@
 package com.foodgo.backend.module.location.service.impl;
 
 import com.foodgo.backend.common.base.service.ReadOnlyServiceImpl;
-import com.foodgo.backend.common.base.service.ReadableMapper;
+import com.foodgo.backend.common.base.mapper.ReadableMapper;
 import com.foodgo.backend.common.constant.EntityName;
 import com.foodgo.backend.module.location.dto.criteria.DistrictSpecification;
 import com.foodgo.backend.module.location.dto.request.DistrictFilterRequest;

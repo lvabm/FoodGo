@@ -1,6 +1,6 @@
 package com.foodgo.backend.module.review.entity;
 
-import com.foodgo.backend.common.base.BaseUUIDEntity;
+import com.foodgo.backend.common.base.dto.BaseUUIDEntity;
 import com.foodgo.backend.module.booking.entity.Booking;
 import com.foodgo.backend.module.outlet.entity.Outlet;
 import com.foodgo.backend.module.user.entity.UserAccount;

@@ -1,6 +1,6 @@
 package com.foodgo.backend.module.location.dto.mapper;
 
-import com.foodgo.backend.common.base.service.ReadableMapper;
+import com.foodgo.backend.common.base.mapper.ReadableMapper;
 import com.foodgo.backend.module.location.dto.response.CountryResponse;
 import com.foodgo.backend.module.location.entity.Country;
 import org.mapstruct.Mapper;

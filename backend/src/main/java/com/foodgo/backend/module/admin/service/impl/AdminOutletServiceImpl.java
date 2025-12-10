@@ -1,6 +1,6 @@
 package com.foodgo.backend.module.admin.service.impl;
 
-import com.foodgo.backend.common.base.PageResponse;
+import com.foodgo.backend.common.base.dto.PageResponse;
 import com.foodgo.backend.module.admin.dto.outlet.OutletAdminDto;
 import com.foodgo.backend.module.admin.service.AdminOutletService;
 import com.foodgo.backend.module.outlet.dto.OutletResponse;

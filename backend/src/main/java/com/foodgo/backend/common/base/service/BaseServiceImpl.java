@@ -1,7 +1,8 @@
 package com.foodgo.backend.common.base.service;
 
-import com.foodgo.backend.common.base.BaseIntegerEntity;
-import com.foodgo.backend.common.base.BaseUUIDEntity;
+import com.foodgo.backend.common.base.dto.BaseIntegerEntity;
+import com.foodgo.backend.common.base.dto.BaseUUIDEntity;
+import com.foodgo.backend.common.base.mapper.BaseMapper;
 import com.foodgo.backend.common.exception.ResourceNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

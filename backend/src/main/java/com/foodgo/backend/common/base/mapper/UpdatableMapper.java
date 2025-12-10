@@ -1,4 +1,4 @@
-package com.foodgo.backend.common.base.service;
+package com.foodgo.backend.common.base.mapper;
 
 import org.mapstruct.BeanMapping;
 import org.mapstruct.MappingTarget;

@@ -1,7 +1,7 @@
 package com.foodgo.backend.module.menu.service.impl;
 
 import com.foodgo.backend.common.base.service.ReadOnlyServiceImpl;
-import com.foodgo.backend.common.base.service.ReadableMapper;
+import com.foodgo.backend.common.base.mapper.ReadableMapper;
 import com.foodgo.backend.common.constant.EntityName;
 import com.foodgo.backend.module.menu.dto.criteria.MenuItemFeatureSpecification;
 import com.foodgo.backend.module.menu.dto.mapper.MenuItemFeatureMapper;

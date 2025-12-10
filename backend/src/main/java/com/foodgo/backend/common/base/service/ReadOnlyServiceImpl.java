@@ -1,5 +1,6 @@
 package com.foodgo.backend.common.base.service;
 
+import com.foodgo.backend.common.base.mapper.ReadableMapper;
 import com.foodgo.backend.common.exception.ResourceNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

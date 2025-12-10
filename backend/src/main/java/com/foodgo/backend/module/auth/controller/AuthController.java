@@ -1,6 +1,6 @@
 package com.foodgo.backend.module.auth.controller;
 
-import com.foodgo.backend.common.base.BaseResponse;
+import com.foodgo.backend.common.base.dto.BaseResponse;
 import com.foodgo.backend.module.auth.dto.*;
 import com.foodgo.backend.module.auth.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;

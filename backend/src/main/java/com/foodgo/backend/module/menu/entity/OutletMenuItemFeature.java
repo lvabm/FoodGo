@@ -1,6 +1,6 @@
 package com.foodgo.backend.module.menu.entity;
 
-import com.foodgo.backend.common.base.BaseIntegerEntity;
+import com.foodgo.backend.common.base.dto.BaseIntegerEntity;
 import jakarta.persistence.*;
 import lombok.*;
 

@@ -1,4 +1,4 @@
-package com.foodgo.backend.common.base;
+package com.foodgo.backend.common.base.dto;
 
 import com.foodgo.backend.common.constant.ErrorCode;
 import lombok.Getter;
@@ -9,14 +9,11 @@ import org.springframework.http.HttpStatus;
 public class BaseException extends RuntimeException {
   private final ErrorCode errorCode;
   private final HttpStatus httpStatus;
-  @Setter
-  private String path;
-
+  @Setter private String path;
 
   public BaseException(ErrorCode errorCode, String message, HttpStatus httpStatus) {
     super(message);
     this.errorCode = errorCode;
     this.httpStatus = httpStatus;
   }
-
 }

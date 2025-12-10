@@ -1,16 +1,15 @@
 package com.foodgo.backend.module.outlet.entity;
 
-import com.foodgo.backend.common.base.BaseIntegerEntity;
+import com.foodgo.backend.common.base.dto.BaseIntegerEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalTime;
 
 @Entity
-@Table(name = "operating_hours",
-        uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"outlet_id", "day_of_week"})
-        })
+@Table(
+    name = "operating_hours",
+    uniqueConstraints = {@UniqueConstraint(columnNames = {"outlet_id", "day_of_week"})})
 @Getter
 @Setter
 @NoArgsConstructor

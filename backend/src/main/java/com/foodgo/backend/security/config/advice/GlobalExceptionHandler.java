@@ -1,6 +1,6 @@
 package com.foodgo.backend.security.config.advice;
 
-import com.foodgo.backend.common.base.ApiError;
+import com.foodgo.backend.common.base.dto.ApiError;
 import com.foodgo.backend.common.exception.BadRequestException;
 import com.foodgo.backend.common.exception.DataConflictException;
 import com.foodgo.backend.common.exception.ResourceNotFoundException;

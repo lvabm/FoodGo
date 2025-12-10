@@ -1,6 +1,6 @@
 package com.foodgo.backend.module.outlet.entity;
 
-import com.foodgo.backend.common.base.BaseIntegerEntity;
+import com.foodgo.backend.common.base.dto.BaseIntegerEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,7 +20,7 @@ public class OutletCategory extends BaseIntegerEntity<Integer> {
 
   // 1. QUAN HỆ MANY - TO - ONE: OutletType <--> OutletCategory
   // OutletCategory sở hữu quan hệ (fk_outlet_type_id_outlet_category)
-  @ManyToOne(fetch = FetchType.LAZY )
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "type_id", nullable = false)
   private OutletType type;
 }

@@ -1,21 +1,23 @@
-package com.foodgo.backend.common.base;
+package com.foodgo.backend.common.base.dto;
 
 import jakarta.persistence.*;
+import java.io.Serializable;
+import java.util.UUID;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.io.Serializable;
+import org.hibernate.annotations.UuidGenerator;
 
 @MappedSuperclass
 @Getter
 @Setter
 @EqualsAndHashCode(of = "id")
-public abstract class BaseIntegerEntity<ID extends Serializable> implements Serializable {
+public abstract class BaseUUIDEntity implements Serializable {
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @UuidGenerator(style = UuidGenerator.Style.AUTO)
   @Column(name = "id", updatable = false, nullable = false)
-  private ID id;
+  private UUID id;
 
   @Column(nullable = true)
   private Boolean isDeleted = false;

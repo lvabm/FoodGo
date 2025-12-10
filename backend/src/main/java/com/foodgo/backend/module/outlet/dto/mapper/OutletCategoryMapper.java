@@ -1,6 +1,6 @@
 package com.foodgo.backend.module.outlet.dto.mapper;
 
-import com.foodgo.backend.common.base.service.ReadableMapper;
+import com.foodgo.backend.common.base.mapper.ReadableMapper;
 import com.foodgo.backend.module.outlet.dto.response.OutletCategoryResponse;
 import com.foodgo.backend.module.outlet.entity.OutletCategory;
 import org.mapstruct.Mapper;

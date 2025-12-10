@@ -2,9 +2,9 @@ package com.foodgo.backend.security.config.advice;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.foodgo.backend.common.base.BaseResponse;
+import com.foodgo.backend.common.base.dto.BaseResponse;
 import com.foodgo.backend.common.context.SuccessMessageContext;
-import com.foodgo.backend.common.base.PageResponse;
+import com.foodgo.backend.common.base.dto.PageResponse;
 import org.springframework.core.MethodParameter;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;

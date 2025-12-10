@@ -1,6 +1,6 @@
 package com.foodgo.backend.module.user.controller;
 
-import com.foodgo.backend.common.base.BaseResponse;
+import com.foodgo.backend.common.base.dto.BaseResponse;
 import com.foodgo.backend.module.user.dto.AvatarUploadResponse;
 import com.foodgo.backend.module.user.dto.UpdateProfileRequest;
 import com.foodgo.backend.module.user.dto.UserResponse;

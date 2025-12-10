@@ -1,13 +1,14 @@
 package com.foodgo.backend.module.sharing.entity;
 
-import com.foodgo.backend.common.base.BaseIntegerEntity;
+import com.foodgo.backend.common.base.dto.BaseIntegerEntity;
 import com.foodgo.backend.module.user.entity.UserAccount;
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "sharing_list_collaborator", uniqueConstraints = {
-    @UniqueConstraint(columnNames = { "user_id", "sharing_list_id" }) })
+@Table(
+    name = "sharing_list_collaborator",
+    uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "sharing_list_id"})})
 @Getter
 @Setter
 @NoArgsConstructor

@@ -1,12 +1,13 @@
 package com.foodgo.backend.module.user.entity;
 
-import com.foodgo.backend.common.base.BaseIntegerEntity;
+import com.foodgo.backend.common.base.dto.BaseIntegerEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "role_permission", uniqueConstraints = {
-    @UniqueConstraint(columnNames = { "role_id", "permission_id" }) })
+@Table(
+    name = "role_permission",
+    uniqueConstraints = {@UniqueConstraint(columnNames = {"role_id", "permission_id"})})
 @Getter
 @Setter
 @NoArgsConstructor

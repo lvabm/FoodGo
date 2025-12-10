@@ -1,6 +1,6 @@
 package com.foodgo.backend.module.user.entity;
 
-import com.foodgo.backend.common.base.BaseUUIDEntity;
+import com.foodgo.backend.common.base.dto.BaseUUIDEntity;
 import com.foodgo.backend.module.auth.entity.RefreshToken;
 import com.foodgo.backend.module.booking.entity.Booking;
 import com.foodgo.backend.module.sharing.entity.SharingListCollaborator;
@@ -17,10 +17,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "user_account")
