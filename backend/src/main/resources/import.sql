@@ -420,12 +420,12 @@ INSERT INTO outlet_feature_mapping (id, outlet_id, feature_id) VALUES (4, (SELEC
 --========================================================
 --24. OUTLET_IMAGE
 --========================================================
-INSERT INTO outlet_image (id, outlet_id, image_url, display_order, is_primary) VALUES (1, (SELECT id FROM outlet WHERE name = 'Quán Phở Alice'), 'https://cdn.example.com/outlet/pho-owner1-1.jpg', 1, true);
+INSERT INTO outlet_image (id, outlet_id, image_url, display_order, is_primary, is_deleted) VALUES (1, (SELECT id FROM outlet WHERE name = 'Quán Phở Alice'), 'https://cdn.example.com/outlet/pho-owner1-1.jpg', 1, true, false);
 
 --========================================================
 --25. OPERATING_HOURS
 --========================================================
-INSERT INTO operating_hours (id, outlet_id, day_of_week, open_time, close_time, is_closed) VALUES (1, (SELECT id FROM outlet WHERE name = 'Quán Phở Alice'), 1, '07:00', '21:00', false);
+INSERT INTO operating_hours (id, outlet_id, day_of_week, open_time, close_time, is_closed, is_deleted) VALUES (1, (SELECT id FROM outlet WHERE name = 'Quán Phở Alice'), 1, '07:00', '21:00', false, false);
 
 --========================================================
 --26. OUTLET_MENU_ITEM
