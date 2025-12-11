@@ -1,8 +1,9 @@
-package com.foodgo.backend.common.base.service;
+package com.foodgo.backend.common.base.service.impl;
 
 import com.foodgo.backend.common.base.dto.BaseIntegerEntity;
 import com.foodgo.backend.common.base.dto.BaseUUIDEntity;
 import com.foodgo.backend.common.base.mapper.BaseMapper;
+import com.foodgo.backend.common.base.service.BaseService;
 import com.foodgo.backend.common.context.SuccessMessageContext;
 import com.foodgo.backend.common.exception.ResourceNotFoundException;
 import org.springframework.data.domain.Page;
@@ -18,8 +19,8 @@ import java.util.stream.Collectors;
 
 @Transactional(readOnly = true)
 public abstract class BaseServiceImpl<
-        Entity, CreateRequest, UpdateRequest, FilterRequest, Response, Id extends Serializable>
-    implements BaseService<CreateRequest, UpdateRequest, FilterRequest, Response, Id> {
+        Entity, Id extends Serializable, CreateRequest, UpdateRequest, FilterRequest, Response>
+    implements BaseService<Id, CreateRequest, UpdateRequest, FilterRequest, Response> {
 
   // ================= I. ABSTRACT =================
 
@@ -103,7 +104,6 @@ public abstract class BaseServiceImpl<
 
     afterUpdate(saved);
 
-    // 🔑 HARD RULE: Success Message
     SuccessMessageContext.setMessage(
         String.format(SuccessMessageContext.UPDATE_SUCCESS, getEntityName(), id));
 
@@ -115,7 +115,6 @@ public abstract class BaseServiceImpl<
   public Response getDetail(Id id) {
     // 1. Kết hợp Soft Delete Filter và Filter theo ID
     Specification<Entity> specById = (root, query, cb) -> cb.equal(root.get("id"), id);
-    // 🔑 KHẮC PHỤC: Dùng .and() để kết hợp Specification
     Specification<Entity> finalSpec = notDeletedSpec().and(specById);
 
     // 2. Tìm kiếm tường minh để có thể gán message
@@ -127,7 +126,6 @@ public abstract class BaseServiceImpl<
                     new ResourceNotFoundException(
                         getEntityName() + " không tìm thấy với ID: " + id));
 
-    // 🔑 HARD RULE: Success Message
     SuccessMessageContext.setMessage(
         String.format(SuccessMessageContext.FETCH_DETAIL_SUCCESS, getEntityName(), id));
 
@@ -140,7 +138,6 @@ public abstract class BaseServiceImpl<
     List<Entity> entities =
         getSpecRepository().findAll(notDeletedSpec()); // Áp dụng Soft Delete Filter
 
-    // 🔑 HARD RULE: Success Message
     SuccessMessageContext.setMessage(
         String.format(SuccessMessageContext.FETCH_SUCCESS, getEntityName()));
 
@@ -181,7 +178,6 @@ public abstract class BaseServiceImpl<
 
     Entity saved = getRepository().save(entity);
 
-    // 🔑 HARD RULE: Success Message
     SuccessMessageContext.setMessage(
         String.format(SuccessMessageContext.SOFT_DELETE_SUCCESS, getEntityName(), id));
 

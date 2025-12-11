@@ -1,6 +1,6 @@
 package com.foodgo.backend.module.outlet.service.impl;
 
-import com.foodgo.backend.common.base.service.BaseMappingServiceImpl;
+import com.foodgo.backend.common.base.service.impl.BaseMappingServiceImpl;
 import com.foodgo.backend.common.constant.EntityName;
 import com.foodgo.backend.common.context.SecurityContext;
 import com.foodgo.backend.common.exception.ResourceNotFoundException;
@@ -14,9 +14,7 @@ import com.foodgo.backend.module.outlet.repository.OutletFeatureMappingRepositor
 import com.foodgo.backend.module.outlet.repository.OutletFeatureRepository;
 import com.foodgo.backend.module.outlet.repository.OutletRepository;
 import com.foodgo.backend.module.outlet.service.OutletFeatureMappingService;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

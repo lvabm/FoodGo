@@ -1,8 +1,8 @@
 package com.foodgo.backend.module.outlet.service.impl;
 
-import com.foodgo.backend.common.base.service.ReadOnlyServiceImpl;
-import com.foodgo.backend.common.base.mapper.ReadableMapper;
+import com.foodgo.backend.common.base.mapper.BaseMapper;
 
+import com.foodgo.backend.common.base.service.impl.BaseServiceImpl;
 import com.foodgo.backend.common.constant.EntityName;
 import com.foodgo.backend.module.outlet.dto.criteria.OutletCategorySearchSpecification;
 import com.foodgo.backend.module.outlet.dto.mapper.OutletCategoryMapper;
@@ -20,8 +20,13 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class OutletCategoryServiceImpl
-    extends ReadOnlyServiceImpl<
-        OutletCategory, OutletCategoryResponse, Integer, OutletCategoryFilterRequest>
+    extends BaseServiceImpl<
+        OutletCategory,
+        Integer,
+        Object,
+        Object,
+        OutletCategoryFilterRequest,
+        OutletCategoryResponse>
     implements OutletCategoryService {
 
   private final String outletCategoryEntityName = EntityName.OUTLET_CATEGORY.getFriendlyName();
@@ -41,7 +46,7 @@ public class OutletCategoryServiceImpl
   }
 
   @Override
-  protected ReadableMapper<OutletCategory, OutletCategoryResponse> getMapper() {
+  protected BaseMapper<OutletCategory, Object, Object, OutletCategoryResponse> getMapper() {
     return mapper;
   }
 

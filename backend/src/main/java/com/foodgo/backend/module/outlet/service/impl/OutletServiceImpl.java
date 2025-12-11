@@ -1,7 +1,7 @@
 package com.foodgo.backend.module.outlet.service.impl;
 
 import com.foodgo.backend.common.base.mapper.BaseMapper;
-import com.foodgo.backend.common.base.service.BaseServiceImpl;
+import com.foodgo.backend.common.base.service.impl.BaseServiceImpl;
 import com.foodgo.backend.common.constant.EntityName;
 import com.foodgo.backend.common.context.SecurityContext;
 import com.foodgo.backend.common.context.SuccessMessageContext;
@@ -32,12 +32,9 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-// Kế thừa BaseServiceImpl: Entity=Outlet, Request/Update=OutletUpdateRequest,
-// Filter=OutletFilterRequest,
-// Response=OutletResponse, Id=UUID
 public class OutletServiceImpl
     extends BaseServiceImpl<
-        Outlet, OutletCreateRequest, OutletUpdateRequest, OutletFilterRequest, OutletResponse, UUID>
+        Outlet, UUID, OutletCreateRequest, OutletUpdateRequest, OutletFilterRequest, OutletResponse>
     implements OutletService {
 
   private final OutletRepository outletRepository;

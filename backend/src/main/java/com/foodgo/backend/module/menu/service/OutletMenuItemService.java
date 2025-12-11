@@ -8,10 +8,10 @@ import com.foodgo.backend.module.menu.dto.response.OutletMenuItemResponse;
 
 public interface OutletMenuItemService
     extends BaseService<
+        Integer,
         OutletMenuItemCreateRequest,
         OutletMenuItemUpdateRequest,
         OutletMenuItemFilterRequest,
-        OutletMenuItemResponse,
-        Integer> {
+        OutletMenuItemResponse> {
   OutletMenuItemResponse toggleAvailability(Integer itemId);
 }

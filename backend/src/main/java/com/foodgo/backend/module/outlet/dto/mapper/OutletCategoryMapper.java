@@ -1,6 +1,6 @@
 package com.foodgo.backend.module.outlet.dto.mapper;
 
-import com.foodgo.backend.common.base.mapper.ReadableMapper;
+import com.foodgo.backend.common.base.mapper.BaseMapper;
 import com.foodgo.backend.module.outlet.dto.response.OutletCategoryResponse;
 import com.foodgo.backend.module.outlet.entity.OutletCategory;
 import org.mapstruct.Mapper;
@@ -9,7 +9,7 @@ import org.mapstruct.ReportingPolicy;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface OutletCategoryMapper
-    extends ReadableMapper<OutletCategory, OutletCategoryResponse> {
+    extends BaseMapper<OutletCategory, Object, Object, OutletCategoryResponse> {
 
   @Override
   @Mapping(target = "typeId", source = "type.id")

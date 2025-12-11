@@ -1,7 +1,7 @@
 package com.foodgo.backend.module.location.service.impl;
 
-import com.foodgo.backend.common.base.service.ReadOnlyServiceImpl;
-import com.foodgo.backend.common.base.mapper.ReadableMapper;
+import com.foodgo.backend.common.base.mapper.BaseMapper;
+import com.foodgo.backend.common.base.service.impl.BaseServiceImpl;
 import com.foodgo.backend.common.constant.EntityName;
 import com.foodgo.backend.module.location.dto.criteria.CountrySpecification;
 import com.foodgo.backend.module.location.dto.request.CountryFilterRequest;
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class CountryServiceImpl
-    extends ReadOnlyServiceImpl<Country, CountryResponse, Integer, CountryFilterRequest>
+    extends BaseServiceImpl<Country, Integer, Object, Object, CountryFilterRequest, CountryResponse>
     implements CountryService {
 
   private final String countryEntityName = EntityName.COUNTRY.getFriendlyName();
@@ -39,7 +39,7 @@ public class CountryServiceImpl
   }
 
   @Override
-  protected ReadableMapper<Country, CountryResponse> getMapper() {
+  protected BaseMapper<Country, Object, Object, CountryResponse> getMapper() {
     return mapper;
   }
 

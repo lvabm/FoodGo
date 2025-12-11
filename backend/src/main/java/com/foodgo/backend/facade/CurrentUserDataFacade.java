@@ -1,109 +1,139 @@
 package com.foodgo.backend.facade;
 
 import com.foodgo.backend.common.context.SecurityContext;
+import com.foodgo.backend.module.booking.entity.Booking;
+import com.foodgo.backend.module.location.entity.Country;
+import com.foodgo.backend.module.notification.entity.Notification;
+import com.foodgo.backend.module.outlet.entity.Outlet;
+import com.foodgo.backend.module.review.entity.Review;
+import com.foodgo.backend.module.review.entity.ReviewReaction;
+import com.foodgo.backend.module.review.entity.ReviewReply;
+import com.foodgo.backend.module.review.entity.ReviewReport;
+import com.foodgo.backend.module.sharing.entity.SharingListCollaborator;
+import com.foodgo.backend.module.user.entity.Profile;
 import com.foodgo.backend.module.user.entity.UserAccount;
-import org.springframework.stereotype.Component;
+import com.foodgo.backend.module.user.repository.ProfileRepository;
+import com.foodgo.backend.module.user.repository.UserAccountRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+
+import java.util.Set;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
 public class CurrentUserDataFacade {
 
-  /**
-   * Lấy đối tượng UserAccount từ SecurityContext (đã được set trong JWT Filter để tránh truy vấn DB
-   * lặp lại)
-   */
-  private UserAccount getCurrentUser() {
-    return SecurityContext.getCurrentUserAccount();
+  private final UserAccountRepository userAccountRepository;
+  private final ProfileRepository profileRepository;
+
+  private UUID getUserId() {
+    return SecurityContext.getCurrentUserId();
   }
 
-  // ================================
-  // 1. ONE-TO-ONE: USER PROFILE
-  // ================================
+  // ============================================================
+  // USER ACCOUNT (WITH profile + country + role)
+  // ============================================================
 
-  /** Lấy thông tin Profile của user */
-  public Object getMyProfile() {
-    return getCurrentUser().getProfile();
+  public UserAccount getCurrentUser() {
+    return userAccountRepository
+        .findById(getUserId())
+        .orElseThrow(() -> new RuntimeException("Không tìm thấy User"));
   }
 
-  // ================================
-  // 2. ONE-TO-MANY: BOOKINGS
-  // ================================
+  // ============================================================
+  // PROFILE (WITH Country)
+  // ============================================================
 
-  /** Tất cả bookings của user */
-  public Object getMyBookings() {
-    return getCurrentUser().getBookings();
+  public Profile getMyProfile() {
+    return profileRepository.findByUserAccountId(getUserId()).orElse(null);
   }
 
-  // ================================
-  // 3. ONE-TO-MANY: REVIEWS
-  // ================================
+  // ============================================================
+  // BOOKINGS
+  // ============================================================
 
-  /** Tất cả reviews user đã tạo */
-  public Object getMyReviews() {
-    return getCurrentUser().getReviews();
+  public Set<Booking> getMyBookings() {
+    return userAccountRepository
+        .findWithBookingsById(getUserId())
+        .map(UserAccount::getBookings)
+        .orElse(Set.of());
   }
 
-  // ================================
-  // 4. ONE-TO-MANY: OUTLETS
-  // ================================
+  // ============================================================
+  // REVIEWS
+  // ============================================================
 
-  /** Các outlets user sở hữu */
-  public Object getMyOutlets() {
-    return getCurrentUser().getOutlets();
+  public Set<Review> getMyReviews() {
+    return userAccountRepository
+        .findWithReviewsById(getUserId())
+        .map(UserAccount::getReviews)
+        .orElse(Set.of());
   }
 
-  // ================================
-  // 5. ONE-TO-MANY: REVIEW REPLIES
-  // ================================
+  // ============================================================
+  // OUTLETS
+  // ============================================================
 
-  /** Các review replies user đã tạo */
-  public Object getMyReviewReplies() {
-    return getCurrentUser().getReviewReplies();
+  public Set<Outlet> getMyOutlets() {
+    return userAccountRepository
+        .findWithOutletsById(getUserId())
+        .map(UserAccount::getOutlets)
+        .orElse(Set.of());
   }
 
-  // ================================
-  // 6. ONE-TO-MANY: REVIEW REACTIONS
-  // ================================
+  // ============================================================
+  // REVIEW REPLIES
+  // ============================================================
 
-  /** Tất cả reaction của user vào các reviews */
-  public Object getMyReviewReactions() {
-    return getCurrentUser().getReviewReactions();
+  public Set<ReviewReply> getMyReviewReplies() {
+    return userAccountRepository
+        .findWithReviewRepliesById(getUserId())
+        .map(UserAccount::getReviewReplies)
+        .orElse(Set.of());
   }
 
-  // ================================
-  // 7. ONE-TO-MANY: REVIEW REPORTS
-  // ================================
+  // ============================================================
+  // REVIEW REACTIONS
+  // ============================================================
 
-  /** Danh sách report user đã gửi */
-  public Object getMyReviewReports() {
-    return getCurrentUser().getReviewReports();
+  public Set<ReviewReaction> getMyReviewReactions() {
+    return userAccountRepository
+        .findWithReviewReactionsById(getUserId())
+        .map(UserAccount::getReviewReactions)
+        .orElse(Set.of());
   }
 
-  // ================================
-  // 8. ONE-TO-MANY: NOTIFICATIONS
-  // ================================
+  // ============================================================
+  // REVIEW REPORTS
+  // ============================================================
 
-  /** Danh sách thông báo của user */
-  public Object getMyNotifications() {
-    return getCurrentUser().getNotifications();
+  public Set<ReviewReport> getMyReviewReports() {
+    return userAccountRepository
+        .findWithReviewReportsById(getUserId())
+        .map(UserAccount::getReviewReports)
+        .orElse(Set.of());
   }
 
-  // ================================
-  // 9. ONE-TO-MANY: MEMBERSHIPS
-  // ================================
+  // ============================================================
+  // NOTIFICATIONS
+  // ============================================================
 
-  /** Danh sách membership user tham gia */
-  public Object getMyMemberships() {
-    return getCurrentUser().getUserMemberships();
+  public Set<Notification> getMyNotifications() {
+    return userAccountRepository
+        .findWithNotificationsById(getUserId())
+        .map(UserAccount::getNotifications)
+        .orElse(Set.of());
   }
 
-  // ================================
-  // 10. ONE-TO-MANY: SHARING LIST COLLABORATORS
-  // ================================
+  // ============================================================
+  // SHARING LIST COLLABORATOR
+  // ============================================================
 
-  /** Danh sách sharing list mà user là collaborator */
-  public Object getMySharingListCollaborations() {
-    return getCurrentUser().getSharingListCollaborators();
+  public Set<SharingListCollaborator> getMySharingListCollaborations() {
+    return userAccountRepository
+        .findWithSharingListCollaboratorsById(getUserId())
+        .map(UserAccount::getSharingListCollaborators)
+        .orElse(Set.of());
   }
 }

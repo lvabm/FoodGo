@@ -1,4 +1,4 @@
-package com.foodgo.backend.module.user.mapper;
+package com.foodgo.backend.module.auth.dto.mapper;
 
 import com.foodgo.backend.module.auth.dto.RegisterRequest;
 import com.foodgo.backend.module.user.entity.Profile;
@@ -9,7 +9,7 @@ import org.mapstruct.ReportingPolicy;
     componentModel = "spring",
     unmappedTargetPolicy = ReportingPolicy.IGNORE // 🔑 Cấu hình quan trọng nhất!
     )
-public interface ProfileMapper {
+public interface AuthProfileMapper {
 
   Profile toEntity(RegisterRequest request);
 }

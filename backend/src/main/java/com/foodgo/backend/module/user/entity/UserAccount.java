@@ -18,7 +18,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "user_account")
@@ -51,7 +51,7 @@ public class UserAccount extends BaseUUIDEntity implements UserDetails {
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    return List.of(new SimpleGrantedAuthority(role.getName()));
+    return Set.of(new SimpleGrantedAuthority(role.getName()));
   }
 
   @Override
@@ -67,56 +67,56 @@ public class UserAccount extends BaseUUIDEntity implements UserDetails {
   // 2. QUAN HỆ ONE - TO - MANY: UserAccount <--> Booking
   // Booking sở hữu quan hệ (fk_user_account_id_booking)
   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  private List<Booking> bookings;
+  private Set<Booking> bookings;
 
   // 3. QUAN HỆ ONE - TO - MANY: UserAccount <--> Review
   // Review sở hữu quan hệ (fk_user_account_id_review)
   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  private List<Review> reviews;
+  private Set<Review> reviews;
 
   // 4. QUAN HỆ ONE - TO - MANY: UserAccount <--> PasswordResetToken
   // PasswordResetToken sở hữu quan hệ (fk_user_account_id_password_reset_token)
   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  private List<PasswordResetToken> passwordResetTokens;
+  private Set<PasswordResetToken> passwordResetTokens;
 
   // 5. QUAN HỆ ONE - TO - MANY: UserAccount <--> RefreshToken
   // RefreshToken sở hữu quan hệ (fk_user_account_id_refresh_token)
   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  private List<RefreshToken> refreshTokens;
+  private Set<RefreshToken> refreshTokens;
 
   // 6. QUAN HỆ ONE - TO - MANY: UserAccount <--> Outlet
   // Outlet sở hữu quan hệ (fk_user_account_id_outlet)
   @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  private List<Outlet> outlets;
+  private Set<Outlet> outlets;
 
   // 7. QUAN HỆ ONE - TO - MANY: UserAccount <--> ReviewReply
   // ReviewReply sở hữu quan hệ (fk_user_account_id_review_reply)
   @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  private List<ReviewReply> reviewReplies;
+  private Set<ReviewReply> reviewReplies;
 
   // 8. QUAN HỆ ONE - TO - MANY: UserAccount <--> ReviewReaction
   // ReviewReaction sở hữu quan hệ (fk_user_account_id_review_reaction)
   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  private List<ReviewReaction> reviewReactions;
+  private Set<ReviewReaction> reviewReactions;
 
   // 9. QUAN HỆ ONE - TO - MANY: UserAccount <--> ReviewReport
   // ReviewReport sở hữu quan hệ (fk_user_account_id_review_report)
   @OneToMany(mappedBy = "reporter", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  private List<ReviewReport> reviewReports;
+  private Set<ReviewReport> reviewReports;
 
   // 10. QUAN HỆ ONE - TO - MANY: UserAccount <--> Notification
   // Notification sở hữu quan hệ (fk_user_account_id_notification)
   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  private List<Notification> notifications;
+  private Set<Notification> notifications;
 
   // 11. QUAN HỆ ONE - TO - MANY: UserAccount <--> UserMembership
   // UserMembership sở hữu quan hệ (fk_user_account_id_user_membership)
   @OneToMany(mappedBy = "userAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  private List<UserMembership> userMemberships;
+  private Set<UserMembership> userMemberships;
 
   // 12. QUAN HỆ ONE - TO - MANY: UserAccount <--> SharingListCollaborator
   // SharingListCollaborator sở hữu quan hệ
   // (fk_user_account_id_sharing_list_collaborator)
   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  private List<SharingListCollaborator> sharingListCollaborators;
+  private Set<SharingListCollaborator> sharingListCollaborators;
 }

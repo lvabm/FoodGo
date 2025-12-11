@@ -25,4 +25,39 @@ public interface UserAccountRepository
 
   /// Chỉ dùng findByPasswordHash cho PasswordUpdateRunner
   List<UserAccount> findByPasswordHash(String passwordHash);
+
+  @EntityGraph(attributePaths = {"profile", "profile.country", "role"})
+  Optional<UserAccount> findById(UUID id);
+
+  // BOOKINGS
+  @EntityGraph(attributePaths = {"bookings"})
+  Optional<UserAccount> findWithBookingsById(UUID id);
+
+  // REVIEWS
+  @EntityGraph(attributePaths = {"reviews"})
+  Optional<UserAccount> findWithReviewsById(UUID id);
+
+  // OUTLETS
+  @EntityGraph(attributePaths = {"outlets"})
+  Optional<UserAccount> findWithOutletsById(UUID id);
+
+  // REVIEW REPLIES
+  @EntityGraph(attributePaths = {"reviewReplies"})
+  Optional<UserAccount> findWithReviewRepliesById(UUID id);
+
+  // REVIEW REACTIONS
+  @EntityGraph(attributePaths = {"reviewReactions"})
+  Optional<UserAccount> findWithReviewReactionsById(UUID id);
+
+  // REVIEW REPORTS
+  @EntityGraph(attributePaths = {"reviewReports"})
+  Optional<UserAccount> findWithReviewReportsById(UUID id);
+
+  // NOTIFICATIONS
+  @EntityGraph(attributePaths = {"notifications"})
+  Optional<UserAccount> findWithNotificationsById(UUID id);
+
+  // SHARING LIST COLLABORATIONS
+  @EntityGraph(attributePaths = {"sharingListCollaborators"})
+  Optional<UserAccount> findWithSharingListCollaboratorsById(UUID id);
 }

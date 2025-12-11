@@ -1,7 +1,7 @@
 package com.foodgo.backend.module.menu.service.impl;
 
-import com.foodgo.backend.common.base.service.ReadOnlyServiceImpl;
-import com.foodgo.backend.common.base.mapper.ReadableMapper;
+import com.foodgo.backend.common.base.mapper.BaseMapper;
+import com.foodgo.backend.common.base.service.impl.BaseServiceImpl;
 import com.foodgo.backend.common.constant.EntityName;
 import com.foodgo.backend.module.menu.dto.criteria.MenuItemSubCategorySpecification;
 import com.foodgo.backend.module.menu.dto.mapper.MenuItemSubCategoryMapper;
@@ -19,8 +19,13 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class MenuItemSubCategoryServiceImpl
-    extends ReadOnlyServiceImpl<
-        MenuItemSubCategory, MenuItemSubCategoryResponse, Integer, MenuItemSubCategoryFilterRequest>
+    extends BaseServiceImpl<
+        MenuItemSubCategory,
+        Integer,
+        Object,
+        Object,
+        MenuItemSubCategoryFilterRequest,
+        MenuItemSubCategoryResponse>
     implements MenuItemSubCategoryService {
 
   private final MenuItemSubCategoryRepository repository;
@@ -42,7 +47,8 @@ public class MenuItemSubCategoryServiceImpl
   }
 
   @Override
-  protected ReadableMapper<MenuItemSubCategory, MenuItemSubCategoryResponse> getMapper() {
+  protected BaseMapper<MenuItemSubCategory, Object, Object, MenuItemSubCategoryResponse>
+      getMapper() {
     return mapper;
   }
 

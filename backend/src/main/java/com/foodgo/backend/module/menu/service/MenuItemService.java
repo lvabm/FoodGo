@@ -10,8 +10,8 @@ import java.util.UUID;
 
 public interface MenuItemService
     extends BaseService<
+        UUID,
         MenuItemCreateRequest,
         MenuItemUpdateRequest,
         MenuItemFilterRequest,
-        MenuItemResponse,
-        UUID> {}
+        MenuItemResponse> {}

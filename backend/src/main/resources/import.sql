@@ -512,6 +512,8 @@ INSERT INTO notification (id, user_id, type, title, content, related_id, is_read
 --========================================================
 INSERT INTO advertisement (id, outlet_id, position, start_date, end_date, is_active) VALUES (1, (SELECT id FROM outlet WHERE name = 'Quán Phở Alice'), 'featured', CURRENT_DATE, CURRENT_DATE + INTERVAL '7 days', true);
 
+
+
 --================================================================================================================
 --================================================================================================================
 -- Các lệnh này đảm bảo Sequence trong DB được đồng bộ với ID lớn nhất hiện tại, tránh lỗi duplicate key.
@@ -610,3 +612,125 @@ SELECT setval(pg_get_serial_sequence('province', 'id'), (SELECT COALESCE(MAX(id)
 
 -- 🔑 31. District (INTEGER ID)
 SELECT setval(pg_get_serial_sequence('district', 'id'), (SELECT COALESCE(MAX(id), 0) FROM district) + 1, false);
+
+
+
+
+
+--================================================================================================================
+--================================================================================================================
+-- Các lệnh này đảm bảo is_deleted trong DB được đồng bộ là false
+--================================================================================================================
+--================================================================================================================
+
+
+-- 1. user_account
+UPDATE user_account SET is_deleted = FALSE WHERE is_deleted IS NULL;
+
+-- 2. profile
+UPDATE profile SET is_deleted = FALSE WHERE is_deleted IS NULL;
+
+-- 3. refresh_token
+UPDATE refresh_token SET is_deleted = FALSE WHERE is_deleted IS NULL;
+
+-- 4. password_reset_token
+UPDATE password_reset_token SET is_deleted = FALSE WHERE is_deleted IS NULL;
+
+-- 5. role
+UPDATE role SET is_deleted = FALSE WHERE is_deleted IS NULL;
+
+-- 6. permission
+UPDATE permission SET is_deleted = FALSE WHERE is_deleted IS NULL;
+
+-- 7. role_permission
+UPDATE role_permission SET is_deleted = FALSE WHERE is_deleted IS NULL;
+
+-- 8. sharing_list
+UPDATE sharing_list SET is_deleted = FALSE WHERE is_deleted IS NULL;
+
+-- 9. sharing_list_collaborator
+UPDATE sharing_list_collaborator SET is_deleted = FALSE WHERE is_deleted IS NULL;
+
+-- 10. outlet
+UPDATE outlet SET is_deleted = FALSE WHERE is_deleted IS NULL;
+
+-- 11. outlet_type
+UPDATE outlet_type SET is_deleted = FALSE WHERE is_deleted IS NULL;
+
+-- 12. outlet_category
+UPDATE outlet_category SET is_deleted = FALSE WHERE is_deleted IS NULL;
+
+-- 13. outlet_feature
+UPDATE outlet_feature SET is_deleted = FALSE WHERE is_deleted IS NULL;
+
+-- 14. outlet_feature_mapping
+UPDATE outlet_feature_mapping SET is_deleted = FALSE WHERE is_deleted IS NULL;
+
+-- 15. outlet_image
+UPDATE outlet_image SET is_deleted = FALSE WHERE is_deleted IS NULL;
+
+-- 16. operating_hours
+UPDATE operating_hours SET is_deleted = FALSE WHERE is_deleted IS NULL;
+
+-- 17. menu_item
+UPDATE menu_item SET is_deleted = FALSE WHERE is_deleted IS NULL;
+
+-- 18. menu_item_type
+UPDATE menu_item_type SET is_deleted = FALSE WHERE is_deleted IS NULL;
+
+-- 19. menu_item_category
+UPDATE menu_item_category SET is_deleted = FALSE WHERE is_deleted IS NULL;
+
+-- 20. menu_item_sub_category
+UPDATE menu_item_sub_category SET is_deleted = FALSE WHERE is_deleted IS NULL;
+
+-- 21. outlet_menu_item
+UPDATE outlet_menu_item SET is_deleted = FALSE WHERE is_deleted IS NULL;
+
+-- 22. menu_item_feature
+UPDATE menu_item_feature SET is_deleted = FALSE WHERE is_deleted IS NULL;
+
+-- 23. outlet_menu_item_feature
+UPDATE outlet_menu_item_feature SET is_deleted = FALSE WHERE is_deleted IS NULL;
+
+-- 24. booking
+UPDATE booking SET is_deleted = FALSE WHERE is_deleted IS NULL;
+
+-- 25. payment
+UPDATE payment SET is_deleted = FALSE WHERE is_deleted IS NULL;
+
+-- 26. review
+UPDATE review SET is_deleted = FALSE WHERE is_deleted IS NULL;
+
+-- 27. review_image
+UPDATE review_image SET is_deleted = FALSE WHERE is_deleted IS NULL;
+
+-- 28. review_reply
+UPDATE review_reply SET is_deleted = FALSE WHERE is_deleted IS NULL;
+
+-- 29. review_reaction
+UPDATE review_reaction SET is_deleted = FALSE WHERE is_deleted IS NULL;
+
+-- 30. review_report
+UPDATE review_report SET is_deleted = FALSE WHERE is_deleted IS NULL;
+
+-- 31. notification
+UPDATE notification SET is_deleted = FALSE WHERE is_deleted IS NULL;
+
+-- 32. membership_plan
+UPDATE membership_plan SET is_deleted = FALSE WHERE is_deleted IS NULL;
+
+-- 33. user_membership
+UPDATE user_membership SET is_deleted = FALSE WHERE is_deleted IS NULL;
+
+-- 34. advertisement
+UPDATE advertisement SET is_deleted = FALSE WHERE is_deleted IS NULL;
+
+-- 35. country
+UPDATE country SET is_deleted = FALSE WHERE is_deleted IS NULL;
+
+-- 36. province
+UPDATE province SET is_deleted = FALSE WHERE is_deleted IS NULL;
+
+-- 37. district
+UPDATE district SET is_deleted = FALSE WHERE is_deleted IS NULL;

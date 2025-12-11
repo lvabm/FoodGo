@@ -11,4 +11,4 @@ import java.util.UUID;
 // Kế thừa BaseService cho Full CRUD
 public interface OutletService
     extends BaseService<
-        OutletCreateRequest, OutletUpdateRequest, OutletFilterRequest, OutletResponse, UUID> {}
+        UUID, OutletCreateRequest, OutletUpdateRequest, OutletFilterRequest, OutletResponse> {}

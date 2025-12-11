@@ -1,25 +1,13 @@
 package com.foodgo.backend.common.base.service;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import java.io.Serializable;
 
-import java.util.List;
-
-public interface BaseService<CreateRequest, UpdateRequest, FilterRequest, Response, Id> {
-
-  Response create(CreateRequest createRequest);
-
-  Response update(Id id, UpdateRequest updateRequest);
-
-  Response getDetail(Id id);
-
-  List<Response> getAll();
-
-  Page<Response> getPage(FilterRequest filterRequest, Pageable pageable);
-
-  Response softDelete(Id id);
-
-  void hardDelete(Id id);
+public interface BaseService<
+        Id extends Serializable, CreateRequest, UpdateRequest, FilterRequest, Response>
+    extends CreatableService<CreateRequest, Response>,
+        UpdatableService<Id, UpdateRequest, Response>,
+        ReadableService<Id, FilterRequest, Response>,
+        DeletableService<Id, Response> {
 
   boolean existsById(Id id);
 }

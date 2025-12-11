@@ -1,4 +1,4 @@
-package com.foodgo.backend.module.user.mapper;
+package com.foodgo.backend.module.admin.dto.mapper;
 
 import com.foodgo.backend.module.admin.dto.user.UserAdminResponse;
 import com.foodgo.backend.module.auth.dto.LoginRequest;
@@ -12,7 +12,7 @@ import org.mapstruct.ReportingPolicy;
     componentModel = "spring",
     unmappedTargetPolicy = ReportingPolicy.IGNORE // 🔑 Cấu hình quan trọng nhất!
     )
-public interface UserAccountMapper {
+public interface AdminUserAccountMapper {
 
   UserAccount toEntity(RegisterRequest request);
 

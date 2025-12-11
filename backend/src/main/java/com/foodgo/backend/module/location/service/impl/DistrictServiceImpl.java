@@ -1,7 +1,7 @@
 package com.foodgo.backend.module.location.service.impl;
 
-import com.foodgo.backend.common.base.service.ReadOnlyServiceImpl;
-import com.foodgo.backend.common.base.mapper.ReadableMapper;
+import com.foodgo.backend.common.base.mapper.BaseMapper;
+import com.foodgo.backend.common.base.service.impl.BaseServiceImpl;
 import com.foodgo.backend.common.constant.EntityName;
 import com.foodgo.backend.module.location.dto.criteria.DistrictSpecification;
 import com.foodgo.backend.module.location.dto.request.DistrictFilterRequest;
@@ -19,7 +19,8 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class DistrictServiceImpl
-    extends ReadOnlyServiceImpl<District, DistrictResponse, Integer, DistrictFilterRequest>
+    extends BaseServiceImpl<
+        District, Integer, Object, Object, DistrictFilterRequest, DistrictResponse>
     implements DistrictService {
 
   private final String districEntityName = EntityName.DISTRICT.getFriendlyName();
@@ -40,7 +41,7 @@ public class DistrictServiceImpl
   }
 
   @Override
-  protected ReadableMapper<District, DistrictResponse> getMapper() {
+  protected BaseMapper<District, Object, Object, DistrictResponse> getMapper() {
     return mapper;
   }
 

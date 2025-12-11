@@ -1,6 +1,6 @@
 package com.foodgo.backend.module.menu.service.impl;
 
-import com.foodgo.backend.common.base.service.BaseMappingServiceImpl;
+import com.foodgo.backend.common.base.service.impl.BaseMappingServiceImpl;
 import com.foodgo.backend.common.constant.EntityName;
 import com.foodgo.backend.common.context.SecurityContext;
 import com.foodgo.backend.common.exception.ResourceNotFoundException;

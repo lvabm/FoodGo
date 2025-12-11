@@ -1,8 +1,8 @@
 package com.foodgo.backend.module.location.service.impl;
 
-import com.foodgo.backend.common.base.service.ReadOnlyServiceImpl;
-import com.foodgo.backend.common.base.mapper.ReadableMapper;
+import com.foodgo.backend.common.base.mapper.BaseMapper;
 
+import com.foodgo.backend.common.base.service.impl.BaseServiceImpl;
 import com.foodgo.backend.common.constant.EntityName;
 import com.foodgo.backend.module.location.dto.criteria.ProvinceSpecification;
 import com.foodgo.backend.module.location.dto.request.ProvinceFilterRequest;
@@ -20,7 +20,8 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class ProvinceServiceImpl
-    extends ReadOnlyServiceImpl<Province, ProvinceResponse, Integer, ProvinceFilterRequest>
+    extends BaseServiceImpl<
+        Province, Integer, Object, Object, ProvinceFilterRequest, ProvinceResponse>
     implements ProvinceService {
 
   private final String provinceEntityName = EntityName.PROVINCE.getFriendlyName();
@@ -40,7 +41,7 @@ public class ProvinceServiceImpl
   }
 
   @Override
-  protected ReadableMapper<Province, ProvinceResponse> getMapper() {
+  protected BaseMapper<Province, Object, Object, ProvinceResponse> getMapper() {
     return mapper;
   }
 

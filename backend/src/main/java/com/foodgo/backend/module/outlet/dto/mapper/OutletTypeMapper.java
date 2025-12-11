@@ -1,5 +1,6 @@
 package com.foodgo.backend.module.outlet.dto.mapper;
 
+import com.foodgo.backend.common.base.mapper.BaseMapper;
 import com.foodgo.backend.common.base.mapper.ReadableMapper;
 import com.foodgo.backend.module.outlet.dto.response.OutletTypeResponse;
 import com.foodgo.backend.module.outlet.entity.OutletType;
@@ -10,4 +11,5 @@ import org.mapstruct.ReportingPolicy;
     componentModel = "spring",
     unmappedTargetPolicy = ReportingPolicy.IGNORE // 🔑 Cấu hình quan trọng nhất!
     )
-public interface OutletTypeMapper extends ReadableMapper<OutletType, OutletTypeResponse> {}
+public interface OutletTypeMapper
+    extends BaseMapper<OutletType, Object, Object, OutletTypeResponse> {}

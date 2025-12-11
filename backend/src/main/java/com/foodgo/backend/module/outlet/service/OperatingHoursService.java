@@ -8,8 +8,8 @@ import com.foodgo.backend.module.outlet.dto.response.OperatingHoursResponse;
 
 public interface OperatingHoursService
     extends BaseService<
+        Integer,
         OperatingHoursCreateRequest,
         OperatingHoursUpdateRequest,
         OperatingHoursFilterRequest,
-        OperatingHoursResponse,
-        Integer> {}
+        OperatingHoursResponse> {}

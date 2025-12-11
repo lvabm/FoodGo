@@ -9,7 +9,7 @@ import com.foodgo.backend.module.admin.dto.user.UserAdminResponse;
 import com.foodgo.backend.module.admin.dto.user.UserFilterRequest;
 import com.foodgo.backend.module.admin.service.AdminUserService;
 import com.foodgo.backend.module.user.entity.UserAccount;
-import com.foodgo.backend.module.user.mapper.UserAccountMapper;
+import com.foodgo.backend.module.admin.dto.mapper.AdminUserAccountMapper;
 import com.foodgo.backend.module.user.repository.RoleRepository;
 import com.foodgo.backend.module.user.repository.UserAccountRepository;
 import jakarta.persistence.criteria.JoinType;
@@ -36,7 +36,7 @@ public class AdminUserServiceImpl implements AdminUserService {
   private final UserAccountRepository userAccountRepository;
   private final RoleRepository roleRepository;
 
-  private final UserAccountMapper userAccountMapper;
+  private final AdminUserAccountMapper adminUserAccountMapper;
 
   public Page<UserAdminResponse> getUsers(UserFilterRequest filter, Pageable pageable) {
 
@@ -48,7 +48,8 @@ public class AdminUserServiceImpl implements AdminUserService {
 
     // 3. Mapping nội dung (Content)
     // Sử dụng phương thức map() của Page để mapping mà không làm mất thông tin phân trang
-    Page<UserAdminResponse> userAdminResponsePage = userPage.map(userAccountMapper::toUserAdminDto);
+    Page<UserAdminResponse> userAdminResponsePage =
+        userPage.map(adminUserAccountMapper::toUserAdminDto);
 
     // 4. Đặt Message vào Context
     SuccessMessageContext.setMessage(
@@ -74,7 +75,7 @@ public class AdminUserServiceImpl implements AdminUserService {
             userAccountEntityName,
             userAccount.getId()));
 
-    return userAccountMapper.toUserAdminDto(userAccount);
+    return adminUserAccountMapper.toUserAdminDto(userAccount);
   }
 
   @Override
@@ -95,7 +96,7 @@ public class AdminUserServiceImpl implements AdminUserService {
         String.format(
             SuccessMessageContext.UPDATE_SUCCESS, userAccountEntityName, savedUser.getId()));
 
-    return userAccountMapper.toUserAdminDto(savedUser);
+    return adminUserAccountMapper.toUserAdminDto(savedUser);
   }
 
   @Override
@@ -126,7 +127,7 @@ public class AdminUserServiceImpl implements AdminUserService {
         String.format(
             SuccessMessageContext.UPDATE_SUCCESS, userAccountEntityName, savedUser.getId()));
 
-    return userAccountMapper.toUserAdminDto(savedUser);
+    return adminUserAccountMapper.toUserAdminDto(savedUser);
   }
 
   @Override
@@ -146,7 +147,7 @@ public class AdminUserServiceImpl implements AdminUserService {
         String.format(
             SuccessMessageContext.SOFT_DELETE_SUCCESS, userAccountEntityName, savedUser.getId()));
 
-    return userAccountMapper.toUserAdminDto(savedUser);
+    return adminUserAccountMapper.toUserAdminDto(savedUser);
   }
 
   public static class UserSpecification {

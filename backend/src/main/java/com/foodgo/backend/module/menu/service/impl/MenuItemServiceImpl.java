@@ -1,7 +1,7 @@
 package com.foodgo.backend.module.menu.service.impl;
 
 import com.foodgo.backend.common.base.mapper.BaseMapper;
-import com.foodgo.backend.common.base.service.BaseServiceImpl;
+import com.foodgo.backend.common.base.service.impl.BaseServiceImpl;
 import com.foodgo.backend.common.constant.EntityName;
 import com.foodgo.backend.common.context.SecurityContext;
 import com.foodgo.backend.common.context.SuccessMessageContext;
@@ -32,11 +32,11 @@ import java.util.UUID;
 public class MenuItemServiceImpl
     extends BaseServiceImpl<
         MenuItem,
+        UUID,
         MenuItemCreateRequest,
         MenuItemUpdateRequest,
         MenuItemFilterRequest,
-        MenuItemResponse,
-        UUID>
+        MenuItemResponse>
     implements com.foodgo.backend.module.menu.service.MenuItemService {
 
   private final MenuItemRepository menuItemRepository;

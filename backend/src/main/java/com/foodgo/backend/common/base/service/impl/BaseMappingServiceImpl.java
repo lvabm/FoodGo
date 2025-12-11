@@ -1,7 +1,8 @@
-package com.foodgo.backend.common.base.service;
+package com.foodgo.backend.common.base.service.impl;
 
 import java.util.List;
 
+import com.foodgo.backend.common.base.service.BaseMappingService;
 import com.foodgo.backend.common.context.SuccessMessageContext;
 import org.springframework.transaction.annotation.Transactional;
 

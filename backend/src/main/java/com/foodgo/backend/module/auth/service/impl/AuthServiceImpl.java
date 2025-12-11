@@ -1,16 +1,15 @@
 package com.foodgo.backend.module.auth.service.impl;
 
-import com.foodgo.backend.common.constant.EntityName;
 import com.foodgo.backend.common.constant.RoleType;
 import com.foodgo.backend.common.context.SuccessMessageContext;
 import com.foodgo.backend.common.exception.BadRequestException;
 import com.foodgo.backend.common.exception.DataConflictException;
 import com.foodgo.backend.module.auth.dto.*;
 import com.foodgo.backend.module.auth.service.AuthService;
+import com.foodgo.backend.module.auth.dto.mapper.AuthProfileMapper;
 import com.foodgo.backend.security.jwt.JwtService;
 import com.foodgo.backend.module.user.entity.UserAccount;
-import com.foodgo.backend.module.user.mapper.ProfileMapper;
-import com.foodgo.backend.module.user.mapper.UserAccountMapper;
+import com.foodgo.backend.module.admin.dto.mapper.AdminUserAccountMapper;
 import com.foodgo.backend.module.user.repository.RoleRepository;
 import com.foodgo.backend.module.user.repository.UserAccountRepository;
 import com.foodgo.backend.common.util.RandomUtils;
@@ -35,8 +34,8 @@ public class AuthServiceImpl implements AuthService {
   private final UserAccountRepository userAccountRepository;
   private final RoleRepository roleRepository;
 
-  private final UserAccountMapper userAccountMapper;
-  private final ProfileMapper profileMapper;
+  private final AdminUserAccountMapper adminUserAccountMapper;
+  private final AuthProfileMapper authProfileMapper;
 
   @Override
   @Transactional
@@ -55,8 +54,8 @@ public class AuthServiceImpl implements AuthService {
             .orElseThrow(
                 () -> new DataConflictException("Role mặc định (ROLE_USER) không tồn tại."));
 
-    var userAccount = userAccountMapper.toEntity(request);
-    var profile = profileMapper.toEntity(request);
+    var userAccount = adminUserAccountMapper.toEntity(request);
+    var profile = authProfileMapper.toEntity(request);
 
     userAccount.setUsername(RandomUtils.generateUniqueUsername());
     userAccount.setPasswordHash(passwordEncoder.encode(request.plainTextPassword()));
