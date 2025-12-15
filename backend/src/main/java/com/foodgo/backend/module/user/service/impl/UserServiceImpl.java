@@ -1,23 +1,9 @@
-<<<<<<<< HEAD:backend/src/main/java/com/foodgo/backend/module/user/service/impl/UserServiceImpl.java
 package com.foodgo.backend.module.user.service.impl;
 
 import com.foodgo.backend.module.user.dto.*;
 import com.foodgo.backend.module.user.repository.UserAccountRepository;
 import com.foodgo.backend.module.user.service.UserService;
-========
-<<<<<<<< HEAD:backend/src/main/java/com/foodgo/backend/module/user/service/UserServiceImpl.java
-package com.foodgo.backend.module.user.service;
 
-import com.foodgo.backend.module.user.dto.*;
-import com.foodgo.backend.module.user.repository.UserAccountRepository;
-========
-package com.foodgo.backend.module.user.service.impl;
-
-import com.foodgo.backend.module.user.dto.*;
-import com.foodgo.backend.module.user.repository.UserAccountRepository;
-import com.foodgo.backend.module.user.service.UserService;
->>>>>>>> develop_v2:backend/src/main/java/com/foodgo/backend/module/user/service/impl/UserServiceImpl.java
->>>>>>>> 0f2c0e1 (Version 1.0):backend/src/main/java/com/foodgo/backend/module/user/service/UserServiceImpl.java
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
