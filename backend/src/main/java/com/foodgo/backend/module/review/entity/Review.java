@@ -46,8 +46,9 @@ public class Review extends BaseUUIDEntity {
 
   // 1. QUAN HỆ ONE-TO-ONE: Review <--> Booking
   // Review sở hữu quan hệ (fk_booking_id_review)
+  // HARD CONSTRAINT: Review phải gắn với Booking
   @OneToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "booking_id")
+  @JoinColumn(name = "booking_id", nullable = false)
   private Booking booking;
 
   // 2. QUAN HỆ MANY - TO - ONE: UserAccount <--> Review
