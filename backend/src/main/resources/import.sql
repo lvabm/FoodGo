@@ -472,7 +472,8 @@ INSERT INTO outlet_menu_item_feature (id, outlet_menu_item_id, feature_id, value
 --========================================================
 --29. BOOKING
 --========================================================
-INSERT INTO booking (id, outlet_id, user_id, booking_date, booking_time, number_of_guests, status, deposit_amount, user_notes, owner_notes) VALUES ('30000000-0000-0000-0000-000000000001', (SELECT id FROM outlet WHERE name = 'Quán Phở Alice'), (SELECT id FROM user_account WHERE username = 'user1'), CURRENT_DATE + INTERVAL '3 days', '19:00', 4, 'PENDING', 100000.00, 'Ngồi tầng 1, gần cửa sổ', NULL);
+INSERT INTO booking (id, outlet_id, user_id, booking_date, booking_time, number_of_guests, status, deposit_amount, user_notes, owner_notes) VALUES ('30000000-0000-0000-0000-000000000001', (SELECT id FROM outlet WHERE name = 'Quán Phở Alice'), (SELECT id FROM user_account WHERE username = 'user1'), CURRENT_DATE + INTERVAL '3 days', '19:00', 4, 'COMPLETED', 100000.00, 'Ngồi tầng 1, gần cửa sổ', NULL);
+INSERT INTO booking (id, outlet_id, user_id, booking_date, booking_time, number_of_guests, status, deposit_amount, user_notes, owner_notes) VALUES ('30000000-0000-0000-0000-000000000002', (SELECT id FROM outlet WHERE name = 'Quán Phở Alice'), (SELECT id FROM user_account WHERE username = 'user1'), CURRENT_DATE + INTERVAL '6 days', '21:00', 4, 'COMPLETED', 100000.00, 'Ngồi tầng 1, gần cửa sổ', NULL);
 
 --========================================================
 --30. PAYMENT
@@ -497,7 +498,7 @@ INSERT INTO review_reply (id, review_id, owner_id, reply_text) VALUES (1, (SELEC
 --========================================================
 --34. REVIEW_REACTION
 --========================================================
-INSERT INTO review_reaction (id, review_id, user_id, reaction_type) VALUES (1, (SELECT id FROM review WHERE comment = 'Nước dùng đậm đà, thịt mềm'), (SELECT id FROM user_account WHERE username = 'user1'), 'like');
+INSERT INTO review_reaction (id, review_id, user_id, reaction_type) VALUES (1, (SELECT id FROM review WHERE comment = 'Nước dùng đậm đà, thịt mềm'), (SELECT id FROM user_account WHERE username = 'user1'), 'LIKE');
 
 --========================================================
 --35. REVIEW_REPORT
