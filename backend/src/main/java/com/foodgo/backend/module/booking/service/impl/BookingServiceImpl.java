@@ -2,9 +2,7 @@ package com.foodgo.backend.module.booking.service.impl;
 
 import com.foodgo.backend.common.base.mapper.BaseMapper;
 import com.foodgo.backend.common.base.service.impl.BaseServiceImpl;
-import com.foodgo.backend.common.constant.BookingStatus;
-import com.foodgo.backend.common.constant.EntityName;
-import com.foodgo.backend.common.constant.PlanType;
+import com.foodgo.backend.common.constant.*;
 import com.foodgo.backend.common.context.SecurityContext;
 import com.foodgo.backend.common.context.SuccessMessageContext;
 import com.foodgo.backend.common.exception.BadRequestException;
@@ -21,6 +19,8 @@ import com.foodgo.backend.module.booking.repository.BookingRepository;
 import com.foodgo.backend.module.booking.service.BookingService;
 import com.foodgo.backend.module.membership.repository.UserMembershipRepository;
 import com.foodgo.backend.module.outlet.repository.OutletRepository;
+import com.foodgo.backend.module.payment.entity.Payment;
+import com.foodgo.backend.module.payment.repository.PaymentRepository;
 import com.foodgo.backend.module.user.repository.UserAccountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
@@ -29,6 +29,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Service
@@ -48,6 +49,7 @@ public class BookingServiceImpl
   private final UserMembershipRepository userMembershipRepository;
   private final OutletRepository outletRepository;
   private final UserAccountRepository userAccountRepository;
+  private final PaymentRepository paymentRepository;
 
   private final String bookingEntityName = EntityName.BOOKING.getFriendlyName();
 
@@ -93,12 +95,15 @@ public class BookingServiceImpl
     if (SecurityContext.isAdmin()) return;
 
     UUID userId = SecurityContext.getCurrentUserId();
+
+    // Check Membership: User phải có gói Membership loại USER mới được đặt bàn
     boolean isMember =
         userMembershipRepository.existsByUserAccount_IdAndIsActiveTrueAndMembershipPlan_Type(
             userId, PlanType.USER);
     if (!isMember) {
       throw new ForbiddenException("Chức năng Đặt bàn chỉ dành cho Hội viên. Vui lòng nâng cấp!");
     }
+
     if (!outletRepository.existsById(request.outletId())) {
       throw new ResourceNotFoundException("Cửa hàng không tồn tại.");
     }
@@ -109,14 +114,37 @@ public class BookingServiceImpl
   public BookingResponse create(BookingCreateRequest request) {
     validateBeforeCreate(request);
 
+    // 1. Tạo Booking Entity
     Booking entity = bookingMapper.toEntity(request);
     entity.setUser(userAccountRepository.getReferenceById(SecurityContext.getCurrentUserId()));
     entity.setOutlet(outletRepository.getReferenceById(request.outletId()));
-    entity.setStatus(BookingStatus.PENDING);
+    entity.setStatus(BookingStatus.PENDING); // Đặt bàn luôn bắt đầu là Pending chờ duyệt
 
-    Booking saved = bookingRepository.save(entity);
-    SuccessMessageContext.setMessage("Đặt bàn thành công! Mã đơn: " + saved.getId());
-    return bookingMapper.toResponse(saved);
+    // 2. [PAYMENT MANUAL LOGIC] - Tự động tính và tạo Payment
+    // Logic: Tiền cọc = Số khách * 20
+    BigDecimal depositRate = new BigDecimal("20"); // Định mức cọc: 20 (đơn vị tiền tệ)
+    BigDecimal depositAmount = depositRate.multiply(BigDecimal.valueOf(request.numberOfGuests()));
+    entity.setDepositAmount(depositAmount);
+
+    Booking savedBooking = bookingRepository.save(entity);
+
+    // Luôn tạo Payment nếu số tiền > 0 (Khách đặt ít nhất 1 người -> deposit >= 20)
+    if (depositAmount.compareTo(BigDecimal.ZERO) > 0) {
+      Payment payment =
+          Payment.builder()
+              .amount(depositAmount)
+              .paymentMethod(PaymentMethod.BANK_TRANSFER) // Giả lập chuyển khoản/tiền mặt
+              .paymentStatus(PaymentStatus.COMPLETED) // Ghi nhận đã thu tiền
+              .transactionId("BOOKING_" + System.currentTimeMillis())
+              .type(PaymentType.BOOKING)
+              .relatedId(savedBooking.getId().toString()) // Link tới Booking vừa tạo
+              .build();
+
+      paymentRepository.save(payment);
+    }
+
+    SuccessMessageContext.setMessage("Đặt bàn thành công! Mã đơn: " + savedBooking.getId());
+    return bookingMapper.toResponse(savedBooking);
   }
 
   @Override
@@ -141,6 +169,8 @@ public class BookingServiceImpl
 
     booking.setStatus(BookingStatus.CANCELLED);
     booking.setUserNotes(booking.getUserNotes() + " [Lý do hủy: " + reason + "]");
+
+    // TODO: Nếu cần hoàn tiền (Refund), có thể update trạng thái Payment tại đây.
 
     Booking saved = bookingRepository.save(booking);
     SuccessMessageContext.setMessage("Đã hủy đơn đặt bàn thành công.");
