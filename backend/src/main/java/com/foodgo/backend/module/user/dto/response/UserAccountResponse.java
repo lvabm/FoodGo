@@ -1,10 +1,10 @@
-package com.foodgo.backend.module.admin.dto.user;
+package com.foodgo.backend.module.user.dto.response;
 
 import com.foodgo.backend.common.constant.RoleType;
 
 import java.util.UUID;
 
-public record UserAdminResponse(
+public record UserAccountResponse(
     UUID id,
     String username,
     String email,

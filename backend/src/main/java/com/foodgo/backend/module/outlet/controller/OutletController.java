@@ -25,7 +25,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class OutletController {
 
-  private final OutletService service;
+  private final OutletService outletService;
 
   // --- 🔑 API Ghi Dữ Liệu (Yêu cầu Owner ID) ---
 
@@ -35,14 +35,14 @@ public class OutletController {
       summary = "Tạo mới Outlet",
       description = "Chỉ Owner mới có thể tạo Outlet và Owner ID được gán tự động.")
   public OutletResponse createOutlet(@Valid @RequestBody OutletCreateRequest request) {
-    return service.create(request);
+    return outletService.create(request);
   }
 
   @PatchMapping("/{id}")
   @Operation(summary = "Cập nhật Outlet", description = "Chỉ Owner sở hữu mới có thể cập nhật.")
   public OutletResponse updateOutlet(
       @PathVariable UUID id, @Valid @RequestBody OutletUpdateRequest request) {
-    return service.update(id, request);
+    return outletService.update(id, request);
   }
 
   @DeleteMapping("/{id}")
@@ -51,7 +51,7 @@ public class OutletController {
       summary = "Xóa mềm (Soft Delete) Outlet",
       description = "Chỉ Owner sở hữu mới có thể xóa.")
   public void softDeleteOutlet(@PathVariable UUID id) {
-    service.softDelete(id);
+    outletService.softDelete(id);
   }
 
   // --- API Đọc Dữ Liệu (API Ưu tiên số 1) ---
@@ -63,13 +63,13 @@ public class OutletController {
       description = "Hỗ trợ lọc theo tên, quận, loại, Price Range, và Đặc điểm (features).")
   public Page<OutletResponse> searchOutlets(
       @ModelAttribute OutletFilterRequest filter, Pageable pageable) {
-    return service.getPage(filter, pageable);
+    return outletService.getPage(filter, pageable);
   }
 
   @PermitAll
   @GetMapping("/{id}")
   @Operation(summary = "Lấy chi tiết Outlet theo ID")
   public OutletResponse getDetail(@PathVariable UUID id) {
-    return service.getDetail(id);
+    return outletService.getDetail(id);
   }
 }

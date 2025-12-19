@@ -11,7 +11,7 @@ import org.springframework.data.jpa.domain.Specification;
 import java.util.ArrayList;
 import java.util.List;
 
-public record MembershipPlanSpecification(MembershipPlanFilterRequest filter)
+public record MembershipPlanSearchSpecification(MembershipPlanFilterRequest filter)
     implements Specification<MembershipPlan> {
 
   @Override

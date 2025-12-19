@@ -20,24 +20,24 @@ import java.util.UUID;
 @PreAuthorize("hasRole('ADMIN') or hasRole('SYSTEM_ADMIN')")
 public class AdminBookingController {
 
-  private final AdminBookingService service;
+  private final AdminBookingService adminBookingService;
 
   @GetMapping("search")
   @Operation(summary = "Xem toàn bộ Booking trên hệ thống")
   public Page<BookingResponse> getAllBookings(
       @ModelAttribute BookingFilterRequest filter, Pageable pageable) {
-    return service.getPage(filter, pageable);
+    return adminBookingService.getPage(filter, pageable);
   }
 
   @GetMapping("/{id}")
   @Operation(summary = "Xem chi tiết bất kỳ đơn nào")
   public BookingResponse getDetail(@PathVariable UUID id) {
-    return service.getDetail(id);
+    return adminBookingService.getDetail(id);
   }
 
   @DeleteMapping("/{id}/force-cancel")
   @Operation(summary = "Hủy nóng đơn đặt bàn (Force Cancel)")
   public void forceCancel(@PathVariable UUID id) {
-    service.forceCancel(id);
+    adminBookingService.forceCancel(id);
   }
 }

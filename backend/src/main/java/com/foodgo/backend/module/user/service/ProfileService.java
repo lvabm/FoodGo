@@ -5,7 +5,7 @@ import com.foodgo.backend.module.user.dto.response.ProfileResponse;
 
 public interface ProfileService {
 
-  ProfileResponse update(ProfileUpdateRequest request);
+  ProfileResponse updateMyProfile(ProfileUpdateRequest request);
 
   ProfileResponse getMyProfile();
 }

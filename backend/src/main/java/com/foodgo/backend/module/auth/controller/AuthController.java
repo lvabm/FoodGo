@@ -1,6 +1,5 @@
 package com.foodgo.backend.module.auth.controller;
 
-import com.foodgo.backend.common.context.SuccessMessageContext;
 import com.foodgo.backend.module.auth.dto.*;
 import com.foodgo.backend.module.auth.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,31 +13,31 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/auth")
 public class AuthController {
 
-  private final AuthService service;
+  private final AuthService authService;
 
   @Operation(summary = "Đăng ký tài khoản")
   @PostMapping("/register")
   @ResponseStatus(HttpStatus.CREATED)
   public AuthResponse register(@Valid @RequestBody RegisterRequest request) {
-    return service.register(request);
+    return authService.register(request);
   }
 
   @Operation(summary = "Đăng nhập")
   @PostMapping("/login")
   public AuthResponse login(@Valid @RequestBody LoginRequest request) {
-    return service.login(request);
+    return authService.login(request);
   }
 
   @Operation(summary = "Làm mới Token")
   @PostMapping("/refresh")
   public AuthResponse refresh(@Valid @RequestBody RefreshTokenRequest request) {
-    return service.refreshToken(request);
+    return authService.refreshToken(request);
   }
 
   @Operation(summary = "Đăng xuất")
   @PostMapping("/logout")
   @ResponseStatus(HttpStatus.OK)
   public void logout() {
-    service.logout();
+    authService.logout();
   }
 }

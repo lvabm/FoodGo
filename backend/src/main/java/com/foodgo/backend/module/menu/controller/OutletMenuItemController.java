@@ -25,7 +25,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class OutletMenuItemController {
 
-  private final OutletMenuItemService service;
+  private final OutletMenuItemService outletMenuItemService;
 
   // --- API CỐT LÕI (CREATE) ---
 
@@ -45,7 +45,7 @@ public class OutletMenuItemController {
             request.imageUrl(),
             outletId,
             request.menuItemId());
-    return service.create(finalRequest);
+    return outletMenuItemService.create(finalRequest);
   }
 
   // --- CRUD KHÁC (Chỉ dùng itemId) ---
@@ -57,7 +57,7 @@ public class OutletMenuItemController {
       description = "Chỉ Owner/Admin có thể cập nhật món ăn.")
   public OutletMenuItemResponse updateMenuItem(
       @PathVariable Integer itemId, @Valid @RequestBody OutletMenuItemUpdateRequest request) {
-    return service.update(itemId, request);
+    return outletMenuItemService.update(itemId, request);
   }
 
   // 3. AVAILABILITY
@@ -66,7 +66,7 @@ public class OutletMenuItemController {
       summary = "Bật/Tắt trạng thái Available của món ăn",
       description = "Owner/Admin có thể nhanh chóng kích hoạt hoặc ngừng bán một món ăn.")
   public OutletMenuItemResponse toggleAvailability(@PathVariable Integer itemId) {
-    return service.toggleAvailability(itemId);
+    return outletMenuItemService.toggleAvailability(itemId);
   }
 
   // 4. SOFT DELETE
@@ -75,7 +75,7 @@ public class OutletMenuItemController {
       summary = "Xóa mềm (Soft Delete) món ăn khỏi Menu",
       description = "Chỉ Owner/Admin có thể xóa mềm.")
   public OutletMenuItemResponse softDeleteMenuItem(@PathVariable Integer itemId) {
-    return service.softDelete(itemId);
+    return outletMenuItemService.softDelete(itemId);
   }
 
   // 5. GET DETAIL
@@ -83,7 +83,7 @@ public class OutletMenuItemController {
   @GetMapping("/{itemId}")
   @Operation(summary = "Lấy chi tiết món ăn tùy chỉnh theo ID")
   public OutletMenuItemResponse getMenuItemDetail(@PathVariable Integer itemId) {
-    return service.getDetail(itemId);
+    return outletMenuItemService.getDetail(itemId);
   }
 
   // 6. GET SEARCH (Filter theo Outlet ID)
@@ -98,6 +98,6 @@ public class OutletMenuItemController {
       Pageable pageable) {
     OutletMenuItemFilterRequest finalFilter =
         new OutletMenuItemFilterRequest(filter.name(), outletId, filter.isAvailable());
-    return service.getPage(finalFilter, pageable);
+    return outletMenuItemService.getPage(finalFilter, pageable);
   }
 }

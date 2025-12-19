@@ -21,20 +21,20 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MenuItemFeatureController {
 
-  private final MenuItemFeatureService service;
+  private final MenuItemFeatureService menuItemFeatureService;
 
   @PermitAll
   @GetMapping
   @Operation(summary = "Lấy tất cả Đặc điểm Món ăn (Không phân trang)")
   public List<MenuItemFeatureResponse> getAll() {
-    return service.getAll();
+    return menuItemFeatureService.getAll();
   }
 
   @PermitAll
   @GetMapping("/{id}")
   @Operation(summary = "Lấy chi tiết Đặc điểm Món ăn theo ID")
   public MenuItemFeatureResponse getDetail(@PathVariable Integer id) {
-    return service.getDetail(id);
+    return menuItemFeatureService.getDetail(id);
   }
 
   @PermitAll
@@ -42,6 +42,6 @@ public class MenuItemFeatureController {
   @Operation(summary = "Tìm kiếm và phân trang Đặc điểm Món ăn")
   public Page<MenuItemFeatureResponse> search(
       @ModelAttribute MenuItemFeatureFilterRequest filter, Pageable pageable) {
-    return service.getPage(filter, pageable);
+    return menuItemFeatureService.getPage(filter, pageable);
   }
 }

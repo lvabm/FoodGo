@@ -24,12 +24,12 @@ import java.util.UUID;
 @Tag(name = "Review Controller", description = "Quản lý Đánh giá & Phản hồi")
 public class ReviewController {
 
-  private final ReviewService service;
+  private final ReviewService reviewService;
 
   @PostMapping
   @Operation(summary = "Viết đánh giá mới (Cần Booking Completed)")
   public ReviewResponse createReview(@RequestBody @Valid ReviewCreateRequest request) {
-    return service.create(request);
+    return reviewService.create(request);
   }
 
   @PermitAll
@@ -37,27 +37,27 @@ public class ReviewController {
   @Operation(summary = "Xem danh sách đánh giá (Lọc theo Quán/User/Rating)")
   public Page<ReviewResponse> getReviews(
       @ModelAttribute ReviewFilterRequest filter, Pageable pageable) {
-    return service.getPage(filter, pageable);
+    return reviewService.getPage(filter, pageable);
   }
 
   @PatchMapping("/{id}")
   @Operation(summary = "Sửa đánh giá (Trong vòng 24h)")
   public ReviewResponse updateReview(
       @PathVariable UUID id, @RequestBody ReviewUpdateRequest request) {
-    return service.update(id, request);
+    return reviewService.update(id, request);
   }
 
   @PostMapping("/{id}/reply")
   @Operation(summary = "Chủ quán trả lời đánh giá (1 lần duy nhất)")
   public void replyReview(
       @PathVariable UUID id, @RequestBody Map<String, String> payload) { // payload: {"text": "..."}
-    service.replyToReview(id, payload.get("text"));
+    reviewService.replyToReview(id, payload.get("text"));
   }
 
   @PermitAll
   @PostMapping("/{id}/react")
   @Operation(summary = "Thả tim/Dislike (Toggle)")
   public void reactReview(@PathVariable UUID id, @RequestParam ReactionType type) {
-    service.reactToReview(id, type);
+    reviewService.reactToReview(id, type);
   }
 }

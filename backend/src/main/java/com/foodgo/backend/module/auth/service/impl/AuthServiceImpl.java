@@ -13,7 +13,7 @@ import com.foodgo.backend.module.auth.service.AuthService;
 import com.foodgo.backend.module.auth.dto.mapper.AuthProfileMapper;
 import com.foodgo.backend.security.jwt.JwtService;
 import com.foodgo.backend.module.user.entity.UserAccount;
-import com.foodgo.backend.module.admin.dto.mapper.AdminUserAccountMapper;
+import com.foodgo.backend.module.user.dto.mapper.UserAccountMapper;
 import com.foodgo.backend.module.user.repository.RoleRepository;
 import com.foodgo.backend.module.user.repository.UserAccountRepository;
 import com.foodgo.backend.common.util.RandomUtils;
@@ -44,7 +44,7 @@ public class AuthServiceImpl implements AuthService {
   private final RoleRepository roleRepository;
   private final RefreshTokenRepository refreshTokenRepository;
 
-  private final AdminUserAccountMapper adminUserAccountMapper;
+  private final UserAccountMapper userAccountMapper;
   private final AuthProfileMapper authProfileMapper;
   private final HttpServletRequest httpRequest;
 
@@ -68,7 +68,7 @@ public class AuthServiceImpl implements AuthService {
             .orElseThrow(
                 () -> new DataConflictException("Role mặc định (ROLE_USER) không tồn tại."));
 
-    var userAccount = adminUserAccountMapper.toEntity(request);
+    var userAccount = userAccountMapper.toEntity(request);
     var profile = authProfileMapper.toEntity(request);
 
     userAccount.setUsername(RandomUtils.generateUniqueUsername());

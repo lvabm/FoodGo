@@ -21,7 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OutletMenuItemFeatureController {
 
-  private final OutletMenuItemFeatureService service;
+  private final OutletMenuItemFeatureService outletMenuItemFeatureService;
 
   // 1. ADD FEATURE (CREATE) - Chỉ Owner/Admin
   @PostMapping
@@ -33,7 +33,7 @@ public class OutletMenuItemFeatureController {
   public OutletMenuItemFeatureResponse addFeature(
       @PathVariable Integer outletMenuItemId,
       @Valid @RequestBody OutletMenuItemFeatureCreateRequest request) {
-    return service.addFeature(outletMenuItemId, request);
+    return outletMenuItemFeatureService.addFeature(outletMenuItemId, request);
   }
 
   // 2. REMOVE FEATURE (HARD DELETE) - Chỉ Owner/Admin
@@ -44,7 +44,7 @@ public class OutletMenuItemFeatureController {
       description = "Owner/Admin loại bỏ một tùy chọn khỏi món ăn. Service tự động kiểm tra quyền.")
   public void removeFeature(
       @PathVariable Integer outletMenuItemId, @PathVariable Integer featureId) {
-    service.removeFeature(outletMenuItemId, featureId);
+    outletMenuItemFeatureService.removeFeature(outletMenuItemId, featureId);
   }
 
   // 3. LIST FEATURES (READ-ONLY) - Public
@@ -54,6 +54,6 @@ public class OutletMenuItemFeatureController {
       summary = "Lấy danh sách Tùy chọn của một Món ăn",
       description = "Public API: Xem tất cả các tùy chọn đã được gán cho món ăn tùy chỉnh này.")
   public List<OutletMenuItemFeatureResponse> listFeatures(@PathVariable Integer outletMenuItemId) {
-    return service.listFeatures(outletMenuItemId);
+    return outletMenuItemFeatureService.listFeatures(outletMenuItemId);
   }
 }

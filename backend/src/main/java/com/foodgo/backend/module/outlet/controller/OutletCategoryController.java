@@ -21,20 +21,20 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OutletCategoryController {
 
-  private final OutletCategoryService service;
+  private final OutletCategoryService outletCategoryService;
 
   @PermitAll
   @GetMapping
   @Operation(summary = "Lấy tất cả Danh mục Outlet (Không phân trang)")
   public List<OutletCategoryResponse> getAll() {
-    return service.getAll();
+    return outletCategoryService.getAll();
   }
 
   @PermitAll
   @GetMapping("/{id}")
   @Operation(summary = "Lấy chi tiết Danh mục Outlet theo ID")
   public OutletCategoryResponse getDetail(@PathVariable Integer id) {
-    return service.getDetail(id);
+    return outletCategoryService.getDetail(id);
   }
 
   @PermitAll
@@ -42,6 +42,6 @@ public class OutletCategoryController {
   @Operation(summary = "Tìm kiếm và phân trang Danh mục Outlet")
   public Page<OutletCategoryResponse> search(
       @ModelAttribute OutletCategoryFilterRequest filter, Pageable pageable) {
-    return service.getPage(filter, pageable);
+    return outletCategoryService.getPage(filter, pageable);
   }
 }

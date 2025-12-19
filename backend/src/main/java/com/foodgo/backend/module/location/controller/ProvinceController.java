@@ -19,20 +19,20 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProvinceController {
 
-  private final ProvinceService service;
+  private final ProvinceService provinceService;
 
   @PermitAll
   @GetMapping
   @Operation(summary = "Lấy tất cả Tỉnh/Thành (Không phân trang)")
   public List<ProvinceResponse> getAll() {
-    return service.getAll();
+    return provinceService.getAll();
   }
 
   @PermitAll
   @GetMapping("/{id}")
   @Operation(summary = "Lấy chi tiết Tỉnh/Thành theo ID")
   public ProvinceResponse getDetail(@PathVariable Integer id) {
-    return service.getDetail(id);
+    return provinceService.getDetail(id);
   }
 
   @PermitAll
@@ -40,6 +40,6 @@ public class ProvinceController {
   @Operation(summary = "Tìm kiếm và phân trang Tỉnh/Thành")
   public Page<ProvinceResponse> search(
       @ModelAttribute ProvinceFilterRequest filter, Pageable pageable) {
-    return service.getPage(filter, pageable);
+    return provinceService.getPage(filter, pageable);
   }
 }

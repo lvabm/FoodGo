@@ -8,7 +8,7 @@ import com.foodgo.backend.common.exception.DataConflictException;
 import com.foodgo.backend.common.exception.ForbiddenException;
 import com.foodgo.backend.common.exception.ResourceNotFoundException;
 import com.foodgo.backend.module.admin.service.AdminMembershipService;
-import com.foodgo.backend.module.membership.dto.criteria.MembershipPlanSpecification;
+import com.foodgo.backend.module.membership.dto.criteria.MembershipPlanSearchSpecification;
 import com.foodgo.backend.module.membership.dto.mapper.MembershipPlanMapper;
 import com.foodgo.backend.module.membership.dto.mapper.UserMembershipMapper;
 import com.foodgo.backend.module.membership.dto.request.create.MembershipPlanCreateRequest;
@@ -89,7 +89,7 @@ public class MembershipServiceImpl
 
   @Override
   protected Specification<MembershipPlan> buildSpecification(MembershipPlanFilterRequest filter) {
-    return new MembershipPlanSpecification(filter);
+    return new MembershipPlanSearchSpecification(filter);
   }
 
   // --- NGHIỆP VỤ RIÊNG: SUBSCRIBE (Đã Fix) ---

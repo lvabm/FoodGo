@@ -21,32 +21,32 @@ import java.util.UUID;
 @Tag(name = "Booking Controller", description = "API Đặt bàn cho User và Owner")
 public class BookingController {
 
-  private final BookingService service;
+  private final BookingService bookingService;
 
   @PostMapping
   @Operation(summary = "Tạo đơn đặt bàn mới (Chỉ Member)")
   public BookingResponse createBooking(@RequestBody @Valid BookingCreateRequest request) {
-    return service.create(request);
+    return bookingService.create(request);
   }
 
   @GetMapping("/{id}")
   @Operation(summary = "Xem chi tiết đơn đặt bàn")
   public BookingResponse getDetail(@PathVariable UUID id) {
-    return service.getDetail(id);
+    return bookingService.getDetail(id);
   }
 
   @GetMapping("/me")
   @Operation(summary = "Danh sách đơn đặt bàn (Của tôi / Của quán tôi)")
   public Page<BookingResponse> getMyBookings(
       @ModelAttribute BookingFilterRequest filter, Pageable pageable) {
-    return service.getPage(filter, pageable);
+    return bookingService.getPage(filter, pageable);
   }
 
   @PatchMapping("/{id}")
   @Operation(summary = "Cập nhật thông tin đơn (Patch)")
   public BookingResponse updateBooking(
       @PathVariable UUID id, @RequestBody BookingUpdateRequest request) {
-    return service.update(id, request);
+    return bookingService.update(id, request);
   }
 
   @DeleteMapping("/{id}/cancel")
@@ -54,6 +54,6 @@ public class BookingController {
   public BookingResponse cancelBooking(
       @PathVariable UUID id,
       @RequestParam(required = false, defaultValue = "Khách yêu cầu hủy") String reason) {
-    return service.cancelBooking(id, reason);
+    return bookingService.cancelBooking(id, reason);
   }
 }

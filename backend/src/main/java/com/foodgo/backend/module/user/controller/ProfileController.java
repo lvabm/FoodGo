@@ -17,13 +17,13 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class ProfileController {
 
-  private final ProfileService service;
+  private final ProfileService profileService;
 
   // 1. GET DETAIL (me)
   @GetMapping
   @Operation(summary = "Lấy Profile của User đang đăng nhập", description = "Tận dụng Facade.")
   public ProfileResponse getMyProfile() {
-    return service.getMyProfile();
+    return profileService.getMyProfile();
   }
 
   // 2. UPDATE (Dùng chung)
@@ -32,6 +32,6 @@ public class ProfileController {
       summary = "Cập nhật Profile của chính mình (Partial Update)",
       description = "Service kiểm tra quyền Owner.")
   public ProfileResponse updateMyProfile(@Valid @RequestBody ProfileUpdateRequest request) {
-    return service.update(request);
+    return profileService.updateMyProfile(request);
   }
 }
