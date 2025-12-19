@@ -5,6 +5,7 @@ import com.foodgo.backend.module.menu.dto.response.MenuItemFeatureResponse;
 import com.foodgo.backend.module.menu.service.MenuItemFeatureService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.security.PermitAll;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,18 +23,21 @@ public class MenuItemFeatureController {
 
   private final MenuItemFeatureService service;
 
+  @PermitAll
   @GetMapping
   @Operation(summary = "Lấy tất cả Đặc điểm Món ăn (Không phân trang)")
   public List<MenuItemFeatureResponse> getAll() {
     return service.getAll();
   }
 
+  @PermitAll
   @GetMapping("/{id}")
   @Operation(summary = "Lấy chi tiết Đặc điểm Món ăn theo ID")
   public MenuItemFeatureResponse getDetail(@PathVariable Integer id) {
     return service.getDetail(id);
   }
 
+  @PermitAll
   @GetMapping("/search")
   @Operation(summary = "Tìm kiếm và phân trang Đặc điểm Món ăn")
   public Page<MenuItemFeatureResponse> search(

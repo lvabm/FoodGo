@@ -5,6 +5,7 @@ import com.foodgo.backend.module.location.dto.response.DistrictResponse;
 import com.foodgo.backend.module.location.service.DistrictService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.security.PermitAll;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,24 +19,27 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DistrictController {
 
-  private final DistrictService districtService;
+  private final DistrictService service;
 
+  @PermitAll
   @GetMapping
   @Operation(summary = "Lấy tất cả Quận/Huyện (Không phân trang)")
   public List<DistrictResponse> getAll() {
-    return districtService.getAll();
+    return service.getAll();
   }
 
+  @PermitAll
   @GetMapping("/{id}")
   @Operation(summary = "Lấy chi tiết Quận/Huyện theo ID")
   public DistrictResponse getDetail(@PathVariable Integer id) {
-    return districtService.getDetail(id);
+    return service.getDetail(id);
   }
 
+  @PermitAll
   @GetMapping("/search")
   @Operation(summary = "Tìm kiếm và phân trang Quận/Huyện")
   public Page<DistrictResponse> search(
       @ModelAttribute DistrictFilterRequest filter, Pageable pageable) {
-    return districtService.getPage(filter, pageable);
+    return service.getPage(filter, pageable);
   }
 }

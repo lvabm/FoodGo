@@ -5,6 +5,7 @@ import com.foodgo.backend.module.outlet.dto.response.OutletFeatureMappingRespons
 import com.foodgo.backend.module.outlet.service.OutletFeatureMappingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -46,6 +47,7 @@ public class OutletFeatureMappingController {
   }
 
   // 3. LIST FEATURES (READ-ONLY) - Public
+  @PermitAll
   @GetMapping
   @Operation(
       summary = "Lấy danh sách Feature của một Outlet",

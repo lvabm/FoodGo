@@ -4,7 +4,11 @@ import com.foodgo.backend.common.constant.RoleType;
 import com.foodgo.backend.common.context.SuccessMessageContext;
 import com.foodgo.backend.common.exception.BadRequestException;
 import com.foodgo.backend.common.exception.DataConflictException;
+import com.foodgo.backend.common.exception.ResourceNotFoundException;
+import com.foodgo.backend.common.exception.UnauthorizedException;
 import com.foodgo.backend.module.auth.dto.*;
+import com.foodgo.backend.module.auth.entity.RefreshToken;
+import com.foodgo.backend.module.auth.repository.RefreshTokenRepository;
 import com.foodgo.backend.module.auth.service.AuthService;
 import com.foodgo.backend.module.auth.dto.mapper.AuthProfileMapper;
 import com.foodgo.backend.security.jwt.JwtService;
@@ -13,7 +17,10 @@ import com.foodgo.backend.module.admin.dto.mapper.AdminUserAccountMapper;
 import com.foodgo.backend.module.user.repository.RoleRepository;
 import com.foodgo.backend.module.user.repository.UserAccountRepository;
 import com.foodgo.backend.common.util.RandomUtils;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -21,7 +28,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -33,9 +42,14 @@ public class AuthServiceImpl implements AuthService {
 
   private final UserAccountRepository userAccountRepository;
   private final RoleRepository roleRepository;
+  private final RefreshTokenRepository refreshTokenRepository;
 
   private final AdminUserAccountMapper adminUserAccountMapper;
   private final AuthProfileMapper authProfileMapper;
+  private final HttpServletRequest httpRequest;
+
+  @Value("${jwt.refresh-exp-days:7}") // Config ngày hết hạn refresh token
+  private long refreshExpDays;
 
   @Override
   @Transactional
@@ -67,23 +81,27 @@ public class AuthServiceImpl implements AuthService {
 
     var savedUser = userAccountRepository.save(userAccount);
 
+    // 🔑 FIX: Tạo Session (Refresh Token) ngay sau khi đăng ký
+    RefreshToken refreshToken = createRefreshToken(savedUser);
+
     SuccessMessageContext.setMessage(
         String.format(SuccessMessageContext.REGISTRATION_SUCCESS, savedUser.getId()));
 
-    return generateAuthResponse(savedUser);
+    // Truyền cả user và refreshToken vào
+    return generateAuthResponse(savedUser, refreshToken);
   }
 
   @Override
   @Transactional
   public AuthResponse login(LoginRequest request) {
-    // 0. TÌM USER DÙNG @EntityGraph
+    // 0. TÌM USER
     var user =
         userAccountRepository
             .findByEmail(request.email())
             .orElseThrow(
                 () -> new DataConflictException("Email chưa có tài khoản hoặc không hợp lệ"));
 
-    // 1. XÁC THỰC (Authentication)
+    // 1. XÁC THỰC
     var authentication =
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
@@ -92,65 +110,97 @@ public class AuthServiceImpl implements AuthService {
     // 2. LẤY USER
     var loginUser = (UserAccount) authentication.getPrincipal();
 
+    // 3. TẠO SESSION (Refresh Token)
+    RefreshToken refreshToken = createRefreshToken(loginUser);
+
     SuccessMessageContext.setMessage(
         String.format(SuccessMessageContext.LOGIN_SUCCESSFUL, loginUser.getId()));
 
-    return generateAuthResponse(loginUser);
+    // 4. TRẢ VỀ RESPONSE KÈM ACCESS TOKEN CHỨA RTID
+    return generateAuthResponse(loginUser, refreshToken);
   }
 
+  @Transactional
   @Override
   public AuthResponse refreshToken(RefreshTokenRequest request) {
-    // TODO: Validate refresh token, cấp token mới
-    throw new UnsupportedOperationException("Not implemented");
+    // 1. Tìm Refresh Token trong DB từ chuỗi token gửi lên
+    RefreshToken storedToken =
+        refreshTokenRepository
+            .findByToken(request.refreshToken())
+            .orElseThrow(() -> new ResourceNotFoundException("Refresh token không tồn tại"));
+
+    // 2. Kiểm tra tính hợp lệ
+    if (storedToken.isRevoked()) {
+      // Cảnh báo bảo mật: Token đã bị hủy mà vẫn mang đi refresh -> Có thể bị đánh cắp
+      throw new UnauthorizedException("Refresh token đã bị vô hiệu hóa. Vui lòng đăng nhập lại.");
+    }
+
+    if (storedToken.getExpiresAt().isBefore(Instant.now())) {
+      throw new UnauthorizedException("Refresh token đã hết hạn. Vui lòng đăng nhập lại.");
+    }
+
+    // 3. Token Rotation (Xoay vòng): Hủy cái cũ, cấp cái mới
+    storedToken.setRevoked(true);
+    refreshTokenRepository.save(storedToken);
+
+    UserAccount user = storedToken.getUser();
+    RefreshToken newRefreshToken = createRefreshToken(user);
+
+    SuccessMessageContext.setMessage("Làm mới token thành công");
+
+    return generateAuthResponse(user, newRefreshToken);
   }
 
   @Override
-  public void logout(LogoutRequest request) {
-    // TODO: Xóa refresh token khỏi DB
-    throw new UnsupportedOperationException("Not implemented");
+  @Transactional
+  public void logout() {
+    // 1. Lấy Access Token từ Header
+    String authHeader = httpRequest.getHeader(HttpHeaders.AUTHORIZATION);
+    if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+      return; // Không có token thì coi như đã logout
+    }
+    String accessToken = authHeader.substring(7);
+
+    // 2. Lấy RTID từ Access Token
+    Long rtid;
+    try {
+      rtid = jwtService.extractRefreshTokenId(accessToken);
+    } catch (Exception e) {
+      // Token lỗi không trích xuất được -> bỏ qua
+      return;
+    }
+
+    // 3. Tìm và Hủy Session (Revoke Refresh Token)
+    var storedToken = refreshTokenRepository.findById(rtid).orElse(null);
+    if (storedToken != null) {
+      storedToken.setRevoked(true);
+      refreshTokenRepository.save(storedToken);
+    }
+
+    SuccessMessageContext.setMessage("Đăng xuất thành công");
   }
 
-  @Override
-  public void sendResetPasswordEmail(ForgotPasswordRequest request) {
-    // TODO: Gửi email reset password
-    throw new UnsupportedOperationException("Not implemented");
+  // --- Helper Methods ---
+
+  private RefreshToken createRefreshToken(UserAccount user) {
+    RefreshToken refreshToken =
+        RefreshToken.builder()
+            .user(user)
+            .token(UUID.randomUUID().toString()) // Token chuỗi ngẫu nhiên
+            .expiresAt(Instant.now().plusSeconds(refreshExpDays * 24 * 60 * 60)) // 7 ngày
+            .isRevoked(false)
+            .build();
+    return refreshTokenRepository.save(refreshToken);
   }
 
-  @Override
-  public void resendResetPasswordEmail(ForgotPasswordRequest request) {
-    // TODO: Gửi lại email reset password
-    throw new UnsupportedOperationException("Not implemented");
-  }
-
-  @Override
-  public void resetPassword(ResetPasswordRequest request) {
-    // TODO: Kiểm tra token hợp lệ, đổi mật khẩu
-    throw new UnsupportedOperationException("Not implemented");
-  }
-
-  @Override
-  public void changePassword(ChangePasswordRequest request) {
-    // TODO: Kiểm tra mật khẩu hiện tại, đổi mật khẩu mới
-    throw new UnsupportedOperationException("Not implemented");
-  }
-
-  @Override
-  public void verifyEmail(String token) {
-    // TODO: Xác thực token và mark verified
-    throw new UnsupportedOperationException("Not implemented");
-  }
-
-  @Override
-  public void resendVerificationEmail(ResendVerifyRequest request) {
-    // TODO: Gửi lại email verify
-    throw new UnsupportedOperationException("Not implemented");
-  }
-
-  private AuthResponse generateAuthResponse(UserAccount user) {
-    String accessToken = jwtService.generateToken(user);
+  private AuthResponse generateAuthResponse(UserAccount user, RefreshToken refreshToken) {
+    // Truyền rtid vào Access Token
+    String accessToken = jwtService.generateToken(user, refreshToken.getId());
 
     List<String> roles =
         user.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
-    return new AuthResponse(accessToken, roles);
+
+    // Trả về AccessToken + RefreshToken String (để client lưu)
+    return new AuthResponse(accessToken, refreshToken.getToken(), roles);
   }
 }

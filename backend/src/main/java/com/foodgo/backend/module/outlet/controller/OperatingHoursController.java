@@ -7,6 +7,7 @@ import com.foodgo.backend.module.outlet.dto.response.OperatingHoursResponse;
 import com.foodgo.backend.module.outlet.service.OperatingHoursService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -64,6 +65,7 @@ public class OperatingHoursController {
   }
 
   // 4. GET DETAIL
+  @PermitAll
   @GetMapping("/{id}")
   @Operation(summary = "Lấy chi tiết giờ hoạt động theo ID")
   public OperatingHoursResponse getDetailHours(@PathVariable Integer id) {
@@ -71,6 +73,7 @@ public class OperatingHoursController {
   }
 
   // 5. GET SEARCH / List theo Outlet
+  @PermitAll
   @GetMapping
   @Operation(
       summary = "Lấy danh sách giờ hoạt động của một Outlet",

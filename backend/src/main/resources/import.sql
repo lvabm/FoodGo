@@ -503,7 +503,7 @@ INSERT INTO review_reaction (id, review_id, user_id, reaction_type) VALUES (1, (
 --========================================================
 --35. REVIEW_REPORT
 --========================================================
-INSERT INTO review_report (id, review_id, reporter_id, reason, status) VALUES (1, (SELECT id FROM review WHERE comment = 'Nước dùng đậm đà, thịt mềm'), (SELECT id FROM user_account WHERE username = 'user1'), 'Nội dung không phù hợp', 'pending');
+INSERT INTO review_report (id, review_id, reporter_id, reason, status) VALUES (1, (SELECT id FROM review WHERE comment = 'Nước dùng đậm đà, thịt mềm'), (SELECT id FROM user_account WHERE username = 'user1'), 'SPAM', 'PENDING');
 
 --========================================================
 --36. NOTIFICATION

@@ -8,6 +8,7 @@ import com.foodgo.backend.module.review.dto.response.ReviewResponse;
 import com.foodgo.backend.module.review.service.ReviewService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -31,6 +32,7 @@ public class ReviewController {
     return service.create(request);
   }
 
+  @PermitAll
   @GetMapping("/search")
   @Operation(summary = "Xem danh sách đánh giá (Lọc theo Quán/User/Rating)")
   public Page<ReviewResponse> getReviews(
@@ -52,6 +54,7 @@ public class ReviewController {
     service.replyToReview(id, payload.get("text"));
   }
 
+  @PermitAll
   @PostMapping("/{id}/react")
   @Operation(summary = "Thả tim/Dislike (Toggle)")
   public void reactReview(@PathVariable UUID id, @RequestParam ReactionType type) {

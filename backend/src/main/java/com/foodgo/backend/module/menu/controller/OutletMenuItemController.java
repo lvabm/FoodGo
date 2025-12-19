@@ -7,6 +7,7 @@ import com.foodgo.backend.module.menu.dto.response.OutletMenuItemResponse;
 import com.foodgo.backend.module.menu.service.OutletMenuItemService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -78,6 +79,7 @@ public class OutletMenuItemController {
   }
 
   // 5. GET DETAIL
+  @PermitAll
   @GetMapping("/{itemId}")
   @Operation(summary = "Lấy chi tiết món ăn tùy chỉnh theo ID")
   public OutletMenuItemResponse getMenuItemDetail(@PathVariable Integer itemId) {
@@ -85,6 +87,7 @@ public class OutletMenuItemController {
   }
 
   // 6. GET SEARCH (Filter theo Outlet ID)
+  @PermitAll
   @GetMapping("/search")
   @Operation(
       summary = "Tìm kiếm và Phân trang món ăn theo Outlet",

@@ -5,6 +5,7 @@ import com.foodgo.backend.module.menu.dto.response.MenuItemResponse;
 import com.foodgo.backend.module.menu.service.MenuItemService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.security.PermitAll;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +22,7 @@ public class MenuItemController {
   private final MenuItemService service;
 
   // 1. GET DETAIL
+  @PermitAll
   @GetMapping("/{id}")
   @Operation(summary = "Lấy chi tiết món ăn gốc theo ID")
   public MenuItemResponse getDetail(@PathVariable UUID id) {
@@ -28,6 +30,7 @@ public class MenuItemController {
   }
 
   // 2. GET SEARCH
+  @PermitAll
   @GetMapping
   @Operation(
       summary = "Tìm kiếm và Phân trang món ăn gốc",

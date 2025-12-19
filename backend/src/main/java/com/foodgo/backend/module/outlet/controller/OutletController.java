@@ -7,6 +7,7 @@ import com.foodgo.backend.module.outlet.dto.response.OutletResponse;
 import com.foodgo.backend.module.outlet.service.OutletService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -55,6 +56,7 @@ public class OutletController {
 
   // --- API Đọc Dữ Liệu (API Ưu tiên số 1) ---
 
+  @PermitAll
   @GetMapping("/search")
   @Operation(
       summary = "Tìm kiếm và Phân trang Outlet (Hiệu suất cao)",
@@ -64,6 +66,7 @@ public class OutletController {
     return service.getPage(filter, pageable);
   }
 
+  @PermitAll
   @GetMapping("/{id}")
   @Operation(summary = "Lấy chi tiết Outlet theo ID")
   public OutletResponse getDetail(@PathVariable UUID id) {
