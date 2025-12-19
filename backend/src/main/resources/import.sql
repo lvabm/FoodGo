@@ -478,7 +478,7 @@ INSERT INTO booking (id, outlet_id, user_id, booking_date, booking_time, number_
 --========================================================
 --30. PAYMENT
 --========================================================
-INSERT INTO payment (id, related_id, amount, payment_method, payment_status, transaction_id, type, is_deleted) VALUES ('40000000-0000-0000-0000-000000000001', '30000000-0000-0000-0000-000000000001', 100000.00, 'MOMO', 'PENDING', 'TXN123456789', 'BOOKING', false);
+INSERT INTO payment (id, related_id, amount, payment_method, payment_status, transaction_id, type, is_deleted) VALUES ('40000000-0000-0000-0000-000000000001', '30000000-0000-0000-0000-000000000001', 100000.00, 'BANK_TRANSFER', 'PENDING', 'TXN123456789', 'BOOKING', false);
 
 --========================================================
 --31. REVIEW

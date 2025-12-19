@@ -18,7 +18,8 @@ spring:
       # update: Phù hợp cho Dev, tự động cập nhật schema. Cẩn thận khi dùng
       # create-drop: Tự động tạo và xóa schema sau khi ứng dụng tắt (tùy chọn)
       # Dùng create xong đổi sang update là ok (Chạy 2 lần)
-      ddl-auto: update
+      # ddl-auto: update
+      ddl-auto: create-drop
       database-platform: org.hibernate.dialect.PostgreSQLDialect
 
     # Hiển thị câu lệnh SQL trong console (Giúp Debug và tối ưu)

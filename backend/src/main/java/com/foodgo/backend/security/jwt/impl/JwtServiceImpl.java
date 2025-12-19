@@ -71,7 +71,7 @@ public class JwtServiceImpl implements JwtService {
     return roleName;
   }
 
-  // 🔑 Mới: Trích xuất rtid
+  // Trích xuất rtid
   @Override
   public Long extractRefreshTokenId(String token) {
     return extractClaim(token, claims -> claims.get("rtid", Long.class));

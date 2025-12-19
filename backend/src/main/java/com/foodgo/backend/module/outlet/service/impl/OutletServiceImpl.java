@@ -3,6 +3,7 @@ package com.foodgo.backend.module.outlet.service.impl;
 import com.foodgo.backend.common.base.mapper.BaseMapper;
 import com.foodgo.backend.common.base.service.impl.BaseServiceImpl;
 import com.foodgo.backend.common.constant.EntityName;
+import com.foodgo.backend.common.constant.RoleType;
 import com.foodgo.backend.common.context.SecurityContext;
 import com.foodgo.backend.common.context.SuccessMessageContext;
 import com.foodgo.backend.common.exception.ResourceNotFoundException;
@@ -17,7 +18,9 @@ import com.foodgo.backend.module.outlet.repository.OutletRepository;
 import com.foodgo.backend.module.location.repository.DistrictRepository;
 import com.foodgo.backend.module.outlet.repository.OutletTypeRepository;
 import com.foodgo.backend.module.outlet.service.OutletService;
+import com.foodgo.backend.module.user.entity.Role;
 import com.foodgo.backend.module.user.entity.UserAccount;
+import com.foodgo.backend.module.user.repository.RoleRepository;
 import com.foodgo.backend.module.user.repository.UserAccountRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -39,9 +42,10 @@ public class OutletServiceImpl
 
   private final OutletRepository outletRepository;
   private final OutletMapper outletMapper;
-  private final UserAccountRepository userAccountRepository; // Cần để tải Owner
+  private final UserAccountRepository userAccountRepository;
   private final DistrictRepository districtRepository;
   private final OutletTypeRepository outletTypeRepository;
+  private final RoleRepository roleRepository;
 
   private final String outletEntityName = EntityName.OUTLET.getFriendlyName();
 
@@ -67,40 +71,39 @@ public class OutletServiceImpl
     return outletEntityName;
   }
 
-  // ==================== I. HOOK METHODS (SECURITY/PERMISSION) ====================
+  // ==================== I. HOOK METHODS (SECURITY) ====================
 
-  /** 🔑 HARD RULE: Kiểm tra quyền sở hữu hoặc quyền Admin (Admin Bypass) */
   @Override
   protected void ensurePermission(Outlet entity) {
     UUID currentUserId = SecurityContext.getCurrentUserId();
 
-    // 1. Admin Bypass
+    // Admin bypass mọi quyền sở hữu
     if (SecurityContext.isAdmin()) {
       return;
     }
 
-    // 2. Kiểm tra Ownership (Rule: Owner có thể modify own data)
     if (!entity.getOwner().getId().equals(currentUserId)) {
-      // Ném lỗi 404 để ẩn thông tin về quyền sở hữu (Security by obscurity)
       throw new AccessDeniedException(
           "Bạn không có quyền thao tác Outlet" + " id: " + entity.getId());
     }
   }
 
-  // ==================== II. GHI ĐÈ CRUD CỐT LÕI (FK Assignment) ====================
+  // ==================== II. GHI ĐÈ CRUD CỐT LÕI ====================
 
-  /** Ghi đè CREATE để gán Owner Entity và FK Entities (District, OutletType) */
   @Override
   @Transactional
   public OutletResponse create(OutletCreateRequest request) {
-    // 1. Lấy Owner từ SecurityContext (Service Rule)
+    // 1. Lấy Owner từ SecurityContext
     UUID ownerId = SecurityContext.getCurrentUserId();
     UserAccount owner =
         userAccountRepository
             .findById(ownerId)
             .orElseThrow(() -> new EntityNotFoundException("Owner not found"));
 
-    // 2. Validate FK tồn tại
+    // [FIX BUG] 1.5: Tự động thăng cấp ROLE_OWNER (trừ khi là Admin)
+    promoteToOwnerIfNecessary(owner);
+
+    // 2. Validate FK
     if (!districtRepository.existsById(request.districtId())) {
       throw new ResourceNotFoundException("District" + " id: " + request.districtId());
     }
@@ -108,13 +111,13 @@ public class OutletServiceImpl
       throw new ResourceNotFoundException("OutletType" + " id: " + request.typeId());
     }
 
-    // 3. Mapping DTO và GÁN Entity quan hệ
+    // 3. Mapping & FK Assignment
     Outlet entity = outletMapper.toEntity(request);
     entity.setOwner(owner);
     entity.setDistrict(districtRepository.getReferenceById(request.districtId()));
     entity.setType(outletTypeRepository.getReferenceById(request.typeId()));
 
-    // 4. Lưu và hoàn tất (dùng Base Logic để set message)
+    // 4. Save & Success Message
     Outlet savedEntity = outletRepository.save(entity);
     afterCreate(savedEntity);
 
@@ -128,11 +131,9 @@ public class OutletServiceImpl
   @Override
   @Transactional
   public OutletResponse update(UUID id, OutletUpdateRequest request) {
-
     Outlet entity = findByIdOrThrow(id);
-    ensurePermission(entity);
+    ensurePermission(entity); // Check quyền trước khi update
 
-    // Gán District
     request
         .optionalDistrictId()
         .ifPresent(
@@ -143,7 +144,6 @@ public class OutletServiceImpl
               entity.setDistrict(districtRepository.getReferenceById(districtId));
             });
 
-    // Gán Outlet Type
     request
         .optionalTypeId()
         .ifPresent(
@@ -155,7 +155,6 @@ public class OutletServiceImpl
             });
 
     outletMapper.updateEntity(request, entity);
-
     Outlet updatedEntity = getRepository().save(entity);
     afterUpdate(updatedEntity);
 
@@ -170,5 +169,34 @@ public class OutletServiceImpl
   @Override
   protected Specification<Outlet> buildSpecification(OutletFilterRequest filterRequest) {
     return new OutletSearchSpecification(filterRequest);
+  }
+
+  // ==================== IV. PRIVATE HELPERS (BUG FIXED) ====================
+
+  /**
+   * Helper method: Kiểm tra và thêm Role OWNER cho user thường. KHÔNG áp dụng nếu user là ADMIN.
+   */
+  private void promoteToOwnerIfNecessary(UserAccount user) {
+    // 1. Guard Clause: Nếu là Admin -> Return ngay, không làm gì cả.
+    boolean isAdmin =
+        user.getRole().getName().equalsIgnoreCase(RoleType.ROLE_SYSTEM_ADMIN.getName());
+
+    if (isAdmin) {
+      return;
+    }
+
+    // 2. Logic cho User thường: Nếu chưa là Owner thì cấp quyền.
+    boolean hasOwnerRole = user.getRole().getName().equalsIgnoreCase(RoleType.ROLE_OWNER.getName());
+
+    if (!hasOwnerRole) {
+      Role ownerRole =
+          roleRepository
+              .findByName(RoleType.ROLE_OWNER.getName())
+              .orElseThrow(
+                  () -> new ResourceNotFoundException("Role OWNER configuration not found in DB"));
+
+      user.setRole(ownerRole);
+      userAccountRepository.save(user);
+    }
   }
 }

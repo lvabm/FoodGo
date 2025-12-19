@@ -4,6 +4,7 @@ import com.foodgo.backend.common.base.mapper.BaseMapper;
 import com.foodgo.backend.common.base.service.impl.BaseServiceImpl;
 import com.foodgo.backend.common.constant.BookingStatus;
 import com.foodgo.backend.common.constant.EntityName;
+import com.foodgo.backend.common.context.SecurityContext;
 import com.foodgo.backend.common.context.SuccessMessageContext;
 import com.foodgo.backend.module.admin.service.AdminBookingService;
 import com.foodgo.backend.module.booking.dto.criteria.BookingSpecification;
@@ -14,10 +15,12 @@ import com.foodgo.backend.module.booking.dto.request.update.BookingUpdateRequest
 import com.foodgo.backend.module.booking.dto.response.BookingResponse;
 import com.foodgo.backend.module.booking.entity.Booking;
 import com.foodgo.backend.module.booking.repository.BookingRepository;
+import com.foodgo.backend.module.user.entity.Profile;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -63,7 +66,10 @@ public class AdminBookingServiceImpl
 
   @Override
   protected void ensurePermission(Booking entity) {
-    // Admin has full access
+    // Chỉ cần đảm bảo người gọi là Admin
+    if (!SecurityContext.isAdmin()) {
+      throw new AccessDeniedException("Chỉ Admin mới có quyền thao tác này.");
+    }
   }
 
   @Override
