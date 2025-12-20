@@ -16,4 +16,10 @@ public interface BookingService
         UpdatableService<UUID, BookingUpdateRequest, BookingResponse> {
   // API dành riêng cho User: Hủy đơn của chính mình
   BookingResponse cancelBooking(UUID bookingId, String reason);
+
+  // Owner/Admin duyệt đơn
+  BookingResponse confirmBooking(UUID bookingId);
+
+  // Owner/Admin từ chối đơn
+  BookingResponse rejectBooking(UUID bookingId, String reason);
 }

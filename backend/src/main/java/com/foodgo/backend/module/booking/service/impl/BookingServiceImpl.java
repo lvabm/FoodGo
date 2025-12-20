@@ -176,4 +176,42 @@ public class BookingServiceImpl
     SuccessMessageContext.setMessage("Đã hủy đơn đặt bàn thành công.");
     return bookingMapper.toResponse(saved);
   }
+
+  @Override
+  @Transactional
+  public BookingResponse confirmBooking(UUID bookingId) {
+    Booking booking = findByIdOrThrow(bookingId);
+    ensurePermission(booking); // Chỉ Owner của quán hoặc Admin mới được duyệt
+
+    if (booking.getStatus() != BookingStatus.PENDING) {
+      throw new BadRequestException("Chỉ có thể duyệt các đơn đang chờ (PENDING).");
+    }
+
+    booking.setStatus(BookingStatus.CONFIRMED);
+    Booking saved = bookingRepository.save(booking);
+
+    // TODO: Gửi thông báo (Notification) cho User là đơn đã được duyệt
+    SuccessMessageContext.setMessage("Duyệt đơn đặt bàn thành công.");
+    return bookingMapper.toResponse(saved);
+  }
+
+  @Override
+  @Transactional
+  public BookingResponse rejectBooking(UUID bookingId, String reason) {
+    Booking booking = findByIdOrThrow(bookingId);
+    ensurePermission(booking);
+
+    if (booking.getStatus() != BookingStatus.PENDING) {
+      throw new BadRequestException("Chỉ có thể từ chối các đơn đang chờ (PENDING).");
+    }
+
+    booking.setStatus(BookingStatus.REJECTED);
+    booking.setOwnerNotes(reason);
+
+    // Logic hoàn tiền (Refund) nếu cần thiết (Manual Payment -> Có thể ghi chú là cần hoàn tiền)
+
+    Booking saved = bookingRepository.save(booking);
+    SuccessMessageContext.setMessage("Đã từ chối đơn đặt bàn.");
+    return bookingMapper.toResponse(saved);
+  }
 }

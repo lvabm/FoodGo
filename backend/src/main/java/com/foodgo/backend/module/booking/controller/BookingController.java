@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -55,5 +56,19 @@ public class BookingController {
       @PathVariable UUID id,
       @RequestParam(required = false, defaultValue = "Khách yêu cầu hủy") String reason) {
     return bookingService.cancelBooking(id, reason);
+  }
+
+  @Operation(summary = "[Owner] Duyệt đơn đặt bàn")
+  @PreAuthorize("hasRole('OWNER')")
+  @PostMapping("/{id}/confirm")
+  public BookingResponse confirm(@PathVariable UUID id) {
+    return bookingService.confirmBooking(id);
+  }
+
+  @Operation(summary = "[Owner] Từ chối đơn đặt bàn")
+  @PreAuthorize("hasRole('OWNER')")
+  @DeleteMapping("/{id}/reject")
+  public BookingResponse reject(@PathVariable UUID id, @RequestParam String reason) {
+    return bookingService.rejectBooking(id, reason);
   }
 }
