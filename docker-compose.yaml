@@ -8,49 +8,9 @@ services:
       - 'POSTGRES_PASSWORD=admin'
     ports:
       - '5432:5432'
-    restart: always
-
-  # -------------------- DỊCH VỤ PGADMIN --------------------
-  pgadmin:
-    image: dpage/pgadmin4
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=admin@foodgo.com
-      - PGADMIN_DEFAULT_PASSWORD=admin
-    ports:
-      - '8081:80'
-    depends_on:
-      - postgres
-    restart: always
-
-  # -------------------- DỊCH VỤ BACKEND (JAVA SPRING BOOT) --------------------
-  backend:
-    # 1. Sử dụng 'build' thay vì 'image'
-    build:
-      context: ./backend # Trỏ đến thư mục chứa code và Dockerfile của Java Backend
-      dockerfile: Dockerfile # Tên file Dockerfile (nếu tên là Dockerfile)
-    ports:
-      - '8080:8080'
-    environment:
-      # Sử dụng tên service 'postgres' cho kết nối DB
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/foodgo_db
-      - SPRING_DATASOURCE_USERNAME=admin
-      - SPRING_DATASOURCE_PASSWORD=admin
-    depends_on:
-      - postgres # Phụ thuộc vào DB
-    restart: always
     volumes:
-      # Ánh xạ thư mục mã nguồn Backend vào Container
-      - ./backend:/app
-      # Cache Maven dependencies (Tùy chọn, tùy vào Dockerfile của bạn)
-      - ~/.m2:/root/.m2
-
-  # -------------------- DỊCH VỤ FRONTEND (VUE.JS) --------------------
-  frontend:
-    build:
-      context: ./frontend # Trỏ đến thư mục gốc của dự án Vue.js
-      dockerfile: Dockerfile
-    ports:
-      - '5173:80' # Mapping cổng
-    depends_on:
-      - backend # Phụ thuộc vào Backend
+      - postgres_data:/var/lib/postgresql/data  # Lưu dữ liệu DB vào volume
     restart: always
+# -------------------- VOLUMES --------------------
+volumes:
+  postgres_data:       # Volume lưu dữ liệu PostgreSQL

@@ -1,0 +1,63 @@
+package com.foodgo.backend.module.outlet.service.impl;
+
+import com.foodgo.backend.common.base.mapper.BaseMapper;
+
+import com.foodgo.backend.common.base.service.impl.BaseServiceImpl;
+import com.foodgo.backend.common.constant.EntityName;
+import com.foodgo.backend.module.outlet.dto.criteria.OutletCategorySearchSpecification;
+import com.foodgo.backend.module.outlet.dto.mapper.OutletCategoryMapper;
+import com.foodgo.backend.module.outlet.dto.request.filter.OutletCategoryFilterRequest;
+import com.foodgo.backend.module.outlet.dto.response.OutletCategoryResponse;
+import com.foodgo.backend.module.outlet.entity.OutletCategory;
+import com.foodgo.backend.module.outlet.repository.OutletCategoryRepository;
+import com.foodgo.backend.module.outlet.service.OutletCategoryService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class OutletCategoryServiceImpl
+    extends BaseServiceImpl<
+        OutletCategory,
+        Integer,
+        Object,
+        Object,
+        OutletCategoryFilterRequest,
+        OutletCategoryResponse>
+    implements OutletCategoryService {
+
+  private final String outletCategoryEntityName = EntityName.OUTLET_CATEGORY.getFriendlyName();
+  private final OutletCategoryRepository repository;
+  private final OutletCategoryMapper mapper;
+
+  // --- Triển khai các phương thức trừu tượng từ ReadOnlyServiceImpl ---
+
+  @Override
+  protected JpaRepository<OutletCategory, Integer> getRepository() {
+    return repository;
+  }
+
+  @Override
+  protected JpaSpecificationExecutor<OutletCategory> getSpecRepository() {
+    return repository;
+  }
+
+  @Override
+  protected BaseMapper<OutletCategory, Object, Object, OutletCategoryResponse> getMapper() {
+    return mapper;
+  }
+
+  @Override
+  protected String getEntityName() {
+    return outletCategoryEntityName;
+  }
+
+  // Triển khai logic Specification
+  @Override
+  protected Specification<OutletCategory> buildSpecification(OutletCategoryFilterRequest filter) {
+    return new OutletCategorySearchSpecification(filter);
+  }
+}

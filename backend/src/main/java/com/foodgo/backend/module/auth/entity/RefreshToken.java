@@ -1,7 +1,7 @@
 package com.foodgo.backend.module.auth.entity;
 
-import com.foodgo.backend.common.base.BaseIntegerEntity;
-import com.foodgo.backend.module.user_d.entity.UserAccount;
+import com.foodgo.backend.common.base.dto.BaseIntegerEntity;
+import com.foodgo.backend.module.user.entity.UserAccount;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,17 +26,19 @@ public class RefreshToken extends BaseIntegerEntity<Long> {
   private String ipAddress;
 
   @Column(name = "is_revoked", nullable = false)
+  @Builder.Default
   private boolean isRevoked = false;
 
   @Column(name = "expires_at", nullable = false)
   private Instant expiresAt;
 
-  @Column(name = "created_at", nullable = false)
+  @Column(name = "created_at", nullable = false, updatable = false)
+  @Builder.Default
   private Instant createdAt = Instant.now();
 
   // 1. QUAN HỆ MANY - TO - ONE: UserAccount <--> RefreshToken
   // RefreshToken sở hữu quan hệ (fk_user_account_id_refresh_token)
-  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id", nullable = false)
   private UserAccount user;
 }
