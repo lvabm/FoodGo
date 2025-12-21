@@ -4,33 +4,17 @@ import com.foodgo.backend.module.auth.dto.*;
 
 public interface AuthService {
 
-  // Đăng ký tài khoản (soft-create until verified)
+  // Đăng ký tài khoản (Tạo user + Tự động login/cấp token)
   AuthResponse register(RegisterRequest request);
 
-  // Đăng nhập (trả access + refresh token) — có thể rate-limit ở service hoặc filter
+  // Đăng nhập (trả access + refresh token)
   AuthResponse login(LoginRequest request);
 
-  // Làm mới access token từ refresh token
+  // Làm mới access token bằng refresh token
   AuthResponse refreshToken(RefreshTokenRequest request);
 
-  // Đăng xuất (revoke refresh token)
-  void logout(LogoutRequest request);
+  // Đăng xuất (Hủy session)
+  void logout();
 
-  // Gửi email đặt lại mật khẩu (throttle per email)
-  void sendResetPasswordEmail(ForgotPasswordRequest request);
-
-  // Gửi lại email đặt lại mật khẩu (throttle resend)
-  void resendResetPasswordEmail(ForgotPasswordRequest request);
-
-  // Đặt lại mật khẩu bằng token (validate token expiry)
-  void resetPassword(ResetPasswordRequest request);
-
-  // Đổi mật khẩu cho user đã đăng nhập (require current password)
-  void changePassword(ChangePasswordRequest request);
-
-  // Xác thực email bằng token (token truyền qua query)
-  void verifyEmail(String token);
-
-  // Gửi lại email xác thực (throttle resend)
-  void resendVerificationEmail(ResendVerifyRequest request);
+  // Các method quên mật khẩu, verify email,..
 }

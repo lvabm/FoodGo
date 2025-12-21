@@ -5,6 +5,7 @@ import com.foodgo.backend.module.menu.dto.response.MenuItemSubCategoryResponse;
 import com.foodgo.backend.module.menu.service.MenuItemSubCategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.security.PermitAll;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,18 +23,21 @@ public class MenuItemSubCategoryController {
 
   private final MenuItemSubCategoryService menuItemSubCategoryService;
 
+  @PermitAll
   @GetMapping
   @Operation(summary = "Lấy tất cả Danh mục Con Món ăn (Không phân trang)")
   public List<MenuItemSubCategoryResponse> getAll() {
     return menuItemSubCategoryService.getAll();
   }
 
+  @PermitAll
   @GetMapping("/{id}")
   @Operation(summary = "Lấy chi tiết Danh mục Con Món ăn theo ID")
   public MenuItemSubCategoryResponse getDetail(@PathVariable Integer id) {
     return menuItemSubCategoryService.getDetail(id);
   }
 
+  @PermitAll
   @GetMapping("/search")
   @Operation(summary = "Tìm kiếm và phân trang Danh mục Con Món ăn")
   public Page<MenuItemSubCategoryResponse> search(

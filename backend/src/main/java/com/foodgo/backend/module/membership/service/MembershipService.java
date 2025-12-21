@@ -1,15 +1,16 @@
 package com.foodgo.backend.module.membership.service;
 
-import com.foodgo.backend.module.membership.dto.MembershipRequest;
-import com.foodgo.backend.module.membership.dto.MembershipResponse;
-import org.springframework.data.domain.Page;
+import com.foodgo.backend.common.base.service.ReadableService;
+import com.foodgo.backend.module.membership.dto.request.filter.MembershipPlanFilterRequest;
+import com.foodgo.backend.module.membership.dto.response.MembershipPlanResponse;
+import com.foodgo.backend.module.membership.dto.response.UserMembershipResponse;
 
-import java.util.List;
+public interface MembershipService
+    extends ReadableService<Integer, MembershipPlanFilterRequest, MembershipPlanResponse> {
 
-public interface MembershipService {
-  MembershipResponse createMembership(MembershipRequest request);
+  // Đăng ký gói
+  UserMembershipResponse subscribe(Integer planId);
 
-  List<MembershipResponse> getAllMemberships();
-
-  MembershipResponse getMembershipById(Long id);
+  // Hủy gói hiện tại
+  void cancelCurrentSubscription();
 }
