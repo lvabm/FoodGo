@@ -31,6 +31,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -201,15 +202,15 @@ public class OutletServiceImpl
   }
 
   @Override
-  public OutletResponse getOwnerOutlet() {
+  public List<OutletResponse> getOwnerOutlets() {
     UUID ownerId = SecurityContext.getCurrentUserId();
-    Outlet outlet =
-        outletRepository
-            .findByOwnerId(ownerId)
-            .orElseThrow(
-                () ->
-                    new ResourceNotFoundException(
-                        "Bạn chưa tạo quán. Vui lòng tạo quán của bạn."));
-    return outletMapper.toResponse(outlet);
+
+    List<Outlet> outlets = outletRepository.findAllByOwnerId(ownerId);
+
+    if (outlets.isEmpty()) {
+      throw new ResourceNotFoundException("Bạn chưa tạo quán nào. Vui lòng tạo quán của bạn.");
+    }
+
+    return outlets.stream().map(outletMapper::toResponse).toList();
   }
 }

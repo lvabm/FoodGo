@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @Tag(
@@ -54,12 +55,10 @@ public class OutletController {
     outletService.softDelete(id);
   }
 
-  // --- API Đọc Dữ Liệu (API Ưu tiên số 1) ---
-
-  @GetMapping("/my-outlet")
-  @Operation(summary = "Lấy Outlet của chính mình (Owner)")
-  public OutletResponse getMyOutlet() {
-    return outletService.getOwnerOutlet();
+  @GetMapping("/my-outlets")
+  @Operation(summary = "Lấy danh sách Outlet của Owner")
+  public List<OutletResponse> getMyOutlets() {
+    return outletService.getOwnerOutlets();
   }
 
   @PermitAll
