@@ -8,4 +8,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface OutletRepository
-    extends JpaRepository<Outlet, UUID>, JpaSpecificationExecutor<Outlet> {}
+    extends JpaRepository<Outlet, UUID>, JpaSpecificationExecutor<Outlet> {
+  
+  Optional<Outlet> findByOwnerId(UUID ownerId);
+}

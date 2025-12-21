@@ -199,4 +199,17 @@ public class OutletServiceImpl
       userAccountRepository.save(user);
     }
   }
+
+  @Override
+  public OutletResponse getOwnerOutlet() {
+    UUID ownerId = SecurityContext.getCurrentUserId();
+    Outlet outlet =
+        outletRepository
+            .findByOwnerId(ownerId)
+            .orElseThrow(
+                () ->
+                    new ResourceNotFoundException(
+                        "Bạn chưa tạo quán. Vui lòng tạo quán của bạn."));
+    return outletMapper.toResponse(outlet);
+  }
 }

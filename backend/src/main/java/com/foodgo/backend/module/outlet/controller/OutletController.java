@@ -56,6 +56,12 @@ public class OutletController {
 
   // --- API Đọc Dữ Liệu (API Ưu tiên số 1) ---
 
+  @GetMapping("/my-outlet")
+  @Operation(summary = "Lấy Outlet của chính mình (Owner)")
+  public OutletResponse getMyOutlet() {
+    return outletService.getOwnerOutlet();
+  }
+
   @PermitAll
   @GetMapping("/search")
   @Operation(
