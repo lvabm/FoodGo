@@ -274,6 +274,15 @@ const handleSubmit = async () => {
     return;
   }
 
+  // Check membership requirement
+  if (!authStore.profile?.membershipName) {
+    errorMessage.value = "Bạn cần đăng ký gói membership để đặt bàn";
+    setTimeout(() => {
+      router.push("/membership");
+    }, 2000);
+    return;
+  }
+
   errorMessage.value = "";
   successMessage.value = "";
   isSubmitting.value = true;

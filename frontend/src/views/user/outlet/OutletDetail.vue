@@ -20,6 +20,25 @@
 
     <!-- Outlet Details -->
     <div v-else-if="outlet" class="w-full">
+      <!-- Notification Messages -->
+      <div
+        v-if="errorMessage || successMessage"
+        class="w-full max-w-7xl mx-auto px-4 pt-4"
+      >
+        <div
+          v-if="errorMessage"
+          class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg"
+        >
+          {{ errorMessage }}
+        </div>
+        <div
+          v-if="successMessage"
+          class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg"
+        >
+          {{ successMessage }}
+        </div>
+      </div>
+
       <!-- Hero Image Gallery -->
       <div class="relative w-full h-[400px] bg-gray-200 dark:bg-gray-800">
         <img
@@ -385,12 +404,12 @@
                 </p>
               </div>
 
-              <router-link
-                :to="`/booking/${outlet.id}`"
+              <button
+                @click="handleBookingClick"
                 class="block w-full bg-primary text-white text-center font-bold py-3 rounded-lg hover:bg-opacity-90 transition-colors mb-4"
               >
                 Đặt bàn ngay
-              </router-link>
+              </button>
 
               <div
                 class="space-y-3 pt-4 border-t border-border-light dark:border-border-dark"
@@ -443,12 +462,15 @@
 
 <script setup>
 import {ref, onMounted, computed, watch} from "vue";
-import {useRoute} from "vue-router";
+import {useRoute, useRouter} from "vue-router";
 import {outletApi} from "@/api";
 import {menuApi} from "@/api/menu";
 import {reviewApi} from "@/api/review";
+import {useAuthStore} from "@/stores/auth";
 
 const route = useRoute();
+const router = useRouter();
+const authStore = useAuthStore();
 
 // State
 const outlet = ref(null);
@@ -458,6 +480,8 @@ const isLoading = ref(false);
 const isLoadingMenu = ref(false);
 const isLoadingReviews = ref(false);
 const error = ref(null);
+const errorMessage = ref("");
+const successMessage = ref("");
 const activeTab = ref("overview");
 
 // Tabs configuration
@@ -650,6 +674,34 @@ const formatDate = (dateString) => {
     month: "long",
     day: "numeric",
   }).format(date);
+};
+
+// Handle booking click with membership check
+const handleBookingClick = () => {
+  errorMessage.value = "";
+  successMessage.value = "";
+
+  // Check authentication
+  if (!authStore.isAuthenticated) {
+    errorMessage.value = "Vui lòng đăng nhập để đặt bàn. Đang chuyển hướng...";
+    setTimeout(() => {
+      router.push("/auth/login");
+    }, 2000);
+    return;
+  }
+
+  // Check membership requirement
+  if (!authStore.profile?.membershipName) {
+    errorMessage.value =
+      "Bạn cần đăng ký gói membership để đặt bàn. Đang chuyển hướng...";
+    setTimeout(() => {
+      router.push("/membership");
+    }, 2000);
+    return;
+  }
+
+  // Navigate to booking form
+  router.push(`/booking/${outlet.value.id}`);
 };
 
 // Lifecycle
