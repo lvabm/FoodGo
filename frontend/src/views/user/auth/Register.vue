@@ -83,19 +83,7 @@
                   />
                 </div>
 
-                <div>
-                  <label
-                    class="text-black dark:text-white text-sm font-medium mb-2 block"
-                    >Số điện thoại</label
-                  >
-                  <input
-                    v-model="formData.phone"
-                    type="tel"
-                    placeholder="0901234567"
-                    class="w-full h-12 px-4 rounded-lg border border-gray-300 dark:border-[#684031] bg-gray-50 dark:bg-[#342018] text-black dark:text-white focus:ring-2 focus:ring-primary/50"
-                  />
-                </div>
-
+                
                 <div>
                   <label
                     class="text-black dark:text-white text-sm font-medium mb-2 block"
@@ -162,7 +150,6 @@ const successMessage = ref("");
 const formData = ref({
   name: "",
   email: "",
-  phone: "",
   password: "",
   confirmPassword: "",
 });

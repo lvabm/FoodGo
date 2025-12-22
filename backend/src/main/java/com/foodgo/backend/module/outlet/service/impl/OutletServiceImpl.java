@@ -165,6 +165,19 @@ public class OutletServiceImpl
     return outletMapper.toResponse(updatedEntity);
   }
 
+  // Override getDetail to allow public access to outlet details (no owner permission check)
+  @Override
+  @Transactional(readOnly = true)
+  public OutletResponse getDetail(UUID id) {
+    // Use findByIdOrThrow (no ensurePermission) so non-owner users can view outlet details
+    Outlet entity = findByIdOrThrow(id);
+
+    SuccessMessageContext.setMessage(
+        String.format(SuccessMessageContext.FETCH_DETAIL_SUCCESS, getEntityName(), id));
+
+    return outletMapper.toResponse(entity);
+  }
+
   // ==================== III. SPECIFICATION ====================
 
   @Override
