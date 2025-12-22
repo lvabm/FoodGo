@@ -1,79 +1,199 @@
 <template>
   <div class="px-10 py-8">
-    <h1 class="text-2xl font-bold mb-6">Quản lý đặt bàn</h1>
-
-    <!-- Tabs -->
-    <div
-      class="flex gap-4 mb-6 border-b border-border-light dark:border-border-dark"
-    >
+    <div class="flex items-center justify-between mb-6">
+      <h1 class="text-2xl font-bold text-text-light dark:text-text-dark">
+        Quản lý đặt bàn
+      </h1>
       <button
-        v-for="tab in tabs"
-        :key="tab"
-        :class="[
-          'pb-3 px-4 font-medium transition-colors',
-          activeTab === tab
-            ? 'border-b-2 border-owner-primary text-owner-primary'
-            : 'text-gray-500',
-        ]"
-        @click="activeTab = tab"
+        @click="loadBookings"
+        class="px-4 py-2 bg-primary text-white rounded-lg hover:opacity-90 transition-opacity flex items-center gap-2"
       >
-        {{ tab }}
+        <span class="material-symbols-outlined text-lg">refresh</span>
+        Làm mới
       </button>
     </div>
 
-    <!-- Booking List -->
-    <div class="space-y-4">
+    <!-- Loading State -->
+    <div v-if="loading" class="flex justify-center items-center py-20">
       <div
-        v-for="booking in filteredBookings"
-        :key="booking.id"
-        class="bg-white dark:bg-surface-dark rounded-xl p-6 border border-border-light dark:border-border-dark"
+        class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"
+      ></div>
+    </div>
+
+    <!-- Error State -->
+    <div
+      v-else-if="error"
+      class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-6"
+    >
+      <p class="text-red-600 dark:text-red-400">{{ error }}</p>
+    </div>
+
+    <!-- Content -->
+    <div v-else>
+      <!-- Tabs -->
+      <div
+        class="flex gap-4 mb-6 border-b border-border-light dark:border-border-dark"
       >
-        <div class="flex items-start justify-between">
-          <div class="flex items-start gap-4">
-            <div class="w-12 h-12 bg-gray-300 rounded-full"></div>
-            <div>
-              <h3 class="font-bold text-lg">{{ booking.customer }}</h3>
+        <button
+          v-for="tab in tabs"
+          :key="tab.value"
+          :class="[
+            'pb-3 px-4 font-medium transition-colors',
+            activeTab === tab.value
+              ? 'border-b-2 border-primary text-primary'
+              : 'text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark',
+          ]"
+          @click="changeTab(tab.value)"
+        >
+          {{ tab.label }}
+          <span
+            v-if="tab.count !== undefined"
+            class="ml-2 px-2 py-0.5 text-xs rounded-full bg-primary/10 text-primary"
+          >
+            {{ tab.count }}
+          </span>
+        </button>
+      </div>
+
+      <!-- Empty State -->
+      <div
+        v-if="filteredBookings.length === 0"
+        class="text-center py-20 text-subtext-light dark:text-subtext-dark"
+      >
+        <span class="material-symbols-outlined text-6xl mb-4 opacity-50"
+          >event_busy</span
+        >
+        <p class="text-lg">Không có đặt bàn nào</p>
+      </div>
+
+      <!-- Booking List -->
+      <div v-else class="space-y-4">
+        <div
+          v-for="booking in filteredBookings"
+          :key="booking.id"
+          class="bg-white dark:bg-surface-dark rounded-xl p-6 border border-border-light dark:border-border-dark shadow-sm hover:shadow-md transition-shadow"
+        >
+          <div class="flex items-start justify-between">
+            <div class="flex items-start gap-4 flex-1">
               <div
-                class="flex items-center gap-4 mt-2 text-sm text-gray-600 dark:text-gray-400"
+                class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0"
               >
-                <span class="flex items-center gap-1">
-                  <span class="material-symbols-outlined text-lg"
-                    >calendar_today</span
-                  >
-                  {{ booking.date }}
-                </span>
-                <span class="flex items-center gap-1">
-                  <span class="material-symbols-outlined text-lg"
-                    >schedule</span
-                  >
-                  {{ booking.time }}
-                </span>
-                <span class="flex items-center gap-1">
-                  <span class="material-symbols-outlined text-lg">group</span>
-                  {{ booking.guests }} người
-                </span>
+                <span class="material-symbols-outlined text-primary text-xl"
+                  >person</span
+                >
               </div>
-              <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                {{ booking.note }}
-              </p>
+              <div class="flex-1">
+                <div class="flex items-start justify-between mb-2">
+                  <div>
+                    <h3
+                      class="font-bold text-lg text-text-light dark:text-text-dark"
+                    >
+                      {{ booking.customerName }}
+                    </h3>
+                    <p
+                      class="text-sm text-subtext-light dark:text-subtext-dark"
+                    >
+                      {{ booking.customerPhone }}
+                    </p>
+                  </div>
+                  <span
+                    :class="getStatusClass(booking.status)"
+                    class="px-3 py-1 text-sm font-medium rounded-full"
+                  >
+                    {{ getStatusText(booking.status) }}
+                  </span>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-3 text-sm">
+                  <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-lg text-primary"
+                      >calendar_today</span
+                    >
+                    <span class="text-subtext-light dark:text-subtext-dark">
+                      {{ formatDate(booking.bookingDate) }}
+                    </span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-lg text-primary"
+                      >schedule</span
+                    >
+                    <span class="text-subtext-light dark:text-subtext-dark">
+                      {{ booking.bookingTime }}
+                    </span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-lg text-primary"
+                      >group</span
+                    >
+                    <span class="text-subtext-light dark:text-subtext-dark">
+                      {{ booking.numberOfGuests }} người
+                    </span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-lg text-primary"
+                      >payments</span
+                    >
+                    <span class="text-subtext-light dark:text-subtext-dark">
+                      {{ formatCurrency(booking.depositAmount) }}
+                    </span>
+                  </div>
+                </div>
+
+                <div
+                  v-if="booking.userNotes"
+                  class="mt-3 p-3 bg-background-light dark:bg-background-dark rounded-lg"
+                >
+                  <p
+                    class="text-sm font-medium text-text-light dark:text-text-dark mb-1"
+                  >
+                    Ghi chú từ khách:
+                  </p>
+                  <p class="text-sm text-subtext-light dark:text-subtext-dark">
+                    {{ booking.userNotes }}
+                  </p>
+                </div>
+
+                <div
+                  v-if="booking.ownerNotes"
+                  class="mt-2 p-3 bg-primary/5 rounded-lg"
+                >
+                  <p
+                    class="text-sm font-medium text-text-light dark:text-text-dark mb-1"
+                  >
+                    Ghi chú của bạn:
+                  </p>
+                  <p class="text-sm text-subtext-light dark:text-subtext-dark">
+                    {{ booking.ownerNotes }}
+                  </p>
+                </div>
+              </div>
             </div>
-          </div>
-          <div class="flex flex-col items-end gap-2">
-            <span
-              :class="getStatusClass(booking.status)"
-              class="px-3 py-1 text-sm font-medium rounded-full"
-            >
-              {{ booking.status }}
-            </span>
-            <div class="flex gap-2 mt-2">
+
+            <div class="flex flex-col gap-2 ml-4">
+              <!-- Xác nhận button -->
               <button
-                v-if="booking.status === 'Chờ xác nhận'"
-                class="px-4 py-2 bg-owner-primary text-white rounded-lg hover:bg-opacity-90"
+                v-if="booking.status === 'PENDING'"
+                @click="confirmBooking(booking.id)"
+                :disabled="actionLoading[booking.id]"
+                class="px-4 py-2 bg-primary text-white rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 whitespace-nowrap"
               >
-                Xác nhận
+                <span v-if="actionLoading[booking.id]">Đang xử lý...</span>
+                <span v-else>Xác nhận</span>
               </button>
+
+              <!-- Từ chối button -->
               <button
-                class="px-4 py-2 border border-border-light dark:border-border-dark rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800"
+                v-if="booking.status === 'PENDING'"
+                @click="openRejectDialog(booking)"
+                class="px-4 py-2 border border-red-500 text-red-500 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors whitespace-nowrap"
+              >
+                Từ chối
+              </button>
+
+              <!-- Chi tiết button -->
+              <button
+                @click="viewDetail(booking.id)"
+                class="px-4 py-2 border border-border-light dark:border-border-dark rounded-lg hover:bg-primary/5 transition-colors text-text-light dark:text-text-dark whitespace-nowrap"
               >
                 Chi tiết
               </button>
@@ -81,69 +201,326 @@
           </div>
         </div>
       </div>
+
+      <!-- Pagination -->
+      <div
+        v-if="totalPages > 1"
+        class="flex justify-center items-center gap-2 mt-8"
+      >
+        <button
+          @click="changePage(currentPage - 1)"
+          :disabled="currentPage === 0"
+          class="px-3 py-2 rounded-lg border border-border-light dark:border-border-dark disabled:opacity-50 hover:bg-primary/5 transition-colors"
+        >
+          <span class="material-symbols-outlined">chevron_left</span>
+        </button>
+
+        <button
+          v-for="page in visiblePages"
+          :key="page"
+          @click="changePage(page)"
+          :class="[
+            'px-4 py-2 rounded-lg border transition-colors',
+            currentPage === page
+              ? 'bg-primary text-white border-primary'
+              : 'border-border-light dark:border-border-dark hover:bg-primary/5',
+          ]"
+        >
+          {{ page + 1 }}
+        </button>
+
+        <button
+          @click="changePage(currentPage + 1)"
+          :disabled="currentPage >= totalPages - 1"
+          class="px-3 py-2 rounded-lg border border-border-light dark:border-border-dark disabled:opacity-50 hover:bg-primary/5 transition-colors"
+        >
+          <span class="material-symbols-outlined">chevron_right</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Reject Dialog -->
+    <div
+      v-if="showRejectDialog"
+      class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+      @click.self="closeRejectDialog"
+    >
+      <div
+        class="bg-white dark:bg-surface-dark rounded-xl p-6 max-w-md w-full mx-4 border border-border-light dark:border-border-dark"
+      >
+        <h3 class="text-xl font-bold text-text-light dark:text-text-dark mb-4">
+          Từ chối đặt bàn
+        </h3>
+        <p class="text-subtext-light dark:text-subtext-dark mb-4">
+          Vui lòng nhập lý do từ chối đặt bàn này:
+        </p>
+        <textarea
+          v-model="rejectReason"
+          class="w-full px-4 py-3 rounded-lg border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark focus:outline-none focus:ring-2 focus:ring-primary resize-none"
+          rows="4"
+          placeholder="Nhập lý do từ chối..."
+        ></textarea>
+        <div class="flex gap-3 mt-4">
+          <button
+            @click="closeRejectDialog"
+            class="flex-1 px-4 py-2 border border-border-light dark:border-border-dark rounded-lg hover:bg-primary/5 transition-colors"
+          >
+            Hủy
+          </button>
+          <button
+            @click="submitReject"
+            :disabled="!rejectReason.trim() || rejectLoading"
+            class="flex-1 px-4 py-2 bg-red-500 text-white rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
+          >
+            <span v-if="rejectLoading">Đang xử lý...</span>
+            <span v-else>Xác nhận từ chối</span>
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import {ref, computed} from "vue";
+import {ref, computed, onMounted} from "vue";
+import {bookingApi} from "@/api";
+import {useRouter} from "vue-router";
 
-const activeTab = ref("Tất cả");
-const tabs = ref([
-  "Tất cả",
-  "Chờ xác nhận",
-  "Đã xác nhận",
-  "Hoàn thành",
-  "Đã hủy",
+const router = useRouter();
+
+// State
+const bookings = ref([]);
+const loading = ref(false);
+const error = ref("");
+const activeTab = ref("ALL");
+const currentPage = ref(0);
+const pageSize = ref(10);
+const totalElements = ref(0);
+const totalPages = ref(0);
+
+// Action loading states
+const actionLoading = ref({});
+
+// Reject dialog
+const showRejectDialog = ref(false);
+const rejectReason = ref("");
+const rejectLoading = ref(false);
+const selectedBooking = ref(null);
+
+// Tabs configuration
+const tabs = computed(() => [
+  {
+    label: "Tất cả",
+    value: "ALL",
+    count: bookings.value.length,
+  },
+  {
+    label: "Chờ xác nhận",
+    value: "PENDING",
+    count: bookings.value.filter((b) => b.status === "PENDING").length,
+  },
+  {
+    label: "Đã xác nhận",
+    value: "CONFIRMED",
+    count: bookings.value.filter((b) => b.status === "CONFIRMED").length,
+  },
+  {
+    label: "Hoàn thành",
+    value: "COMPLETED",
+    count: bookings.value.filter((b) => b.status === "COMPLETED").length,
+  },
+  {
+    label: "Đã hủy",
+    value: "CANCELLED",
+    count: bookings.value.filter((b) => b.status === "CANCELLED").length,
+  },
 ]);
 
-const bookings = ref([
-  {
-    id: 1,
-    customer: "Nguyễn Văn A",
-    date: "22/12/2024",
-    time: "19:00",
-    guests: 4,
-    status: "Chờ xác nhận",
-    note: "Muốn bàn gần cửa sổ",
-  },
-  {
-    id: 2,
-    customer: "Trần Thị B",
-    date: "22/12/2024",
-    time: "20:00",
-    guests: 2,
-    status: "Đã xác nhận",
-    note: "Có trẻ em",
-  },
-  {
-    id: 3,
-    customer: "Lê Văn C",
-    date: "23/12/2024",
-    time: "18:30",
-    guests: 6,
-    status: "Đã xác nhận",
-    note: "Tiệc sinh nhật",
-  },
-]);
-
+// Filtered bookings based on active tab
 const filteredBookings = computed(() => {
-  if (activeTab.value === "Tất cả") return bookings.value;
+  if (activeTab.value === "ALL") return bookings.value;
   return bookings.value.filter((b) => b.status === activeTab.value);
 });
 
-const getStatusClass = (status) => {
-  switch (status) {
-    case "Chờ xác nhận":
-      return "bg-yellow-100 text-yellow-600";
-    case "Đã xác nhận":
-      return "bg-owner-primary/10 text-owner-primary";
-    case "Hoàn thành":
-      return "bg-positive/10 text-positive";
-    case "Đã hủy":
-      return "bg-red-100 text-red-600";
-    default:
-      return "bg-gray-100 text-gray-600";
+// Visible pages for pagination
+const visiblePages = computed(() => {
+  const pages = [];
+  const maxVisible = 5;
+  let start = Math.max(0, currentPage.value - Math.floor(maxVisible / 2));
+  let end = Math.min(totalPages.value, start + maxVisible);
+
+  if (end - start < maxVisible) {
+    start = Math.max(0, end - maxVisible);
+  }
+
+  for (let i = start; i < end; i++) {
+    pages.push(i);
+  }
+  return pages;
+});
+
+// Load bookings from API
+const loadBookings = async () => {
+  loading.value = true;
+  error.value = "";
+
+  try {
+    const params = {
+      page: currentPage.value,
+      size: pageSize.value,
+    };
+
+    // Add status filter if not ALL
+    if (activeTab.value !== "ALL") {
+      params.status = activeTab.value;
+    }
+
+    const response = await bookingApi.getMyBookings(params);
+    console.log("📋 Full response:", response);
+
+    // response.data is already the array of bookings
+    bookings.value = response.data || [];
+    totalElements.value = response.totalElements || 0;
+    totalPages.value = response.totalPages || 0;
+
+    console.log("📋 Loaded bookings:", bookings.value.length, "items");
+  } catch (err) {
+    console.error("❌ Error loading bookings:", err);
+    error.value =
+      err.response?.data?.message ||
+      "Không thể tải danh sách đặt bàn. Vui lòng thử lại.";
+  } finally {
+    loading.value = false;
   }
 };
+
+// Change tab
+const changeTab = (tab) => {
+  activeTab.value = tab;
+  currentPage.value = 0; // Reset to first page when changing tab
+  loadBookings();
+};
+
+// Change page
+const changePage = (page) => {
+  if (page >= 0 && page < totalPages.value) {
+    currentPage.value = page;
+    loadBookings();
+  }
+};
+
+// Confirm booking
+const confirmBooking = async (bookingId) => {
+  actionLoading.value[bookingId] = true;
+
+  try {
+    await bookingApi.confirmBooking(bookingId);
+    console.log("✅ Booking confirmed:", bookingId);
+
+    // Reload bookings to get updated status
+    await loadBookings();
+  } catch (err) {
+    console.error("❌ Error confirming booking:", err);
+    alert(
+      err.response?.data?.message ||
+        "Không thể xác nhận đặt bàn. Vui lòng thử lại."
+    );
+  } finally {
+    actionLoading.value[bookingId] = false;
+  }
+};
+
+// Open reject dialog
+const openRejectDialog = (booking) => {
+  selectedBooking.value = booking;
+  rejectReason.value = "";
+  showRejectDialog.value = true;
+};
+
+// Close reject dialog
+const closeRejectDialog = () => {
+  showRejectDialog.value = false;
+  selectedBooking.value = null;
+  rejectReason.value = "";
+};
+
+// Submit reject
+const submitReject = async () => {
+  if (!rejectReason.value.trim() || !selectedBooking.value) return;
+
+  rejectLoading.value = true;
+
+  try {
+    await bookingApi.rejectBooking(
+      selectedBooking.value.id,
+      rejectReason.value
+    );
+    console.log("❌ Booking rejected:", selectedBooking.value.id);
+
+    closeRejectDialog();
+    await loadBookings();
+  } catch (err) {
+    console.error("❌ Error rejecting booking:", err);
+    alert(
+      err.response?.data?.message ||
+        "Không thể từ chối đặt bàn. Vui lòng thử lại."
+    );
+  } finally {
+    rejectLoading.value = false;
+  }
+};
+
+// View booking detail
+const viewDetail = (bookingId) => {
+  router.push(`/owner/bookings/${bookingId}`);
+};
+
+// Status badge classes
+const getStatusClass = (status) => {
+  const statusMap = {
+    PENDING:
+      "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400",
+    CONFIRMED: "bg-primary/10 text-primary",
+    COMPLETED:
+      "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
+    CANCELLED: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
+  };
+  return statusMap[status] || "bg-gray-100 text-gray-600";
+};
+
+// Status text in Vietnamese
+const getStatusText = (status) => {
+  const statusMap = {
+    PENDING: "Chờ xác nhận",
+    CONFIRMED: "Đã xác nhận",
+    COMPLETED: "Hoàn thành",
+    CANCELLED: "Đã hủy",
+  };
+  return statusMap[status] || status;
+};
+
+// Format date
+const formatDate = (dateString) => {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  return date.toLocaleDateString("vi-VN", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+};
+
+// Format currency
+const formatCurrency = (amount) => {
+  if (amount === null || amount === undefined) return "₫0";
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+  }).format(amount);
+};
+
+// Load bookings on mount
+onMounted(() => {
+  loadBookings();
+});
 </script>

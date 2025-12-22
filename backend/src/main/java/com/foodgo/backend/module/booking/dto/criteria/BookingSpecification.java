@@ -21,7 +21,7 @@ public record BookingSpecification(BookingFilterRequest filter) implements Speci
     if (!SecurityContext.isAdmin()) {
       UUID currentUserId = SecurityContext.getCurrentUserId();
       if (SecurityContext.hasRole("ROLE_OWNER")) {
-        predicates.add(cb.equal(root.get("outlet").get("ownerId"), currentUserId));
+        predicates.add(cb.equal(root.get("outlet").get("owner").get("id"), currentUserId));
       } else {
         predicates.add(cb.equal(root.get("user").get("id"), currentUserId));
       }

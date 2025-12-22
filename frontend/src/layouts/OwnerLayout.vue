@@ -12,7 +12,7 @@
             <!-- Logo -->
             <div class="flex items-center gap-3 p-2">
               <div
-                class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 bg-owner-primary flex items-center justify-center"
+                class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 bg-primary flex items-center justify-center"
               >
                 <svg
                   class="h-6 w-6 text-white"
@@ -42,8 +42,8 @@
             <div class="flex flex-col gap-2 mt-4">
               <router-link
                 to="/owner"
-                class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-owner-primary/10"
-                active-class="bg-owner-primary/20 text-owner-primary"
+                class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-primary/10 transition-colors"
+                active-class="bg-primary/20 text-primary"
               >
                 <span class="material-symbols-outlined">dashboard</span>
                 <p class="text-sm font-medium">Tổng quan</p>
@@ -51,8 +51,8 @@
 
               <router-link
                 to="/owner/bookings"
-                class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-owner-primary/10"
-                active-class="bg-owner-primary/20 text-owner-primary"
+                class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-primary/10 transition-colors"
+                active-class="bg-primary/20 text-primary"
               >
                 <span class="material-symbols-outlined">calendar_month</span>
                 <p class="text-sm font-medium">Đặt bàn</p>
@@ -60,8 +60,8 @@
 
               <router-link
                 to="/owner/menu"
-                class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-owner-primary/10"
-                active-class="bg-owner-primary/20 text-owner-primary"
+                class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-primary/10 transition-colors"
+                active-class="bg-primary/20 text-primary"
               >
                 <span class="material-symbols-outlined">restaurant_menu</span>
                 <p class="text-sm font-medium">Menu</p>
@@ -69,8 +69,8 @@
 
               <router-link
                 to="/owner/feedback"
-                class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-owner-primary/10"
-                active-class="bg-owner-primary/20 text-owner-primary"
+                class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-primary/10 transition-colors"
+                active-class="bg-primary/20 text-primary"
               >
                 <span class="material-symbols-outlined">grade</span>
                 <p class="text-sm font-medium">Đánh giá</p>
@@ -78,8 +78,8 @@
 
               <router-link
                 to="/owner/outlet"
-                class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-owner-primary/10"
-                active-class="bg-owner-primary/20 text-owner-primary"
+                class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-primary/10 transition-colors"
+                active-class="bg-primary/20 text-primary"
               >
                 <span class="material-symbols-outlined">storefront</span>
                 <p class="text-sm font-medium">Thông tin quán</p>
@@ -87,8 +87,8 @@
 
               <router-link
                 to="/owner/statistics"
-                class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-owner-primary/10"
-                active-class="bg-owner-primary/20 text-owner-primary"
+                class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-primary/10 transition-colors"
+                active-class="bg-primary/20 text-primary"
               >
                 <span class="material-symbols-outlined">analytics</span>
                 <p class="text-sm font-medium">Thống kê</p>
@@ -99,13 +99,13 @@
           <!-- Bottom Actions -->
           <div class="mt-auto flex flex-col gap-1">
             <button
-              class="flex items-center gap-3 px-3 py-2 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-owner-primary/10"
+              class="flex items-center gap-3 px-3 py-2 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-primary/10 transition-colors"
             >
               <span class="material-symbols-outlined">settings</span>
               <p class="text-sm font-medium">Cài đặt</p>
             </button>
             <button
-              class="flex items-center gap-3 px-3 py-2 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-owner-primary/10"
+              class="flex items-center gap-3 px-3 py-2 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-primary/10 transition-colors"
             >
               <span class="material-symbols-outlined">logout</span>
               <p class="text-sm font-medium">Đăng xuất</p>
