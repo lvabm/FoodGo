@@ -11,6 +11,7 @@ public record ProfileResponse(
     String avatarUrl,
     UUID userId,
     String countryName,
+    String roleName, // Role name from UserAccount
     // Membership fields (optional, may be null if user has no active membership)
     String membershipName,
     LocalDate membershipStartDate,

@@ -16,6 +16,7 @@ public interface ProfileMapper
   @Override
   @Mapping(target = "userId", source = "userAccount.id")
   @Mapping(target = "countryName", source = "country.name")
+  @Mapping(target = "roleName", source = "userAccount.role.name")
   @Mapping(target = "membershipName", expression = "java(findActiveMembershipPlanName(entity))")
   @Mapping(target = "membershipStartDate", expression = "java(findActiveMembershipStartDate(entity))")
   @Mapping(target = "membershipEndDate", expression = "java(findActiveMembershipEndDate(entity))")

@@ -199,14 +199,37 @@ const fetchPlans = async () => {
   errorMessage.value = "";
   try {
     console.log("📋 Fetching membership plans");
+    console.log("👤 Current user:", authStore.user);
+    console.log("🔍 User role field:", authStore.user?.role);
+    console.log("🔍 User roleType field:", authStore.user?.roleType);
+    console.log("🔍 isOwner computed:", authStore.isOwner);
+    console.log("🔍 isAdmin computed:", authStore.isAdmin);
+
+    // Determine type based on user role
+    const planType = authStore.isOwner ? "OWNER" : "USER";
+    console.log("👤 Selected plan type:", planType);
+
     const response = await membershipApi.getMembershipPlans({
-      type: "USER", // Only USER type memberships
+      type: planType, // Dynamic based on user role
       page: 0,
-      size: 10,
+      size: 100, // Increase to get all plans
+    });
+
+    console.log("📦 Raw API response:", response);
+    console.log("📊 Response structure:", {
+      hasData: !!response.data,
+      isArray: Array.isArray(response.data),
+      dataLength: response.data?.length,
+      totalElements: response.totalElements,
+      totalPages: response.totalPages,
     });
 
     membershipPlans.value = response.data || [];
     console.log("✅ Plans loaded:", membershipPlans.value.length);
+    console.log(
+      "📋 Plan details:",
+      membershipPlans.value.map((p) => ({id: p.id, name: p.name, type: p.type}))
+    );
   } catch (err) {
     console.error("❌ Error fetching plans:", err);
     errorMessage.value = "Không thể tải danh sách gói membership";

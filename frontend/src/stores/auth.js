@@ -13,13 +13,13 @@ export const useAuthStore = defineStore("auth", () => {
   // Getters
   const isAuthenticated = computed(() => !!accessToken.value);
   const isAdmin = computed(
-    () => user.value?.roleType === "ADMIN" || user.value?.role === "ADMIN"
+    () => user.value?.roleName === "ROLE_ADMIN" || user.value?.role === "ADMIN"
   );
   const isOwner = computed(
-    () => user.value?.roleType === "OWNER" || user.value?.role === "OWNER"
+    () => user.value?.roleName === "ROLE_OWNER" || user.value?.role === "OWNER"
   );
   const isUser = computed(
-    () => user.value?.roleType === "USER" || user.value?.role === "USER"
+    () => user.value?.roleName === "ROLE_USER" || user.value?.role === "USER"
   );
 
   // Actions

@@ -275,7 +275,7 @@ const handleSubmit = async () => {
   }
 
   // Check membership requirement
-  if (!authStore.profile?.membershipName) {
+  if (!authStore.user?.membershipName) {
     errorMessage.value = "Bạn cần đăng ký gói membership để đặt bàn";
     setTimeout(() => {
       router.push("/membership");

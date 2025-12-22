@@ -393,7 +393,7 @@
           <!-- Right Column - Booking Card -->
           <div class="lg:col-span-1">
             <div
-              class="sticky top-20 bg-white dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-xl p-6 shadow-lg"
+              class=" top-20 bg-white dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-xl p-6 shadow-lg"
             >
               <div class="mb-6">
                 <div class="text-3xl font-bold text-primary mb-2">
@@ -453,7 +453,200 @@
                 </div>
               </div>
             </div>
+
+            <!-- Review Form Section -->
+            <div
+              v-if="authStore.isAuthenticated"
+              class="mt-6 bg-white dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-xl p-6 shadow-lg"
+              :class="{'opacity-50': completedBookingsCount === 0}"
+            >
+              <div class="flex items-center justify-between mb-4">
+                <h3
+                  class="text-lg font-bold text-text-light dark:text-text-dark"
+                >
+                  Đánh giá nhà hàng
+                </h3>
+                <span
+                  class="text-xs px-2 py-1 rounded-full"
+                  :class="
+                    completedBookingsCount > 0
+                      ? 'bg-green-100 text-green-700'
+                      : 'bg-gray-100 text-gray-600'
+                  "
+                >
+                  {{ completedBookingsCount }} lượt đặt bàn hoàn thành
+                </span>
+              </div>
+
+              <p
+                v-if="completedBookingsCount === 0"
+                class="text-sm text-red-500 mb-4"
+              >
+                Bạn cần có ít nhất 1 đơn đặt bàn hoàn thành để đánh giá
+              </p>
+
+              <!-- Rating Stars -->
+              <div class="mb-4">
+                <label class="block text-sm font-medium mb-2">
+                  Xếp hạng <span class="text-red-500">*</span>
+                </label>
+                <div class="flex gap-2">
+                  <button
+                    v-for="star in 5"
+                    :key="star"
+                    @click="
+                      completedBookingsCount > 0 && (reviewForm.rating = star)
+                    "
+                    type="button"
+                    class="text-3xl transition-colors"
+                    :class="[
+                      star <= reviewForm.rating
+                        ? 'text-yellow-500'
+                        : 'text-gray-300 dark:text-gray-600',
+                      completedBookingsCount === 0
+                        ? 'cursor-not-allowed'
+                        : 'cursor-pointer hover:scale-110',
+                    ]"
+                    :disabled="completedBookingsCount === 0"
+                  >
+                    <span class="material-symbols-outlined">
+                      {{ star <= reviewForm.rating ? "star" : "star_border" }}
+                    </span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Review Text -->
+              <div class="mb-4">
+                <label class="block text-sm font-medium mb-2">
+                  Đánh giá của bạn <span class="text-red-500">*</span>
+                </label>
+                <textarea
+                  v-model="reviewForm.comment"
+                  :disabled="completedBookingsCount === 0"
+                  rows="4"
+                  placeholder="Chia sẻ trải nghiệm của bạn về nhà hàng..."
+                  class="w-full px-4 py-3 rounded-lg border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark focus:ring-2 focus:ring-primary/50 focus:border-primary resize-none disabled:cursor-not-allowed disabled:opacity-50"
+                ></textarea>
+              </div>
+
+              <!-- Error Message -->
+              <div
+                v-if="reviewError"
+                class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg text-sm"
+              >
+                {{ reviewError }}
+              </div>
+
+              <!-- Success Message -->
+              <div
+                v-if="reviewSuccess"
+                class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg text-sm"
+              >
+                {{ reviewSuccess }}
+              </div>
+
+              <!-- Submit Button -->
+              <button
+                @click="submitReview"
+                :disabled="
+                  completedBookingsCount === 0 ||
+                  isSubmittingReview ||
+                  !reviewForm.rating ||
+                  !reviewForm.comment.trim()
+                "
+                class="w-full px-4 py-3 bg-primary text-white rounded-lg font-bold hover:bg-opacity-90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {{ isSubmittingReview ? "Đang gửi..." : "Gửi đánh giá" }}
+              </button>
+            </div>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Review Dialog -->
+    <div
+      v-if="showReviewDialog"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+    >
+      <div class="bg-white dark:bg-surface-dark rounded-xl max-w-lg w-full p-6">
+        <h3 class="text-xl font-bold mb-4">Đánh giá nhà hàng</h3>
+
+        <!-- Rating Stars -->
+        <div class="mb-4">
+          <label class="block text-sm font-medium mb-2"
+            >Xếp hạng <span class="text-red-500">*</span></label
+          >
+          <div class="flex gap-2">
+            <button
+              v-for="star in 5"
+              :key="star"
+              @click="reviewForm.rating = star"
+              type="button"
+              class="text-3xl transition-colors"
+              :class="
+                star <= reviewForm.rating
+                  ? 'text-yellow-500'
+                  : 'text-gray-300 dark:text-gray-600'
+              "
+            >
+              <span class="material-symbols-outlined">{{
+                star <= reviewForm.rating ? "star" : "star_border"
+              }}</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Review Text -->
+        <div class="mb-4">
+          <label class="block text-sm font-medium mb-2"
+            >Đánh giá của bạn <span class="text-red-500">*</span></label
+          >
+          <textarea
+            v-model="reviewForm.comment"
+            rows="4"
+            placeholder="Chia sẻ trải nghiệm của bạn về nhà hàng..."
+            class="w-full px-4 py-3 rounded-lg border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark focus:ring-2 focus:ring-primary/50 focus:border-primary resize-none"
+          ></textarea>
+        </div>
+
+        <!-- Error Message -->
+        <div
+          v-if="reviewError"
+          class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg text-sm"
+        >
+          {{ reviewError }}
+        </div>
+
+        <!-- Success Message -->
+        <div
+          v-if="reviewSuccess"
+          class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg text-sm"
+        >
+          {{ reviewSuccess }}
+        </div>
+
+        <!-- Actions -->
+        <div class="flex gap-3">
+          <button
+            @click="closeReviewDialog"
+            :disabled="isSubmittingReview"
+            class="flex-1 px-4 py-2 border border-border-light dark:border-border-dark rounded-lg font-medium hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors disabled:opacity-50"
+          >
+            Đóng
+          </button>
+          <button
+            @click="submitReview"
+            :disabled="
+              isSubmittingReview ||
+              !reviewForm.rating ||
+              !reviewForm.comment.trim()
+            "
+            class="flex-1 px-4 py-2 bg-primary text-white rounded-lg font-medium hover:bg-opacity-90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {{ isSubmittingReview ? "Đang gửi..." : "Gửi đánh giá" }}
+          </button>
         </div>
       </div>
     </div>
@@ -466,6 +659,7 @@ import {useRoute, useRouter} from "vue-router";
 import {outletApi} from "@/api";
 import {menuApi} from "@/api/menu";
 import {reviewApi} from "@/api/review";
+import {bookingApi} from "@/api/booking";
 import {useAuthStore} from "@/stores/auth";
 
 const route = useRoute();
@@ -483,6 +677,16 @@ const error = ref(null);
 const errorMessage = ref("");
 const successMessage = ref("");
 const activeTab = ref("overview");
+
+// Review state
+const completedBookingsCount = ref(0);
+const reviewForm = ref({
+  rating: 0,
+  comment: "",
+});
+const isSubmittingReview = ref(false);
+const reviewError = ref("");
+const reviewSuccess = ref("");
 
 // Tabs configuration
 const tabs = [
@@ -691,7 +895,7 @@ const handleBookingClick = () => {
   }
 
   // Check membership requirement
-  if (!authStore.profile?.membershipName) {
+  if (!authStore.user?.membershipName) {
     errorMessage.value =
       "Bạn cần đăng ký gói membership để đặt bàn. Đang chuyển hướng...";
     setTimeout(() => {
@@ -704,8 +908,126 @@ const handleBookingClick = () => {
   router.push(`/booking/${outlet.value.id}`);
 };
 
+// Check completed bookings count for review eligibility
+const checkCanReview = async () => {
+  if (!authStore.isAuthenticated || !outlet.value) {
+    completedBookingsCount.value = 0;
+    return;
+  }
+
+  try {
+    // Fetch user's bookings and count COMPLETED ones for this outlet
+    const response = await bookingApi.getMyBookings({
+      page: 0,
+      size: 100, // Get enough to check
+    });
+
+    const bookings = response.data || response || [];
+    console.log("📋 User bookings:", bookings);
+    console.log("🏠 Current outlet ID:", outlet.value.id);
+
+    // Convert both IDs to lowercase string for comparison
+    const currentOutletId = String(outlet.value.id).toLowerCase();
+
+    // Count completed bookings for this outlet
+    completedBookingsCount.value = bookings.filter((booking) => {
+      const bookingOutletId = String(
+        booking.outlet?.id || booking.outletId || ""
+      ).toLowerCase();
+      const isCompleted = booking.status === "COMPLETED";
+      const isMatch = bookingOutletId === currentOutletId;
+
+      console.log("🔍 Checking booking:", {
+        bookingOutletId,
+        currentOutletId,
+        status: booking.status,
+        isCompleted,
+        isMatch,
+        counts: isMatch && isCompleted,
+      });
+
+      return isMatch && isCompleted;
+    }).length;
+
+    console.log("✅ Completed bookings count:", completedBookingsCount.value);
+  } catch (err) {
+    console.error("❌ Error checking review eligibility:", err);
+    completedBookingsCount.value = 0;
+  }
+};
+
+// Open review dialog
+const openReviewDialog = () => {
+  if (!authStore.isAuthenticated) {
+    errorMessage.value = "Vui lòng đăng nhập để đánh giá";
+    setTimeout(() => {
+      router.push("/auth/login");
+    }, 2000);
+    return;
+  }
+
+  reviewForm.value = {
+    rating: 0,
+    comment: "",
+  };
+  reviewError.value = "";
+  reviewSuccess.value = "";
+  showReviewDialog.value = true;
+};
+
+// Close review dialog
+const closeReviewDialog = () => {
+  showReviewDialog.value = false;
+  reviewForm.value = {
+    rating: 0,
+    comment: "",
+  };
+  reviewError.value = "";
+  reviewSuccess.value = "";
+};
+
+// Submit review
+const submitReview = async () => {
+  if (!reviewForm.value.rating || !reviewForm.value.comment.trim()) {
+    reviewError.value = "Vui lòng nhập đầy đủ thông tin";
+    return;
+  }
+
+  isSubmittingReview.value = true;
+  reviewError.value = "";
+  reviewSuccess.value = "";
+
+  try {
+    const reviewData = {
+      outletId: outlet.value.id,
+      rating: reviewForm.value.rating,
+      comment: reviewForm.value.comment.trim(),
+    };
+
+    console.log("📝 Submitting review:", reviewData);
+    await reviewApi.createReview(reviewData);
+    console.log("✅ Review submitted successfully");
+
+    reviewSuccess.value = "Đánh giá của bạn đã được gửi thành công!";
+
+    // Refresh reviews after 1.5 seconds
+    setTimeout(() => {
+      closeReviewDialog();
+      fetchReviews();
+      // Can't review again after submitting
+      canReview.value = false;
+    }, 1500);
+  } catch (err) {
+    console.error("❌ Error submitting review:", err);
+    reviewError.value = err.message || "Đánh giá thất bại. Vui lòng thử lại.";
+  } finally {
+    isSubmittingReview.value = false;
+  }
+};
+
 // Lifecycle
 onMounted(() => {
   fetchOutletDetail();
+  checkCanReview();
 });
 </script>
