@@ -18,6 +18,7 @@ import BookingForm from "@/views/user/booking/BookingForm.vue";
 import BookingHistory from "@/views/user/booking/BookingHistory.vue";
 import BookingConfirmation from "@/views/user/booking/BookingConfirmation.vue";
 import UserProfile from "@/views/user/profile/Profile.vue";
+import MembershipSubscription from "@/views/user/membership/MembershipSubscription.vue";
 
 // Admin Pages
 import AdminDashboard from "@/views/admin/Dashboard.vue";
@@ -65,6 +66,11 @@ const routes = [
         component: BookingConfirmation,
       },
       {path: "profile", name: "UserProfile", component: UserProfile},
+      {
+        path: "membership",
+        name: "MembershipSubscription",
+        component: MembershipSubscription,
+      },
     ],
   },
   // User Auth Routes (no layout)

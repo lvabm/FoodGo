@@ -10,4 +10,9 @@ public record ProfileResponse(
     String address,
     String avatarUrl,
     UUID userId,
-    String countryName) {}
+    String countryName,
+    // Membership fields (optional, may be null if user has no active membership)
+    String membershipName,
+    LocalDate membershipStartDate,
+    LocalDate membershipEndDate,
+    Boolean membershipIsActive) {}

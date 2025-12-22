@@ -99,11 +99,13 @@ public class MembershipServiceImpl
     // 1. Get Current User ID
     UUID userId = SecurityContext.getCurrentUserId();
 
-    // 2. Check Duplicate Subscription (User chỉ được active 1 gói)
-    if (userMembershipRepository.existsByUserAccount_IdAndIsActiveTrue(userId)) {
-      throw new DataConflictException(
-          "Bạn đang có một gói hội viên đang hoạt động. Vui lòng hủy gói cũ trước khi đăng ký mới.");
-    }
+    // 2. Deactivate existing active membership if any (Support Upgrade)
+    userMembershipRepository
+        .findByUserAccount_IdAndIsActiveTrue(userId)
+        .ifPresent(existingMembership -> {
+          existingMembership.setIsActive(false);
+          userMembershipRepository.save(existingMembership);
+        });
 
     UserAccount user =
         userAccountRepository

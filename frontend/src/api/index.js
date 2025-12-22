@@ -6,3 +6,4 @@ export {userApi} from "./user";
 export {reviewApi} from "./review";
 export {menuApi} from "./menu";
 export {locationApi} from "./location";
+export {membershipApi} from "./membership";

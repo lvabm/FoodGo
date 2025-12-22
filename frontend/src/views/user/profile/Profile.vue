@@ -117,6 +117,36 @@
                 </p>
               </div>
             </div>
+            <div class="flex items-center gap-3">
+              <span class="material-symbols-outlined text-primary"
+                >card_membership</span
+              >
+              <div>
+                <p class="text-xs text-subtext-light dark:text-subtext-dark">
+                  Membership
+                </p>
+                <p class="font-medium">
+                  {{
+                    profile.membershipName ||
+                    authStore.user?.membershipName ||
+                    "Chưa có"
+                  }}
+                </p>
+                <p
+                  v-if="
+                    profile.membershipStartDate && profile.membershipEndDate
+                  "
+                  class="text-xs text-subtext-light dark:text-subtext-dark"
+                >
+                  {{
+                    formatMembershipPeriod(
+                      profile.membershipStartDate,
+                      profile.membershipEndDate
+                    )
+                  }}
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -428,6 +458,25 @@ const getRoleText = (role) => {
     MEMBER: "Thành viên",
   };
   return roleMap[role] || role;
+};
+
+// Format membership period
+const formatMembershipPeriod = (start, end) => {
+  try {
+    const s = new Date(start);
+    const e = new Date(end);
+    return `${new Intl.DateTimeFormat("vi-VN", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    }).format(s)} - ${new Intl.DateTimeFormat("vi-VN", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    }).format(e)}`;
+  } catch (err) {
+    return "";
+  }
 };
 
 // Lifecycle
