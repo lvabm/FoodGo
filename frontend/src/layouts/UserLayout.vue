@@ -75,7 +75,7 @@
                 Hồ sơ cá nhân
               </router-link>
               <router-link
-                to="/booking/history"
+                to="/booking-history"
                 class="block px-4 py-2 text-sm text-text-light dark:text-text-dark hover:bg-gray-100 dark:hover:bg-gray-800"
               >
                 Lịch sử đặt bàn

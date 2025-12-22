@@ -70,7 +70,7 @@
             </div>
           </div>
 
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
             <div>
               <p class="text-xs text-subtext-light dark:text-subtext-dark mb-1">
                 Ngày
@@ -88,14 +88,6 @@
                 Số khách
               </p>
               <p class="font-medium">{{ booking.numberOfGuests }} người</p>
-            </div>
-            <div>
-              <p class="text-xs text-subtext-light dark:text-subtext-dark mb-1">
-                Đặt lúc
-              </p>
-              <p class="font-medium text-xs">
-                {{ formatDateTime(booking.createdAt) }}
-              </p>
             </div>
           </div>
 
