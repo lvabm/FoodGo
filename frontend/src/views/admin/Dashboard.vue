@@ -1,7 +1,20 @@
 <template>
   <div class="px-10 py-8">
+    <h1 class="text-2xl font-bold mb-6">Dashboard</h1>
+
+    <!-- Loading State -->
+    <div v-if="isLoading" class="flex justify-center items-center h-64">
+      <LoadingSpinner size="lg" />
+    </div>
+
+    <!-- Error State -->
+    <ErrorMessage v-if="error" :message="error" />
+
     <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div
+      v-if="!isLoading && !error"
+      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
+    >
       <div
         class="bg-white dark:bg-surface-dark rounded-xl p-6 border border-border-light dark:border-border-dark"
       >
@@ -10,7 +23,7 @@
             <p class="text-sm text-subtext-light dark:text-subtext-dark">
               Tổng người dùng
             </p>
-            <h3 class="text-2xl font-bold mt-2">12,458</h3>
+            <h3 class="text-2xl font-bold mt-2">{{ stats.totalUsers || 0 }}</h3>
           </div>
           <div class="bg-primary/10 p-3 rounded-lg">
             <span class="material-symbols-outlined text-primary text-2xl"
@@ -28,7 +41,9 @@
             <p class="text-sm text-subtext-light dark:text-subtext-dark">
               Tổng địa điểm
             </p>
-            <h3 class="text-2xl font-bold mt-2">3,845</h3>
+            <h3 class="text-2xl font-bold mt-2">
+              {{ stats.totalOutlets || 0 }}
+            </h3>
           </div>
           <div class="bg-primary/10 p-3 rounded-lg">
             <span class="material-symbols-outlined text-primary text-2xl"
@@ -46,7 +61,9 @@
             <p class="text-sm text-subtext-light dark:text-subtext-dark">
               Đặt bàn hôm nay
             </p>
-            <h3 class="text-2xl font-bold mt-2">1,284</h3>
+            <h3 class="text-2xl font-bold mt-2">
+              {{ stats.todayBookings || 0 }}
+            </h3>
           </div>
           <div class="bg-primary/10 p-3 rounded-lg">
             <span class="material-symbols-outlined text-primary text-2xl"
@@ -64,7 +81,9 @@
             <p class="text-sm text-subtext-light dark:text-subtext-dark">
               Doanh thu tháng này
             </p>
-            <h3 class="text-2xl font-bold mt-2">₫42.5M</h3>
+            <h3 class="text-2xl font-bold mt-2">
+              {{ formatCurrency(stats.monthlyRevenue || 0) }}
+            </h3>
           </div>
           <div class="bg-primary/10 p-3 rounded-lg">
             <span class="material-symbols-outlined text-primary text-2xl"
@@ -76,7 +95,10 @@
     </div>
 
     <!-- Charts Section -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+    <div
+      v-if="!isLoading && !error"
+      class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8"
+    >
       <div
         class="bg-white dark:bg-surface-dark rounded-xl p-6 border border-border-light dark:border-border-dark"
       >
@@ -133,6 +155,7 @@
 
     <!-- Recent Activities -->
     <div
+      v-if="!isLoading && !error"
       class="bg-white dark:bg-surface-dark rounded-xl p-6 border border-border-light dark:border-border-dark"
     >
       <h3 class="text-lg font-bold mb-4">Hoạt động gần đây</h3>
@@ -158,7 +181,19 @@
 </template>
 
 <script setup>
-import {ref} from "vue";
+import {ref, onMounted} from "vue";
+import {adminApi} from "@/api";
+import LoadingSpinner from "@/components/common/LoadingSpinner.vue";
+import ErrorMessage from "@/components/common/ErrorMessage.vue";
+
+const isLoading = ref(false);
+const error = ref(null);
+const stats = ref({
+  totalUsers: 0,
+  totalOutlets: 0,
+  todayBookings: 0,
+  monthlyRevenue: 0,
+});
 
 const weekData = ref([
   {name: "T2", height: 60},
@@ -203,4 +238,50 @@ const recentActivities = ref([
     time: "1 giờ trước",
   },
 ]);
+
+const formatCurrency = (amount) => {
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+  }).format(amount);
+};
+
+const fetchDashboardStats = async () => {
+  isLoading.value = true;
+  error.value = null;
+  try {
+    // Try to fetch from API, fallback to mock data if endpoint doesn't exist
+    try {
+      const response = await adminApi.getDashboardStats();
+      stats.value = response.data || response;
+    } catch (apiError) {
+      // If API endpoint doesn't exist, use mock data
+      console.warn("Dashboard stats API not available, using mock data");
+      // Fetch from other endpoints to calculate stats
+      const [usersRes, outletsRes, bookingsRes] = await Promise.all([
+        adminApi.getUsers({page: 0, size: 1}),
+        adminApi.getOutlets({page: 0, size: 1}),
+        adminApi.getBookings({page: 0, size: 1}),
+      ]);
+
+      stats.value = {
+        totalUsers: usersRes.data?.totalElements || usersRes.totalElements || 0,
+        totalOutlets:
+          outletsRes.data?.totalElements || outletsRes.totalElements || 0,
+        todayBookings:
+          bookingsRes.data?.totalElements || bookingsRes.totalElements || 0,
+        monthlyRevenue: 0, // Would need separate endpoint
+      };
+    }
+  } catch (err) {
+    console.error("Error fetching dashboard stats:", err);
+    error.value = "Không thể tải dữ liệu dashboard";
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+onMounted(() => {
+  fetchDashboardStats();
+});
 </script>
