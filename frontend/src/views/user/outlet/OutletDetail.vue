@@ -393,7 +393,7 @@
           <!-- Right Column - Booking Card -->
           <div class="lg:col-span-1">
             <div
-              class=" top-20 bg-white dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-xl p-6 shadow-lg"
+              class="top-20 bg-white dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-xl p-6 shadow-lg"
             >
               <div class="mb-6">
                 <div class="text-3xl font-bold text-primary mb-2">
@@ -454,12 +454,9 @@
               </div>
             </div>
 
-            <!-- Review Form Section -->
-            <div
-              v-if="authStore.isAuthenticated"
-              class="mt-6 bg-white dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-xl p-6 shadow-lg"
-              :class="{'opacity-50': completedBookingsCount === 0}"
-            >
+            <!-- Review Form Section (moved to Bookings List) -->
+            <!-- Removed: review per outlet; reviews are now per-booking in Lịch sử đặt bàn -->
+            <div style="display:none">
               <div class="flex items-center justify-between mb-4">
                 <h3
                   class="text-lg font-bold text-text-light dark:text-text-dark"
@@ -485,34 +482,126 @@
                 Bạn cần có ít nhất 1 đơn đặt bàn hoàn thành để đánh giá
               </p>
 
-              <!-- Rating Stars -->
-              <div class="mb-4">
-                <label class="block text-sm font-medium mb-2">
-                  Xếp hạng <span class="text-red-500">*</span>
-                </label>
-                <div class="flex gap-2">
-                  <button
-                    v-for="star in 5"
-                    :key="star"
-                    @click="
-                      completedBookingsCount > 0 && (reviewForm.rating = star)
-                    "
-                    type="button"
-                    class="text-3xl transition-colors"
-                    :class="[
-                      star <= reviewForm.rating
-                        ? 'text-yellow-500'
-                        : 'text-gray-300 dark:text-gray-600',
-                      completedBookingsCount === 0
-                        ? 'cursor-not-allowed'
-                        : 'cursor-pointer hover:scale-110',
-                    ]"
-                    :disabled="completedBookingsCount === 0"
+              <!-- Per-aspect Rating Stars -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <!-- Food -->
+                <div>
+                  <label class="block text-sm font-medium mb-2"
+                    >Đồ ăn <span class="text-red-500">*</span></label
                   >
-                    <span class="material-symbols-outlined">
-                      {{ star <= reviewForm.rating ? "star" : "star_border" }}
-                    </span>
-                  </button>
+                  <div class="flex gap-2">
+                    <button
+                      v-for="star in 5"
+                      :key="`food-${star}`"
+                      @click="canReview && (reviewForm.foodRating = star)"
+                      type="button"
+                      class="text-3xl transition-colors"
+                      :class="[
+                        star <= reviewForm.foodRating
+                          ? 'text-yellow-500'
+                          : 'text-gray-300 dark:text-gray-600',
+                        !canReview
+                          ? 'cursor-not-allowed'
+                          : 'cursor-pointer hover:scale-110',
+                      ]"
+                      :disabled="!canReview"
+                    >
+                      <span class="material-symbols-outlined">{{
+                        star <= reviewForm.foodRating ? "star" : "star_border"
+                      }}</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Service -->
+                <div>
+                  <label class="block text-sm font-medium mb-2"
+                    >Phục vụ <span class="text-red-500">*</span></label
+                  >
+                  <div class="flex gap-2">
+                    <button
+                      v-for="star in 5"
+                      :key="`service-${star}`"
+                      @click="canReview && (reviewForm.serviceRating = star)"
+                      type="button"
+                      class="text-3xl transition-colors"
+                      :class="[
+                        star <= reviewForm.serviceRating
+                          ? 'text-yellow-500'
+                          : 'text-gray-300 dark:text-gray-600',
+                        !canReview
+                          ? 'cursor-not-allowed'
+                          : 'cursor-pointer hover:scale-110',
+                      ]"
+                      :disabled="!canReview"
+                    >
+                      <span class="material-symbols-outlined">{{
+                        star <= reviewForm.serviceRating
+                          ? "star"
+                          : "star_border"
+                      }}</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Ambiance -->
+                <div>
+                  <label class="block text-sm font-medium mb-2"
+                    >Không gian <span class="text-red-500">*</span></label
+                  >
+                  <div class="flex gap-2">
+                    <button
+                      v-for="star in 5"
+                      :key="`amb-${star}`"
+                      @click="canReview && (reviewForm.ambianceRating = star)"
+                      type="button"
+                      class="text-3xl transition-colors"
+                      :class="[
+                        star <= reviewForm.ambianceRating
+                          ? 'text-yellow-500'
+                          : 'text-gray-300 dark:text-gray-600',
+                        !canReview
+                          ? 'cursor-not-allowed'
+                          : 'cursor-pointer hover:scale-110',
+                      ]"
+                      :disabled="!canReview"
+                    >
+                      <span class="material-symbols-outlined">{{
+                        star <= reviewForm.ambianceRating
+                          ? "star"
+                          : "star_border"
+                      }}</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Price -->
+                <div>
+                  <label class="block text-sm font-medium mb-2"
+                    >Giá cả <span class="text-red-500">*</span></label
+                  >
+                  <div class="flex gap-2">
+                    <button
+                      v-for="star in 5"
+                      :key="`price-${star}`"
+                      @click="canReview && (reviewForm.priceRating = star)"
+                      type="button"
+                      class="text-3xl transition-colors"
+                      :class="[
+                        star <= reviewForm.priceRating
+                          ? 'text-yellow-500'
+                          : 'text-gray-300 dark:text-gray-600',
+                        !canReview
+                          ? 'cursor-not-allowed'
+                          : 'cursor-pointer hover:scale-110',
+                      ]"
+                      :disabled="!canReview"
+                    >
+                      <span class="material-symbols-outlined">{{
+                        star <= reviewForm.priceRating ? "star" : "star_border"
+                      }}</span>
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -550,9 +639,12 @@
               <button
                 @click="submitReview"
                 :disabled="
-                  completedBookingsCount === 0 ||
+                  !canReview ||
                   isSubmittingReview ||
-                  !reviewForm.rating ||
+                  !reviewForm.foodRating ||
+                  !reviewForm.serviceRating ||
+                  !reviewForm.ambianceRating ||
+                  !reviewForm.priceRating ||
                   !reviewForm.comment.trim()
                 "
                 class="w-full px-4 py-3 bg-primary text-white rounded-lg font-bold hover:bg-opacity-90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
@@ -561,92 +653,6 @@
               </button>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Review Dialog -->
-    <div
-      v-if="showReviewDialog"
-      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
-    >
-      <div class="bg-white dark:bg-surface-dark rounded-xl max-w-lg w-full p-6">
-        <h3 class="text-xl font-bold mb-4">Đánh giá nhà hàng</h3>
-
-        <!-- Rating Stars -->
-        <div class="mb-4">
-          <label class="block text-sm font-medium mb-2"
-            >Xếp hạng <span class="text-red-500">*</span></label
-          >
-          <div class="flex gap-2">
-            <button
-              v-for="star in 5"
-              :key="star"
-              @click="reviewForm.rating = star"
-              type="button"
-              class="text-3xl transition-colors"
-              :class="
-                star <= reviewForm.rating
-                  ? 'text-yellow-500'
-                  : 'text-gray-300 dark:text-gray-600'
-              "
-            >
-              <span class="material-symbols-outlined">{{
-                star <= reviewForm.rating ? "star" : "star_border"
-              }}</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Review Text -->
-        <div class="mb-4">
-          <label class="block text-sm font-medium mb-2"
-            >Đánh giá của bạn <span class="text-red-500">*</span></label
-          >
-          <textarea
-            v-model="reviewForm.comment"
-            rows="4"
-            placeholder="Chia sẻ trải nghiệm của bạn về nhà hàng..."
-            class="w-full px-4 py-3 rounded-lg border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark focus:ring-2 focus:ring-primary/50 focus:border-primary resize-none"
-          ></textarea>
-        </div>
-
-        <!-- Error Message -->
-        <div
-          v-if="reviewError"
-          class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg text-sm"
-        >
-          {{ reviewError }}
-        </div>
-
-        <!-- Success Message -->
-        <div
-          v-if="reviewSuccess"
-          class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg text-sm"
-        >
-          {{ reviewSuccess }}
-        </div>
-
-        <!-- Actions -->
-        <div class="flex gap-3">
-          <button
-            @click="closeReviewDialog"
-            :disabled="isSubmittingReview"
-            class="flex-1 px-4 py-2 border border-border-light dark:border-border-dark rounded-lg font-medium hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors disabled:opacity-50"
-          >
-            Đóng
-          </button>
-          <button
-            @click="submitReview"
-            :disabled="
-              isSubmittingReview ||
-              !reviewForm.rating ||
-              !reviewForm.comment.trim()
-            "
-            class="flex-1 px-4 py-2 bg-primary text-white rounded-lg font-medium hover:bg-opacity-90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {{ isSubmittingReview ? "Đang gửi..." : "Gửi đánh giá" }}
-          </button>
         </div>
       </div>
     </div>
@@ -680,8 +686,13 @@ const activeTab = ref("overview");
 
 // Review state
 const completedBookingsCount = ref(0);
+const eligibleBookingId = ref(null); // booking id used to create review
+const canReview = ref(false);
 const reviewForm = ref({
-  rating: 0,
+  foodRating: 0,
+  serviceRating: 0,
+  ambianceRating: 0,
+  priceRating: 0,
   comment: "",
 });
 const isSubmittingReview = ref(false);
@@ -745,6 +756,15 @@ const fetchOutletDetail = async () => {
       "reviews count:",
       reviews.value.length
     );
+
+    // Re-evaluate review eligibility now that outlet is loaded
+    try {
+    } catch (err) {
+      console.error(
+        "❌ Error while checking review eligibility after outlet load:",
+        err
+      );
+    }
   } catch (err) {
     console.error("❌ Error fetching outlet:", err);
     error.value = err.message || "Không thể tải thông tin địa điểm";
@@ -908,12 +928,9 @@ const handleBookingClick = () => {
   router.push(`/booking/${outlet.value.id}`);
 };
 
-// Check completed bookings count for review eligibility
-const checkCanReview = async () => {
-  if (!authStore.isAuthenticated || !outlet.value) {
-    completedBookingsCount.value = 0;
-    return;
-  }
+// (Removed) Check completed bookings logic moved to BookingHistory.vue
+// function checkCanReview removed - reviews are managed per-booking now
+/*
 
   try {
     // Fetch user's bookings and count COMPLETED ones for this outlet
@@ -922,39 +939,77 @@ const checkCanReview = async () => {
       size: 100, // Get enough to check
     });
 
-    const bookings = response.data || response || [];
-    console.log("📋 User bookings:", bookings);
+    // Normalize bookings array: support PageResponse (content/data) or raw array
+    let bookingsList = [];
+    if (Array.isArray(response?.content)) bookingsList = response.content;
+    else if (Array.isArray(response?.data)) bookingsList = response.data;
+    else if (Array.isArray(response)) bookingsList = response;
+
+    console.log("📋 User bookings (normalized):", bookingsList);
     console.log("🏠 Current outlet ID:", outlet.value.id);
 
     // Convert both IDs to lowercase string for comparison
     const currentOutletId = String(outlet.value.id).toLowerCase();
 
-    // Count completed bookings for this outlet
-    completedBookingsCount.value = bookings.filter((booking) => {
+    // Find reviewable bookings for this outlet
+    const reviewableBookings = bookingsList.filter((booking) => {
       const bookingOutletId = String(
         booking.outlet?.id || booking.outletId || ""
       ).toLowerCase();
-      const isCompleted = booking.status === "COMPLETED";
+      const status = String(booking.status || "").toUpperCase();
+      const isCompleted = status === "COMPLETED";
+      const bothCheckedIn =
+        Boolean(booking.userCheckedInAt) && Boolean(booking.ownerCheckedInAt);
       const isMatch = bookingOutletId === currentOutletId;
+
+      const isReviewable = isMatch && (isCompleted || bothCheckedIn);
 
       console.log("🔍 Checking booking:", {
         bookingOutletId,
         currentOutletId,
         status: booking.status,
         isCompleted,
+        bothCheckedIn,
         isMatch,
-        counts: isMatch && isCompleted,
+        isReviewable,
       });
 
-      return isMatch && isCompleted;
-    }).length;
+      return isReviewable;
+    });
 
-    console.log("✅ Completed bookings count:", completedBookingsCount.value);
+    // Count
+    completedBookingsCount.value = reviewableBookings.length;
+
+    // Choose an eligible booking id (most recent by date/time) for the review payload
+    if (reviewableBookings.length > 0) {
+      reviewableBookings.sort((a, b) => {
+        const atime = new Date(
+          (a.bookingDate || "") + "T" + (a.bookingTime || "00:00:00")
+        );
+        const btime = new Date(
+          (b.bookingDate || "") + "T" + (b.bookingTime || "00:00:00")
+        );
+        return btime - atime; // newest first
+      });
+      eligibleBookingId.value =
+        reviewableBookings[0].id || reviewableBookings[0].bookingId;
+      canReview.value = true;
+    } else {
+      eligibleBookingId.value = null;
+      canReview.value = false;
+    }
+
+    console.log(
+      "✅ Completed/reviewable bookings count:",
+      completedBookingsCount.value,
+      "eligibleBookingId:",
+      eligibleBookingId.value
+    );
   } catch (err) {
     console.error("❌ Error checking review eligibility:", err);
     completedBookingsCount.value = 0;
   }
-};
+*/
 
 // Open review dialog
 const openReviewDialog = () => {
@@ -967,7 +1022,10 @@ const openReviewDialog = () => {
   }
 
   reviewForm.value = {
-    rating: 0,
+    foodRating: 0,
+    serviceRating: 0,
+    ambianceRating: 0,
+    priceRating: 0,
     comment: "",
   };
   reviewError.value = "";
@@ -979,7 +1037,10 @@ const openReviewDialog = () => {
 const closeReviewDialog = () => {
   showReviewDialog.value = false;
   reviewForm.value = {
-    rating: 0,
+    foodRating: 0,
+    serviceRating: 0,
+    ambianceRating: 0,
+    priceRating: 0,
     comment: "",
   };
   reviewError.value = "";
@@ -988,7 +1049,14 @@ const closeReviewDialog = () => {
 
 // Submit review
 const submitReview = async () => {
-  if (!reviewForm.value.rating || !reviewForm.value.comment.trim()) {
+  // Ensure all per-aspect ratings are provided
+  if (
+    !reviewForm.value.foodRating ||
+    !reviewForm.value.serviceRating ||
+    !reviewForm.value.ambianceRating ||
+    !reviewForm.value.priceRating ||
+    !reviewForm.value.comment.trim()
+  ) {
     reviewError.value = "Vui lòng nhập đầy đủ thông tin";
     return;
   }
@@ -998,11 +1066,22 @@ const submitReview = async () => {
   reviewSuccess.value = "";
 
   try {
+    if (!eligibleBookingId.value) {
+      reviewError.value = "Không tìm thấy đơn hợp lệ để đánh giá.";
+      return;
+    }
+
     const reviewData = {
-      outletId: outlet.value.id,
-      rating: reviewForm.value.rating,
+      bookingId: eligibleBookingId.value,
+      foodRating: reviewForm.value.foodRating,
+      serviceRating: reviewForm.value.serviceRating,
+      ambianceRating: reviewForm.value.ambianceRating,
+      priceRating: reviewForm.value.priceRating,
       comment: reviewForm.value.comment.trim(),
     };
+
+    // Debug: log payload
+    console.log("🧾 Review payload:", reviewData);
 
     console.log("📝 Submitting review:", reviewData);
     await reviewApi.createReview(reviewData);
@@ -1028,6 +1107,5 @@ const submitReview = async () => {
 // Lifecycle
 onMounted(() => {
   fetchOutletDetail();
-  checkCanReview();
 });
 </script>

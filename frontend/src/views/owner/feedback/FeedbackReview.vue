@@ -108,6 +108,69 @@
 
               <p class="mt-3 text-subtext-light">{{ rev.comment }}</p>
 
+              <!-- Per-aspect ratings -->
+              <div
+                class="mt-3 grid grid-cols-2 gap-2 text-sm text-subtext-light"
+              >
+                <div class="flex items-center gap-2">
+                  <span class="font-medium">Đồ ăn:</span>
+                  <div class="flex items-center">
+                    <template v-for="i in 5" :key="`food-${i}-${rev.id}`">
+                      <span class="material-symbols-outlined text-yellow-400">
+                        {{
+                          i <= (rev.foodRating || 0) ? "star" : "star_border"
+                        }}
+                      </span>
+                    </template>
+                    <span class="ml-2">{{ rev.foodRating || 0 }}/5</span>
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-2">
+                  <span class="font-medium">Phục vụ:</span>
+                  <div class="flex items-center">
+                    <template v-for="i in 5" :key="`service-${i}-${rev.id}`">
+                      <span class="material-symbols-outlined text-yellow-400">
+                        {{
+                          i <= (rev.serviceRating || 0) ? "star" : "star_border"
+                        }}
+                      </span>
+                    </template>
+                    <span class="ml-2">{{ rev.serviceRating || 0 }}/5</span>
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-2">
+                  <span class="font-medium">Không gian:</span>
+                  <div class="flex items-center">
+                    <template v-for="i in 5" :key="`amb-${i}-${rev.id}`">
+                      <span class="material-symbols-outlined text-yellow-400">
+                        {{
+                          i <= (rev.ambianceRating || 0)
+                            ? "star"
+                            : "star_border"
+                        }}
+                      </span>
+                    </template>
+                    <span class="ml-2">{{ rev.ambianceRating || 0 }}/5</span>
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-2">
+                  <span class="font-medium">Giá cả:</span>
+                  <div class="flex items-center">
+                    <template v-for="i in 5" :key="`price-${i}-${rev.id}`">
+                      <span class="material-symbols-outlined text-yellow-400">
+                        {{
+                          i <= (rev.priceRating || 0) ? "star" : "star_border"
+                        }}
+                      </span>
+                    </template>
+                    <span class="ml-2">{{ rev.priceRating || 0 }}/5</span>
+                  </div>
+                </div>
+              </div>
+
               <div v-if="rev.images?.length" class="mt-2 flex gap-2">
                 <img
                   v-for="img in rev.images"

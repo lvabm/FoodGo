@@ -140,6 +140,35 @@
             >
               Hủy đặt bàn
             </button>
+
+            <!-- Review states: only show for COMPLETED bookings -->
+            <template v-if="hasReviewed(booking)">
+              <div
+                class="px-4 py-2 rounded-lg text-sm font-medium text-green-700 flex items-center gap-2"
+              >
+                <span class="material-symbols-outlined">check_circle</span>
+                <span>Cảm ơn bạn đã đánh giá</span>
+              </div>
+            </template>
+
+            <template v-else-if="isBookingReviewable(booking)">
+              <button
+                @click="
+                  () => {
+                    console.log(
+                      'Open review for booking',
+                      booking.id,
+                      'hasReviewed=',
+                      hasReviewed(booking)
+                    );
+                    openReviewForBooking(booking);
+                  }
+                "
+                class="px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-opacity-90 transition-colors"
+              >
+                Hãy đánh giá
+              </button>
+            </template>
           </div>
         </div>
       </div>
@@ -208,13 +237,152 @@
       </div>
     </div>
   </div>
+
+  <!-- Review Dialog -->
+  <div
+    v-if="showReviewDialog"
+    class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+  >
+    <div class="bg-white dark:bg-surface-dark rounded-xl max-w-md w-full p-6">
+      <h3 class="text-xl font-bold mb-4">Đánh giá đơn đặt bàn</h3>
+
+      <div class="grid grid-cols-2 gap-4 mb-4">
+        <div>
+          <label class="block text-sm font-medium mb-2"
+            >Đồ ăn <span class="text-red-500">*</span></label
+          >
+          <div class="flex gap-2">
+            <button
+              v-for="s in 5"
+              :key="s"
+              @click="reviewForm.foodRating = s"
+              class="text-3xl"
+              :class="
+                s <= reviewForm.foodRating ? 'text-yellow-500' : 'text-gray-300'
+              "
+            >
+              <span class="material-symbols-outlined">{{
+                s <= reviewForm.foodRating ? "star" : "star_border"
+              }}</span>
+            </button>
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-2"
+            >Phục vụ <span class="text-red-500">*</span></label
+          >
+          <div class="flex gap-2">
+            <button
+              v-for="s in 5"
+              :key="'sv-' + s"
+              @click="reviewForm.serviceRating = s"
+              class="text-3xl"
+              :class="
+                s <= reviewForm.serviceRating
+                  ? 'text-yellow-500'
+                  : 'text-gray-300'
+              "
+            >
+              <span class="material-symbols-outlined">{{
+                s <= reviewForm.serviceRating ? "star" : "star_border"
+              }}</span>
+            </button>
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-2"
+            >Không gian <span class="text-red-500">*</span></label
+          >
+          <div class="flex gap-2">
+            <button
+              v-for="s in 5"
+              :key="'amb-' + s"
+              @click="reviewForm.ambianceRating = s"
+              class="text-3xl"
+              :class="
+                s <= reviewForm.ambianceRating
+                  ? 'text-yellow-500'
+                  : 'text-gray-300'
+              "
+            >
+              <span class="material-symbols-outlined">{{
+                s <= reviewForm.ambianceRating ? "star" : "star_border"
+              }}</span>
+            </button>
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-2"
+            >Giá cả <span class="text-red-500">*</span></label
+          >
+          <div class="flex gap-2">
+            <button
+              v-for="s in 5"
+              :key="'pr-' + s"
+              @click="reviewForm.priceRating = s"
+              class="text-3xl"
+              :class="
+                s <= reviewForm.priceRating
+                  ? 'text-yellow-500'
+                  : 'text-gray-300'
+              "
+            >
+              <span class="material-symbols-outlined">{{
+                s <= reviewForm.priceRating ? "star" : "star_border"
+              }}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-2"
+          >Đánh giá của bạn <span class="text-red-500">*</span></label
+        >
+        <textarea
+          v-model="reviewForm.comment"
+          rows="4"
+          class="w-full px-4 py-3 rounded-lg border"
+          placeholder="Chia sẻ trải nghiệm của bạn..."
+        ></textarea>
+      </div>
+
+      <div v-if="reviewError" class="mb-4 text-red-600">{{ reviewError }}</div>
+      <div v-if="reviewSuccess" class="mb-4 text-green-600">
+        {{ reviewSuccess }}
+      </div>
+
+      <div class="flex gap-3">
+        <button
+          @click="showReviewDialog = false"
+          class="flex-1 px-4 py-2 border rounded-lg"
+        >
+          Huỷ
+        </button>
+        <button
+          @click="submitReviewForBooking"
+          :disabled="
+            isSubmittingReview ||
+            !reviewForm.foodRating ||
+            !reviewForm.serviceRating ||
+            !reviewForm.ambianceRating ||
+            !reviewForm.priceRating ||
+            !reviewForm.comment.trim()
+          "
+          class="flex-1 px-4 py-2 bg-primary text-white rounded-lg"
+        >
+          {{ isSubmittingReview ? "Đang gửi..." : "Gửi đánh giá" }}
+        </button>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup>
 import {ref, onMounted} from "vue";
 import {useRouter} from "vue-router";
 import {bookingApi} from "@/api";
-
+import {reviewApi} from "@/api/review";
 const router = useRouter();
 
 // State
@@ -232,6 +400,21 @@ const isCancelling = ref(false);
 
 // Check-in state
 const isChecking = ref({});
+
+// Review state
+const showReviewDialog = ref(false);
+const reviewForm = ref({
+  foodRating: 0,
+  serviceRating: 0,
+  ambianceRating: 0,
+  priceRating: 0,
+  comment: "",
+});
+const isSubmittingReview = ref(false);
+const reviewError = ref("");
+const reviewSuccess = ref("");
+const selectedBookingForReview = ref(null);
+const reviewedBookingIds = ref(new Set()); // set of booking id strings
 
 // Can user check-in? (status=CONFIRMED, booking date is today, not checked-in yet)
 const canUserCheckIn = (booking) => {
@@ -261,6 +444,209 @@ const userCheckIn = async (booking) => {
   }
 };
 
+// --- Reviews: fetch user's reviews so we can know which bookings already reviewed ---
+const loadMyReviews = async () => {
+  try {
+    const resp = await reviewApi.getMyReviews({page: 0, size: 200});
+    const reviews = resp.data || resp || [];
+    const s = new Set();
+    reviews.forEach((r) => {
+      if (r.bookingId) s.add(String(r.bookingId));
+    });
+
+    // Merge persisted local reviews (optimistic) so the UI stays consistent across refresh
+    try {
+      const persisted = JSON.parse(
+        localStorage.getItem("localReviewedBookingIds") || "[]"
+      );
+      if (Array.isArray(persisted) && persisted.length) {
+        persisted.forEach((id) => s.add(String(id)));
+        console.log("💾 Merged persisted local reviewed IDs:", persisted);
+      }
+    } catch (e) {
+      console.warn(
+        "⚠️ Could not read persisted reviewed ids from localStorage",
+        e
+      );
+    }
+
+    reviewedBookingIds.value = s; // Update bookings flags if bookings are loaded
+
+    // Remove any persisted IDs that are now confirmed on server (cleanup)
+    try {
+      const persisted = JSON.parse(
+        localStorage.getItem("localReviewedBookingIds") || "[]"
+      );
+      const remaining = Array.isArray(persisted)
+        ? persisted.filter((id) => !s.has(String(id)))
+        : [];
+      if (!remaining.length) {
+        localStorage.removeItem("localReviewedBookingIds");
+      } else {
+        localStorage.setItem(
+          "localReviewedBookingIds",
+          JSON.stringify(remaining)
+        );
+      }
+    } catch (e) {
+      console.warn("⚠️ Could not cleanup persisted reviewed ids", e);
+    }
+
+    console.log(
+      "✅ Loaded my reviews, bookingIds:",
+      Array.from(reviewedBookingIds.value)
+    );
+    if (bookings.value && bookings.value.length) {
+      bookings.value = bookings.value.map((b) => ({
+        ...b,
+        _reviewed: reviewedBookingIds.value.has(String(b.id)),
+      }));
+    }
+  } catch (err) {
+    console.error("❌ Error loading my reviews", err);
+    // Fallback: load persisted reviewed IDs from localStorage so UI remains consistent
+    try {
+      const persisted = JSON.parse(localStorage.getItem("localReviewedBookingIds") || "[]");
+      if (Array.isArray(persisted) && persisted.length) {
+        const s2 = new Set(persisted.map((id) => String(id)));
+        reviewedBookingIds.value = s2;
+        console.log("💾 Fallback loaded persisted reviewed IDs:", Array.from(s2));
+      } else {
+        reviewedBookingIds.value = new Set();
+      }
+    } catch (e) {
+      console.warn("⚠️ Failed to read persisted reviewed IDs in fallback", e);
+      reviewedBookingIds.value = new Set();
+    }
+  }
+};
+
+// Helper: booking is reviewable only when status is COMPLETED
+const isBookingReviewable = (booking) => {
+  if (!booking) return false;
+  const status = String(booking.status || "").toUpperCase();
+  return status === "COMPLETED";
+};
+
+const hasReviewed = (booking) => {
+  if (!booking) return false;
+  const res =
+    Boolean(booking._reviewed) ||
+    reviewedBookingIds.value.has(String(booking.id));
+  console.log(
+    "🔍 hasReviewed check for booking",
+    booking.id,
+    "=>",
+    res,
+    "(_reviewed=",
+    booking._reviewed,
+    ", reviewedBookingIds=",
+    Array.from(reviewedBookingIds.value)
+  );
+  return res;
+};
+
+// Open review dialog for a booking
+const openReviewForBooking = (booking) => {
+  selectedBookingForReview.value = booking;
+  reviewForm.value = {
+    foodRating: 0,
+    serviceRating: 0,
+    ambianceRating: 0,
+    priceRating: 0,
+    comment: "",
+  };
+  reviewError.value = "";
+  reviewSuccess.value = "";
+  showReviewDialog.value = true;
+};
+
+// Submit review for selected booking
+const submitReviewForBooking = async () => {
+  if (!selectedBookingForReview.value) return;
+  if (
+    !reviewForm.value.foodRating ||
+    !reviewForm.value.serviceRating ||
+    !reviewForm.value.ambianceRating ||
+    !reviewForm.value.priceRating ||
+    !reviewForm.value.comment.trim()
+  ) {
+    reviewError.value = "Vui lòng nhập đầy đủ thông tin";
+    return;
+  }
+
+  isSubmittingReview.value = true;
+  reviewError.value = "";
+  reviewSuccess.value = "";
+
+  try {
+    const payload = {
+      bookingId: selectedBookingForReview.value.id,
+      foodRating: reviewForm.value.foodRating,
+      serviceRating: reviewForm.value.serviceRating,
+      ambianceRating: reviewForm.value.ambianceRating,
+      priceRating: reviewForm.value.priceRating,
+      comment: reviewForm.value.comment.trim(),
+    };
+    console.log("🧾 Submit review payload", payload);
+    const created = await reviewApi.createReview(payload);
+    reviewSuccess.value = "Đã gửi đánh giá thành công!";
+
+    // mark booking as reviewed - update reviewedBookingIds Set
+    const reviewedId = String(selectedBookingForReview.value.id);
+    reviewedBookingIds.value.add(reviewedId);
+
+    // Force Vue reactivity by creating a new Set
+    reviewedBookingIds.value = new Set(reviewedBookingIds.value);
+
+    // Persist to localStorage as fallback so refresh keeps the optimistic state
+    try {
+      const persisted = JSON.parse(
+        localStorage.getItem("localReviewedBookingIds") || "[]"
+      );
+      if (!persisted.includes(reviewedId)) {
+        persisted.push(reviewedId);
+        localStorage.setItem(
+          "localReviewedBookingIds",
+          JSON.stringify(persisted)
+        );
+        console.log("💾 Persisted reviewedId to localStorage:", reviewedId);
+      }
+    } catch (e) {
+      console.warn("⚠️ Could not persist reviewed id to localStorage", e);
+    }
+
+    console.log(
+      "✅ Review submitted — updated reviewedBookingIds:",
+      Array.from(reviewedBookingIds.value)
+    );
+
+    // Update the booking in the list - create completely new array to trigger reactivity
+    bookings.value = bookings.value.map((b) => {
+      if (String(b.id) === reviewedId) {
+        return {...b, _reviewed: true};
+      }
+      return b;
+    });
+
+    console.log(
+      "🔎 Local bookings state after marking reviewed:",
+      bookings.value.map((b) => ({id: b.id, _reviewed: b._reviewed}))
+    );
+
+    // Wait a moment to show success message
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    // close dialog
+    showReviewDialog.value = false;
+  } catch (err) {
+    console.error("❌ Error submitting booking review", err);
+    reviewError.value = err.message || "Gửi đánh giá thất bại";
+  } finally {
+    isSubmittingReview.value = false;
+  }
+};
+
 // Fetch bookings
 const fetchBookings = async (page = 0) => {
   isLoading.value = true;
@@ -278,6 +664,25 @@ const fetchBookings = async (page = 0) => {
     // Handle PageResponse structure
     if (response.data) {
       bookings.value = response.data;
+      console.log(
+        "🔁 After fetch: loaded bookings count =",
+        bookings.value.length
+      );
+      // Mark bookings that the user has already reviewed for immediate UI update
+      if (bookings.value && bookings.value.length) {
+        bookings.value = bookings.value.map((b) => ({
+          ...b,
+          _reviewed: reviewedBookingIds.value.has(String(b.id)),
+        }));
+        console.log(
+          "🔎 After fetch mapping _reviewed:",
+          bookings.value.map((b) => ({id: b.id, _reviewed: b._reviewed}))
+        );
+        console.log(
+          "🔁 Current reviewedBookingIds:",
+          Array.from(reviewedBookingIds.value)
+        );
+      }
       currentPage.value = response.pageNumber || 0;
       totalPages.value = response.totalPages || 0;
       totalElements.value = response.totalElements || 0;
@@ -396,7 +801,8 @@ const getStatusBadgeClass = (status) => {
 };
 
 // Lifecycle
-onMounted(() => {
-  fetchBookings();
+onMounted(async () => {
+  await loadMyReviews();
+  await fetchBookings();
 });
 </script>
