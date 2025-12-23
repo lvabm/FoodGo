@@ -61,7 +61,29 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         var user = jpaUserDetailsServiceImpl.loadUserByUsername(username);
 
+        // 🔒 KIỂM TRA TRẠNG THÁI TÀI KHOẢN
+        if (user instanceof com.foodgo.backend.module.user.entity.UserAccount userAccount) {
+          if (Boolean.TRUE.equals(userAccount.getIsDeleted())) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("Unauthorized: Account Deleted");
+            return;
+          }
+
+          if (!userAccount.isActive()) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("Unauthorized: Account Locked");
+            return;
+          }
+        }
+
         if (user != null && jwtService.isTokenValid(token, user)) {
+          // 🔒 KIỂM TRA LẠI UserDetails methods
+          if (!user.isEnabled() || !user.isAccountNonLocked() || !user.isAccountNonExpired()) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("Unauthorized: Account Disabled or Locked");
+            return;
+          }
+
           UsernamePasswordAuthenticationToken authToken =
               new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
           authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

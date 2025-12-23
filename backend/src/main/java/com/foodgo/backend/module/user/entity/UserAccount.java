@@ -59,6 +59,35 @@ public class UserAccount extends BaseUUIDEntity implements UserDetails {
     return passwordHash;
   }
 
+  @Override
+  public String getUsername() {
+    return username;
+  }
+
+  @Override
+  public boolean isAccountNonExpired() {
+    // Account không hết hạn nếu chưa bị xóa
+    return !Boolean.TRUE.equals(getIsDeleted());
+  }
+
+  @Override
+  public boolean isAccountNonLocked() {
+    // Account không bị khóa nếu isActive = true
+    return isActive;
+  }
+
+  @Override
+  public boolean isCredentialsNonExpired() {
+    // Credentials không hết hạn
+    return true;
+  }
+
+  @Override
+  public boolean isEnabled() {
+    // Account enabled nếu isActive = true và chưa bị xóa
+    return isActive && !Boolean.TRUE.equals(getIsDeleted());
+  }
+
   // 1. QUAN HỆ ONE - TO - ONE: UserAccount <--> Profile
   // Profile sở hữu quan hệ (fk_user_account_id_profile)
   @OneToOne(mappedBy = "userAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
