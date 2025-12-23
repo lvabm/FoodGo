@@ -2,6 +2,7 @@ package com.foodgo.backend.module.review.dto.criteria;
 
 import com.foodgo.backend.module.review.dto.request.filter.ReviewFilterRequest;
 import com.foodgo.backend.module.review.entity.Review;
+import com.foodgo.backend.module.review.entity.ReviewReply;
 import jakarta.persistence.criteria.*;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -19,6 +20,9 @@ public record ReviewSpecification(ReviewFilterRequest filter) implements Specifi
       root.fetch("outlet", JoinType.LEFT);
       root.fetch("user", JoinType.LEFT).fetch("profile", JoinType.LEFT);
       root.fetch("booking", JoinType.LEFT);
+      // Fetch reviewReply và owner.profile để hiển thị phản hồi của chủ quán
+      Fetch<Review, ReviewReply> replyFetch = root.fetch("reviewReply", JoinType.LEFT);
+      replyFetch.fetch("owner", JoinType.LEFT).fetch("profile", JoinType.LEFT);
       query.distinct(true);
     }
 

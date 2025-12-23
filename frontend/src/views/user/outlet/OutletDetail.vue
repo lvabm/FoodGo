@@ -404,10 +404,34 @@
                           {{ review.comment || review.reviewText }}
                         </p>
                         <p
-                          class="text-xs text-subtext-light dark:text-subtext-dark"
+                          class="text-xs text-subtext-light dark:text-subtext-dark mb-3"
                         >
                           {{ formatDate(review.createdAt) }}
                         </p>
+                        
+                        <!-- Owner Reply -->
+                        <div
+                          v-if="review.reply"
+                          class="mt-3 p-3 bg-primary/5 dark:bg-primary/10 rounded-lg border border-primary/20"
+                        >
+                          <div class="flex items-center gap-2 mb-2">
+                            <span class="material-symbols-outlined text-primary text-sm">reply</span>
+                            <div class="text-sm font-medium text-text-light dark:text-text-dark">
+                              Phản hồi từ chủ quán
+                            </div>
+                          </div>
+                          <p class="text-sm text-subtext-light dark:text-subtext-dark whitespace-pre-wrap mb-2">
+                            {{ review.reply.replyText }}
+                          </p>
+                          <div class="flex items-center justify-between">
+                            <p class="text-xs text-subtext-light dark:text-subtext-dark">
+                              - {{ review.reply.ownerName }}
+                            </p>
+                            <p class="text-xs text-subtext-light dark:text-subtext-dark">
+                              {{ formatDate(review.reply.createdAt) }}
+                            </p>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>

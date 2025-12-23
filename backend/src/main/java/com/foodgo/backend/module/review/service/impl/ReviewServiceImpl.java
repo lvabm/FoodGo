@@ -25,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import jakarta.persistence.criteria.Fetch;
 import jakarta.persistence.criteria.JoinType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -321,6 +322,9 @@ public class ReviewServiceImpl
         root.fetch("outlet", JoinType.LEFT);
         root.fetch("user", JoinType.LEFT).fetch("profile", JoinType.LEFT);
         root.fetch("booking", JoinType.LEFT);
+        // Fetch reviewReply và owner.profile để hiển thị phản hồi của chủ quán
+        Fetch<Review, ReviewReply> replyFetch = root.fetch("reviewReply", JoinType.LEFT);
+        replyFetch.fetch("owner", JoinType.LEFT).fetch("profile", JoinType.LEFT);
         query.distinct(true);
       }
       return cb.equal(root.get("id"), id);
