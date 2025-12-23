@@ -16,6 +16,13 @@ public record OutletSearchSpecification(OutletFilterRequest request)
   public Predicate toPredicate(Root<Outlet> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
     List<Predicate> predicates = new ArrayList<>();
 
+    // Fetch join outletImages để tránh LazyInitializationException và N+1 query
+    // Chỉ fetch khi không phải count query
+    if (Long.class != query.getResultType()) {
+      root.fetch("outletImages", JoinType.LEFT);
+      query.distinct(true);
+    }
+
     // 1. Lọc theo Tên (tương đối)
     request
         .optionalName()

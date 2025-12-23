@@ -27,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import jakarta.persistence.criteria.JoinType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -186,11 +187,26 @@ public class OutletServiceImpl
   }
 
   // Override getDetail to allow public access to outlet details (no owner permission check)
+  // and fetch join outletImages to avoid LazyInitializationException
   @Override
   @Transactional(readOnly = true)
   public OutletResponse getDetail(UUID id) {
-    // Use findByIdOrThrow (no ensurePermission) so non-owner users can view outlet details
-    Outlet entity = findByIdOrThrow(id);
+    Specification<Outlet> specById = (root, query, cb) -> {
+      // Fetch join để tránh LazyInitializationException
+      if (Long.class != query.getResultType()) {
+        root.fetch("outletImages", JoinType.LEFT);
+        root.fetch("district", JoinType.LEFT);
+        root.fetch("type", JoinType.LEFT);
+        root.fetch("owner", JoinType.LEFT);
+        query.distinct(true);
+      }
+      return cb.equal(root.get("id"), id);
+    };
+    
+    Outlet entity = getSpecRepository().findAll(specById).stream()
+        .findFirst()
+        .orElseThrow(() -> new ResourceNotFoundException(
+            getEntityName() + " không tìm thấy với ID: " + id));
 
     SuccessMessageContext.setMessage(
         String.format(SuccessMessageContext.FETCH_DETAIL_SUCCESS, getEntityName(), id));

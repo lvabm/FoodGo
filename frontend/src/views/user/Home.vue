@@ -201,15 +201,19 @@
           class="group flex cursor-pointer flex-col overflow-hidden rounded-xl bg-white dark:bg-surface-dark shadow-md transition-all duration-300 hover:shadow-xl hover:-translate-y-1 animate-slide-up"
         >
           <div class="relative overflow-hidden">
-            <div
-              class="h-48 w-full bg-gradient-to-br from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-800 transition-transform duration-300 group-hover:scale-105 flex items-center justify-center"
-            >
-              <span class="material-symbols-outlined text-6xl text-gray-400 dark:text-gray-600">
-                restaurant
-              </span>
+            <div class="h-48 w-full transition-transform duration-300 group-hover:scale-105">
+              <ImageDisplay
+                :image-url="restaurant.imageUrl"
+                :alt="restaurant.name"
+                :lazy="true"
+                placeholder-icon="restaurant"
+                :icon-size="'64px'"
+                container-class="w-full h-full"
+                image-class="w-full h-full object-cover"
+              />
             </div>
             <div
-              class="absolute top-3 left-3 rounded-full bg-primary/90 backdrop-blur-sm px-3 py-1 text-xs font-bold text-white shadow-lg"
+              class="absolute top-3 left-3 rounded-full bg-primary/90 backdrop-blur-sm px-3 py-1 text-xs font-bold text-white shadow-lg z-10"
             >
               {{ restaurant.badge }}
             </div>
@@ -505,19 +509,27 @@ const loadRestaurants = async () => {
     await outletStore.fetchOutlets({page: 0, size: 6});
 
     if (outletStore.outlets && outletStore.outlets.length > 0) {
-      featuredRestaurants.value = outletStore.outlets.map((outlet) => ({
-        id: outlet.id,
-        name: outlet.name || "Chưa có tên",
-        category: outlet.outletCategory?.name || outlet.outletTypeName || "Nhà hàng",
-        district: outlet.districtName || outlet.district?.name || "TPHCM",
-        rating:
-          outlet.averageRating !== undefined && outlet.averageRating !== null
-            ? Number(outlet.averageRating).toFixed(1)
-            : null,
-        reviews: outlet.totalReviews ?? 0,
-        badge: outlet.featured ? "Nổi bật" : "Mới",
-        hours: outlet.openingHours || "8:00 - 22:00",
-      }));
+      featuredRestaurants.value = outletStore.outlets.map((outlet) => {
+        // Get first image from outlet.images array (now List<String> from backend)
+        const firstImage = outlet.images && Array.isArray(outlet.images) && outlet.images.length > 0 
+          ? outlet.images[0] 
+          : null;
+        
+        return {
+          id: outlet.id,
+          name: outlet.name || "Chưa có tên",
+          category: outlet.outletCategory?.name || outlet.outletTypeName || "Nhà hàng",
+          district: outlet.districtName || outlet.district?.name || "TPHCM",
+          rating:
+            outlet.averageRating !== undefined && outlet.averageRating !== null
+              ? Number(outlet.averageRating).toFixed(1)
+              : null,
+          reviews: outlet.totalReviews ?? 0,
+          badge: outlet.featured ? "Nổi bật" : "Mới",
+          hours: outlet.openingHours || "8:00 - 22:00",
+          imageUrl: firstImage, // Add image URL for ImageDisplay
+        };
+      });
     } else {
       featuredRestaurants.value = [];
     }

@@ -217,11 +217,25 @@ public class ReviewServiceImpl
       throw new BadRequestException("Đánh giá này đã được phản hồi.");
     }
 
+    // Validate reply text
+    if (replyText == null || replyText.trim().isEmpty()) {
+      throw new BadRequestException("Nội dung phản hồi không được để trống.");
+    }
+
+    String trimmedText = replyText.trim();
+    if (trimmedText.length() < 5) {
+      throw new BadRequestException("Phản hồi phải có ít nhất 5 ký tự.");
+    }
+
+    if (trimmedText.length() > 1000) {
+      throw new BadRequestException("Phản hồi không được vượt quá 1000 ký tự.");
+    }
+
     replyRepository.save(
         ReviewReply.builder()
             .review(review)
             .owner(userAccountRepository.getReferenceById(userId))
-            .replyText(replyText)
+            .replyText(trimmedText)
             .build());
 
     SuccessMessageContext.setMessage("Đã gửi phản hồi thành công.");

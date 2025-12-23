@@ -41,32 +41,34 @@
 
       <!-- Hero Image Gallery -->
       <div class="relative w-full h-[400px] bg-gray-200 dark:bg-gray-800">
-        <img
-          v-if="outlet.images && outlet.images.length > 0"
-          :src="outlet.images[0]"
+        <ImageDisplay
+          :image-url="getOutletImageUrl(outlet)"
           :alt="outlet.name"
-          class="w-full h-full object-cover"
+          :lazy="false"
+          placeholder-icon="restaurant"
+          :icon-size="'96px'"
+          container-class="w-full h-full"
+          image-class="w-full h-full object-cover"
         />
-        <div v-else class="flex items-center justify-center h-full">
-          <span class="material-symbols-outlined text-6xl text-gray-400"
-            >restaurant</span
-          >
-        </div>
 
         <!-- Image Gallery Thumbnails -->
         <div
           v-if="outlet.images && outlet.images.length > 1"
-          class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2"
+          class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 z-10"
         >
           <button
             v-for="(img, index) in outlet.images.slice(0, 5)"
             :key="index"
-            class="w-16 h-16 rounded-lg overflow-hidden border-2 border-white shadow-lg hover:scale-110 transition-transform"
+            class="w-16 h-16 rounded-lg overflow-hidden border-2 border-white shadow-lg hover:scale-110 transition-transform bg-white"
           >
-            <img
-              :src="img"
+            <ImageDisplay
+              :image-url="img"
               :alt="`Image ${index + 1}`"
-              class="w-full h-full object-cover"
+              :lazy="true"
+              placeholder-icon="image"
+              :icon-size="'24px'"
+              container-class="w-full h-full"
+              image-class="w-full h-full object-cover"
             />
           </button>
         </div>
@@ -298,20 +300,16 @@
                         item.is_available === false,
                     }"
                   >
-                    <img
-                      v-if="item.image || item.imageUrl || item.image_url"
-                      :src="item.image || item.imageUrl || item.image_url"
-                      :alt="item.name"
-                      class="w-24 h-24 object-cover rounded-lg"
-                      @error="$event.target.style.display = 'none'"
-                    />
-                    <div
-                      v-else
-                      class="w-24 h-24 bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center flex-shrink-0"
-                    >
-                      <span class="material-symbols-outlined text-gray-400"
-                        >restaurant</span
-                      >
+                    <div class="w-24 h-24 flex-shrink-0">
+                      <ImageDisplay
+                        :image-url="item.image || item.imageUrl || item.image_url"
+                        :alt="item.name"
+                        :lazy="true"
+                        placeholder-icon="restaurant_menu"
+                        :icon-size="'32px'"
+                        container-class="w-full h-full rounded-lg"
+                        image-class="w-full h-full object-cover rounded-lg"
+                      />
                     </div>
                     <div class="flex-1">
                       <div class="flex items-start justify-between mb-1">
@@ -691,6 +689,7 @@ import {menuApi} from "@/api/menu";
 import {reviewApi} from "@/api/review";
 import {bookingApi} from "@/api/booking";
 import {useAuthStore} from "@/stores/auth";
+import ImageDisplay from "@/components/common/ImageDisplay.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -1210,6 +1209,16 @@ const submitReview = async () => {
   } finally {
     isSubmittingReview.value = false;
   }
+};
+
+// Helper function to get outlet image URL
+const getOutletImageUrl = (outlet) => {
+  // Backend now returns images as List<String>
+  if (!outlet?.images || !Array.isArray(outlet.images) || outlet.images.length === 0) {
+    return null;
+  }
+  // images is now a simple array of strings
+  return outlet.images[0] || null;
 };
 
 // Lifecycle

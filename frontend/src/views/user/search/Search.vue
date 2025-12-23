@@ -387,17 +387,15 @@
             <div
               class="relative h-48 bg-gray-200 dark:bg-gray-800 overflow-hidden"
             >
-              <img
-                v-if="outlet.images && outlet.images.length > 0"
-                :src="outlet.images[0]"
+              <ImageDisplay
+                :image-url="getOutletImageUrl(outlet)"
                 :alt="outlet.name"
-                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                :lazy="true"
+                placeholder-icon="restaurant"
+                :icon-size="'64px'"
+                container-class="w-full h-full"
+                image-class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
               />
-              <div v-else class="flex items-center justify-center h-full">
-                <span class="material-symbols-outlined text-6xl text-gray-400">
-                  restaurant
-                </span>
-              </div>
             </div>
 
             <!-- Content -->
@@ -892,6 +890,16 @@ const formatPrice = (price) => {
     style: "currency",
     currency: "VND",
   }).format(price);
+};
+
+// Helper function to get outlet image URL
+const getOutletImageUrl = (outlet) => {
+  // Backend now returns images as List<String>
+  if (!outlet?.images || !Array.isArray(outlet.images) || outlet.images.length === 0) {
+    return null;
+  }
+  // images is now a simple array of strings
+  return outlet.images[0] || null;
 };
 
 // Fetch menu items by category
