@@ -96,14 +96,159 @@
           </div>
         </nav>
 
-        <router-link
-          to="/owner"
+        <button
+          @click="handleOwnerClick"
           class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-opacity-90 transition-colors"
         >
           <span class="truncate">Dành cho chủ quán</span>
-        </router-link>
+        </button>
       </div>
     </header>
+
+    <!-- Owner registration modal (moved out of header for correct overlay) -->
+    <transition name="fade">
+      <div
+        v-if="showOwnerModal"
+        @click.self="showOwnerModal = false"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+      >
+        <div
+          class="relative bg-white dark:bg-surface-dark rounded-xl max-w-lg w-full max-h-[90vh] overflow-auto p-6 shadow-lg border border-border-light dark:border-border-dark"
+        >
+          <button
+            @click="showOwnerModal = false"
+            class="absolute top-3 right-3 text-subtext-light hover:text-red-600 rounded-full p-1"
+            aria-label="Đóng"
+          >
+            <span class="material-symbols-outlined">close</span>
+          </button>
+
+          <h3 class="text-xl font-bold mb-2">Đăng ký làm chủ quán</h3>
+          <p class="text-sm text-subtext-light dark:text-subtext-dark mb-4">
+            Bạn chưa phải là chủ quán. Vui lòng đăng ký quán để tiếp tục.
+          </p>
+
+          <form
+            @submit.prevent="submitOwnerRegistration"
+            class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4"
+          >
+            <div class="sm:col-span-2">
+              <label class="block text-sm font-medium mb-2"
+                >Tên quán <span class="text-red-500">*</span></label
+              >
+              <input
+                v-model="ownerForm.name"
+                class="w-full px-4 py-2 rounded-lg border"
+                placeholder="Tên quán"
+                required
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium mb-2"
+                >Số điện thoại</label
+              >
+              <input
+                v-model="ownerForm.phoneNumber"
+                class="w-full px-4 py-2 rounded-lg border"
+                placeholder="Số điện thoại"
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium mb-2"
+                >Loại quán (bắt buộc) <span class="text-red-500">*</span></label
+              >
+              <select
+                v-model="ownerForm.typeId"
+                class="w-full px-4 py-2 rounded-lg border"
+              >
+                <option value="">Chọn loại quán</option>
+                <option v-for="t in types" :key="t.id" :value="t.id">
+                  {{ t.name }}
+                </option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium mb-2">Tỉnh/Thành</label>
+              <select
+                v-model="ownerForm.provinceId"
+                @change="onProvinceChange"
+                class="w-full px-4 py-2 rounded-lg border"
+              >
+                <option value="">Chọn tỉnh</option>
+                <option v-for="p in provinces" :key="p.id" :value="p.id">
+                  {{ p.name }}
+                </option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium mb-2"
+                >Quận/Huyện (bắt buộc)
+                <span class="text-red-500">*</span></label
+              >
+              <select
+                v-model="ownerForm.districtId"
+                class="w-full px-4 py-2 rounded-lg border"
+              >
+                <option value="">Chọn quận/huyện</option>
+                <option v-for="d in districts" :key="d.id" :value="d.id">
+                  {{ d.name }}
+                </option>
+              </select>
+            </div>
+
+            <div class="sm:col-span-2">
+              <label class="block text-sm font-medium mb-2"
+                >Địa chỉ <span class="text-red-500">*</span></label
+              >
+              <input
+                v-model="ownerForm.address"
+                class="w-full px-4 py-2 rounded-lg border"
+                placeholder="Địa chỉ"
+                required
+              />
+            </div>
+
+            <div class="sm:col-span-2">
+              <label class="block text-sm font-medium mb-2">Mô tả</label>
+              <textarea
+                v-model="ownerForm.description"
+                rows="3"
+                class="w-full px-4 py-2 rounded-lg border"
+                placeholder="Mô tả ngắn"
+              ></textarea>
+            </div>
+
+            <div class="sm:col-span-2 flex items-center justify-end gap-3">
+              <button
+                type="button"
+                @click="showOwnerModal = false"
+                class="px-4 py-2 border rounded-lg"
+              >
+                Hủy
+              </button>
+              <button
+                type="submit"
+                :disabled="isSubmittingOwner"
+                class="px-4 py-2 bg-primary text-white rounded-lg"
+              >
+                {{ isSubmittingOwner ? "Đang gửi..." : "Đăng ký quán" }}
+              </button>
+            </div>
+          </form>
+
+          <div v-if="ownerError" class="mt-3 text-red-600">
+            {{ ownerError }}
+          </div>
+          <div v-if="ownerSuccess" class="mt-3 text-green-600">
+            {{ ownerSuccess }}
+          </div>
+        </div>
+      </div>
+    </transition>
 
     <!-- Main Content -->
     <main class="flex flex-1 flex-col items-center">
@@ -124,14 +269,143 @@
 </template>
 
 <script setup>
+import {ref, onMounted} from "vue";
 import {useAuthStore} from "@/stores/auth";
 import {useRouter} from "vue-router";
+import {outletApi} from "@/api/outlet";
+import {locationApi} from "@/api/location";
 
 const authStore = useAuthStore();
 const router = useRouter();
 
+// Logout
 const handleLogout = () => {
   authStore.logout();
   router.push("/auth/login");
+};
+
+// Owner registration modal state
+const showOwnerModal = ref(false);
+const isSubmittingOwner = ref(false);
+const ownerError = ref("");
+const ownerSuccess = ref("");
+const categories = ref([]);
+
+const ownerForm = ref({
+  name: "",
+  address: "",
+  phoneNumber: "",
+  categoryId: "",
+  description: "",
+  typeId: "",
+  provinceId: "",
+  districtId: "",
+});
+
+const types = ref([]);
+const provinces = ref([]);
+const districts = ref([]);
+
+const handleOwnerClick = () => {
+  if (!authStore.isAuthenticated) {
+    router.push("/auth/login");
+    return;
+  }
+  if (authStore.isOwner) {
+    router.push("/owner");
+    return;
+  }
+  // show registration modal
+  ownerError.value = "";
+  ownerSuccess.value = "";
+  showOwnerModal.value = true;
+};
+
+const submitOwnerRegistration = async () => {
+  if (!ownerForm.value.name || !ownerForm.value.address) {
+    ownerError.value = "Vui lòng nhập tên quán và địa chỉ";
+    return;
+  }
+  if (!ownerForm.value.typeId) {
+    ownerError.value = "Vui lòng chọn loại quán";
+    return;
+  }
+  if (!ownerForm.value.districtId) {
+    ownerError.value = "Vui lòng chọn quận/huyện";
+    return;
+  }
+  isSubmittingOwner.value = true;
+  ownerError.value = "";
+  ownerSuccess.value = "";
+  try {
+    const payload = {
+      name: ownerForm.value.name,
+      address: ownerForm.value.address,
+      phoneNumber: ownerForm.value.phoneNumber,
+      outletCategoryId: ownerForm.value.categoryId || undefined,
+      typeId: Number(ownerForm.value.typeId),
+      districtId: Number(ownerForm.value.districtId),
+      description: ownerForm.value.description,
+    };
+    await outletApi.createOutlet(payload);
+    ownerSuccess.value = "Đăng ký quán thành công! Chuyển đến trang quản lý...";
+
+    // refresh profile to get owner role (if backend assigns)
+    try {
+      await authStore.fetchUserProfile();
+    } catch (e) {
+      console.warn("Could not refresh profile after outlet creation", e);
+    }
+
+    // close modal and navigate to owner dashboard
+    showOwnerModal.value = false;
+    router.push("/owner");
+  } catch (err) {
+    console.error("Error creating outlet:", err);
+    ownerError.value = err.message || "Tạo quán thất bại";
+  } finally {
+    isSubmittingOwner.value = false;
+  }
+};
+
+onMounted(async () => {
+  try {
+    const res = await outletApi.getCategories();
+    categories.value = res || [];
+  } catch (e) {
+    console.warn("Could not load outlet categories", e);
+  }
+
+  // load outlet types
+  try {
+    const t = await outletApi.getTypes();
+    types.value = t || [];
+  } catch (e) {
+    console.warn("Could not load outlet types", e);
+  }
+
+  // load provinces (no country filter by default)
+  try {
+    const p = await locationApi.getProvinces();
+    provinces.value = p || [];
+  } catch (e) {
+    console.warn("Could not load provinces", e);
+  }
+});
+
+const onProvinceChange = async () => {
+  const provId = ownerForm.value.provinceId;
+  if (!provId) {
+    districts.value = [];
+    ownerForm.value.districtId = "";
+    return;
+  }
+  try {
+    const d = await locationApi.getDistricts(provId);
+    districts.value = d || [];
+  } catch (e) {
+    console.warn("Could not load districts for province", provId, e);
+    districts.value = [];
+  }
 };
 </script>
