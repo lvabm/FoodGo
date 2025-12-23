@@ -64,14 +64,29 @@ apiClient.interceptors.response.use(
     return extractedData;
   },
   (error) => {
-    console.error("❌ API Error:", error.config?.url);
-    console.error("❌ Error details:", error.response || error);
+    const url = error.config?.url || "";
+    const isAdminApi = url.includes("/admin/");
+    const status = error.response?.status;
+
+    // For admin APIs, 403/500 from permission issues are expected for non-admin users
+    // Don't log them as errors to reduce console noise
+    if (isAdminApi && (status === 403 || status === 500)) {
+      // Silently handle permission errors for admin APIs
+      console.log("ℹ️ Admin API access denied (expected for non-admin users):", url);
+    } else {
+      // Log other errors normally
+      console.error("❌ API Error:", url);
+      console.error("❌ Error details:", error.response || error);
+    }
 
     if (error.response) {
       // Server responded with error
       const {status, data} = error.response;
-      console.error("❌ Status:", status);
-      console.error("❌ Response data:", data);
+      
+      if (!isAdminApi || (status !== 403 && status !== 500)) {
+        console.error("❌ Status:", status);
+        console.error("❌ Response data:", data);
+      }
 
       if (status === 401) {
         // Token expired or invalid
@@ -83,7 +98,9 @@ apiClient.interceptors.response.use(
 
       // Backend error response structure: { success: false, message: string, data: any }
       const errorMessage = data?.message || data?.error || error.message;
-      console.error("❌ Error message:", errorMessage);
+      if (!isAdminApi || (status !== 403 && status !== 500)) {
+        console.error("❌ Error message:", errorMessage);
+      }
       return Promise.reject(new Error(errorMessage));
     } else if (error.request) {
       // Request made but no response
