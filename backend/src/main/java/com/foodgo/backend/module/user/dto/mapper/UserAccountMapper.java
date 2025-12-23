@@ -15,6 +15,7 @@ public interface UserAccountMapper
   @Mapping(target = "fullName", source = "profile.fullName")
   @Mapping(target = "address", source = "profile.address")
   @Mapping(target = "roleType", source = "role.name")
+  @Mapping(target = "isActive", expression = "java(entity.isActive())")
   @Override
   UserAccountResponse toResponse(UserAccount entity);
 }

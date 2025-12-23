@@ -174,7 +174,7 @@
             <td class="px-6 py-4 whitespace-nowrap">
               <span
                 :class="
-                  user.isActive !== false
+                  isUserActive(user)
                     ? 'text-positive'
                     : 'text-red-500'
                 "
@@ -183,13 +183,13 @@
                 <span
                   class="w-2 h-2 rounded-full"
                   :class="
-                    user.isActive !== false
+                    isUserActive(user)
                       ? 'bg-positive'
                       : 'bg-red-500'
                   "
                 ></span>
                 {{
-                  user.isActive !== false ? "Hoạt động" : "Bị khóa"
+                  isUserActive(user) ? "Hoạt động" : "Bị khóa"
                 }}
               </span>
             </td>
@@ -212,12 +212,12 @@
                   v-if="!isCurrentUser(user)"
                   @click="toggleUserStatus(user)"
                   :class="
-                    user.isActive !== false
+                    isUserActive(user)
                       ? 'text-yellow-600 hover:text-yellow-500'
                       : 'text-positive hover:text-green-600'
                   "
                 >
-                  {{ user.isActive !== false ? "Khóa" : "Mở khóa" }}
+                  {{ isUserActive(user) ? "Khóa" : "Mở khóa" }}
                 </button>
                 <span
                   v-else
@@ -482,6 +482,36 @@ const formatDate = (date) => {
   }
 };
 
+// Helper function to check if user is active (handle various formats)
+const isUserActive = (user) => {
+  if (!user) {
+    return false;
+  }
+  
+  // Check multiple possible field names (camelCase, snake_case, etc.)
+  const isActive = user.isActive ?? user.active ?? user.is_active;
+  
+  // Handle boolean true/false (most common case from backend)
+  if (typeof isActive === 'boolean') {
+    return isActive === true;
+  }
+  
+  // Handle string "true"/"false"
+  if (typeof isActive === 'string') {
+    const lower = isActive.toLowerCase().trim();
+    return lower === 'true' || lower === '1' || lower === 'yes';
+  }
+  
+  // Handle number 1/0
+  if (typeof isActive === 'number') {
+    return isActive === 1 || isActive > 0;
+  }
+  
+  // If undefined/null, default to false (safer - user must be explicitly active)
+  // This prevents accidentally showing inactive users as active
+  return false;
+};
+
 const isCurrentUser = (user) => {
   const currentUser = authStore.user;
   if (!currentUser || !user) return false;
@@ -550,6 +580,18 @@ const fetchUsers = async () => {
     users.value = Array.isArray(allUsers) ? allUsers : [];
     console.log("✅ [UserManagement] Final users.value:", users.value);
     console.log("✅ [UserManagement] Final users.value.length:", users.value.length);
+    if (users.value.length > 0) {
+      const firstUser = users.value[0];
+      console.log("🔍 [UserManagement] First user object:", JSON.stringify(firstUser, null, 2));
+      console.log("🔍 [UserManagement] First user isActive:", firstUser.isActive, "Type:", typeof firstUser.isActive);
+      console.log("🔍 [UserManagement] First user keys:", Object.keys(firstUser));
+      console.log("🔍 [UserManagement] isUserActive result:", isUserActive(firstUser));
+      
+      // Check all users' isActive status - log first 5 only to avoid spam
+      users.value.slice(0, 5).forEach((user, index) => {
+        console.log(`🔍 [UserManagement] User ${index} (${user.email || user.username}): isActive=${user.isActive} (${typeof user.isActive}), isUserActive=${isUserActive(user)}`);
+      });
+    }
     
     // Update pagination
     if (pageData && typeof pageData === 'object' && !Array.isArray(pageData)) {
@@ -612,16 +654,17 @@ const toggleUserStatus = async (user) => {
     return;
   }
 
+  const isActive = isUserActive(user);
   const confirmed = await confirm(
-    `Bạn có chắc muốn ${user.isActive !== false ? "khóa" : "mở khóa"} người dùng này?`
+    `Bạn có chắc muốn ${isActive ? "khóa" : "mở khóa"} người dùng này?`
   );
   if (!confirmed) return;
 
   try {
     await adminApi.changeUserStatus(user.id, {
-      isActive: user.isActive === false,
+      isActive: !isActive,
     });
-    success(`${user.isActive !== false ? "Khóa" : "Mở khóa"} người dùng thành công`);
+    success(`${isActive ? "Khóa" : "Mở khóa"} người dùng thành công`);
     await fetchUsers();
   } catch (err) {
     showError(err.response?.data?.message || "Có lỗi xảy ra");

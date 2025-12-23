@@ -344,7 +344,7 @@ INSERT INTO role_permission (id, role_id, permission_id) VALUES (44, (SELECT id 
 --========================================================
 -- Note: Converting from old structure (user_role table) to new structure (role_id in user_account)
 -- Mapping: role_id 1=ROLE_USER, 2=ROLE_OWNER, 3=ROLE_ADMIN, 4=ROLE_SYSTEM_ADMIN
-INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active, role_id) VALUES ('00000000-0000-0000-0000-000000000001', 'son.duong_88', 'PLAINTEXT_123', 'sonduong@gmail.vn', '0932952112', false, (SELECT id FROM role WHERE name = 'ROLE_OWNER'));
+INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active, role_id) VALUES ('00000000-0000-0000-0000-000000000001', 'son.duong_88', 'PLAINTEXT_123', 'admin1@example.com', '0932952112', false, (SELECT id FROM role WHERE name = 'ROLE_ADMIN'));
 INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active, role_id) VALUES ('00000000-0000-0000-0000-000000000002', 'thang.ngo_95', 'PLAINTEXT_123', 'thangngo@gmail.vn', '0926854815', true, (SELECT id FROM role WHERE name = 'ROLE_USER'));
 INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active, role_id) VALUES ('00000000-0000-0000-0000-000000000003', 'tam.duong_54', 'PLAINTEXT_123', 'tamduong@example.com', '0999442169', true, (SELECT id FROM role WHERE name = 'ROLE_OWNER'));
 INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active, role_id) VALUES ('00000000-0000-0000-0000-000000000004', 'gia.vo_19', 'PLAINTEXT_123', 'giavo@foodgo.vn', '0995695455', false, (SELECT id FROM role WHERE name = 'ROLE_OWNER'));
