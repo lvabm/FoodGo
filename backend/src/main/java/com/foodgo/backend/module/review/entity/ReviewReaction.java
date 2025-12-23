@@ -1,6 +1,7 @@
 package com.foodgo.backend.module.review.entity;
 
 import com.foodgo.backend.common.base.dto.BaseIntegerEntity;
+import com.foodgo.backend.common.constant.ReactionType;
 import com.foodgo.backend.module.user.entity.UserAccount;
 import jakarta.persistence.*;
 import lombok.*;
@@ -17,7 +18,8 @@ import lombok.*;
 public class ReviewReaction extends BaseIntegerEntity<Long> {
 
   @Column(name = "reaction_type", nullable = false, length = 10)
-  private String reactionType;
+  @Enumerated(EnumType.STRING)
+  private ReactionType reactionType;
 
   // 1. QUAN HỆ MANY - TO - ONE: ReviewReaction <--> UserAccount
   // ReviewReaction sở hữu quan hệ (fk_user_account_id_review_reaction)

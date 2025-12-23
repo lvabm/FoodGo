@@ -7,6 +7,7 @@ import com.foodgo.backend.module.user.entity.UserAccount;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -44,10 +45,15 @@ public class Review extends BaseUUIDEntity {
   @Builder.Default
   private Integer dislikesCount = 0;
 
+  @Column(name = "create_at")
+  @Builder.Default
+  private LocalDateTime createAt = LocalDateTime.now();
+
   // 1. QUAN HỆ ONE-TO-ONE: Review <--> Booking
   // Review sở hữu quan hệ (fk_booking_id_review)
+  // HARD CONSTRAINT: Review phải gắn với Booking
   @OneToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "booking_id")
+  @JoinColumn(name = "booking_id", nullable = false)
   private Booking booking;
 
   // 2. QUAN HỆ MANY - TO - ONE: UserAccount <--> Review
