@@ -141,11 +141,15 @@ export const adminApi = {
 
   // Reports
   getReports(params) {
-    return apiClient.get("/admin/reports", {params});
+    return apiClient.get("/admin/reports/search", {params});
   },
 
   getReportDetail(id) {
     return apiClient.get(`/admin/reports/${id}`);
+  },
+
+  updateReportStatus(id, status) {
+    return apiClient.patch(`/admin/reports/${id}/status`, {status});
   },
 
   // Transactions

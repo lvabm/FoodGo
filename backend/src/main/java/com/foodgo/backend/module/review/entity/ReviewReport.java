@@ -7,6 +7,8 @@ import com.foodgo.backend.module.user.entity.UserAccount;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "review_report")
 @Getter
@@ -27,6 +29,10 @@ public class ReviewReport extends BaseIntegerEntity<Integer> {
   @Enumerated(EnumType.STRING)
   @Builder.Default
   private ReportStatus status = ReportStatus.PENDING;
+
+  @Column(name = "created_at", nullable = false, updatable = false)
+  @Builder.Default
+  private LocalDateTime createdAt = LocalDateTime.now();
 
   // 1. QUAN HỆ MANY - TO - ONE: ReviewReport <--> UserAccount
   // ReviewReport sở hữu quan hệ (fk_user_account_id_review_report)
