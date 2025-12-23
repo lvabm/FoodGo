@@ -104,6 +104,7 @@
       <!-- Bottom actions -->
       <div class="mt-auto flex flex-col gap-1">
         <button
+          @click="handleLogout"
           class="flex items-center gap-3 px-3 py-2 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-primary/10"
         >
           <span class="material-symbols-outlined text-xl">logout</span>
@@ -148,5 +149,16 @@
 </template>
 
 <script setup>
-// Admin Layout Component
+import {useRouter} from "vue-router";
+import {useAuthStore} from "@/stores/auth";
+
+const router = useRouter();
+const authStore = useAuthStore();
+
+const handleLogout = () => {
+  if (confirm("Bạn có chắc muốn đăng xuất?")) {
+    authStore.logout();
+    router.push("/auth/login");
+  }
+};
 </script>
