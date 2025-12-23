@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Component
+// ⚠️ Vẫn rất khuyến khích dùng @Profile("dev")
 // @Profile("dev")
 @RequiredArgsConstructor
 public class PasswordUpdateRunner implements ApplicationRunner {

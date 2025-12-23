@@ -5,7 +5,6 @@ import com.foodgo.backend.module.menu.dto.response.OutletMenuItemFeatureResponse
 import com.foodgo.backend.module.menu.service.OutletMenuItemFeatureService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,7 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OutletMenuItemFeatureController {
 
-  private final OutletMenuItemFeatureService outletMenuItemFeatureService;
+  private final OutletMenuItemFeatureService service;
 
   // 1. ADD FEATURE (CREATE) - Chỉ Owner/Admin
   @PostMapping
@@ -33,7 +32,7 @@ public class OutletMenuItemFeatureController {
   public OutletMenuItemFeatureResponse addFeature(
       @PathVariable Integer outletMenuItemId,
       @Valid @RequestBody OutletMenuItemFeatureCreateRequest request) {
-    return outletMenuItemFeatureService.addFeature(outletMenuItemId, request);
+    return service.addFeature(outletMenuItemId, request);
   }
 
   // 2. REMOVE FEATURE (HARD DELETE) - Chỉ Owner/Admin
@@ -44,16 +43,15 @@ public class OutletMenuItemFeatureController {
       description = "Owner/Admin loại bỏ một tùy chọn khỏi món ăn. Service tự động kiểm tra quyền.")
   public void removeFeature(
       @PathVariable Integer outletMenuItemId, @PathVariable Integer featureId) {
-    outletMenuItemFeatureService.removeFeature(outletMenuItemId, featureId);
+    service.removeFeature(outletMenuItemId, featureId);
   }
 
   // 3. LIST FEATURES (READ-ONLY) - Public
-  @PermitAll
   @GetMapping
   @Operation(
       summary = "Lấy danh sách Tùy chọn của một Món ăn",
       description = "Public API: Xem tất cả các tùy chọn đã được gán cho món ăn tùy chỉnh này.")
   public List<OutletMenuItemFeatureResponse> listFeatures(@PathVariable Integer outletMenuItemId) {
-    return outletMenuItemFeatureService.listFeatures(outletMenuItemId);
+    return service.listFeatures(outletMenuItemId);
   }
 }

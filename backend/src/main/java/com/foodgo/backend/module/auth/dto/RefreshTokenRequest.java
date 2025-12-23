@@ -1,6 +1,5 @@
 package com.foodgo.backend.module.auth.dto;
 
-import jakarta.validation.constraints.NotBlank;
-
-public record RefreshTokenRequest(
-    @NotBlank(message = "Refresh token không được để trống") String refreshToken) {}
+public class RefreshTokenRequest {
+    // không cần class này
+}

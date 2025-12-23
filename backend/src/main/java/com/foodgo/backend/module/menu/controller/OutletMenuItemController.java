@@ -7,7 +7,6 @@ import com.foodgo.backend.module.menu.dto.response.OutletMenuItemResponse;
 import com.foodgo.backend.module.menu.service.OutletMenuItemService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -25,7 +24,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class OutletMenuItemController {
 
-  private final OutletMenuItemService outletMenuItemService;
+  private final OutletMenuItemService service;
 
   // --- API CỐT LÕI (CREATE) ---
 
@@ -45,7 +44,7 @@ public class OutletMenuItemController {
             request.imageUrl(),
             outletId,
             request.menuItemId());
-    return outletMenuItemService.create(finalRequest);
+    return service.create(finalRequest);
   }
 
   // --- CRUD KHÁC (Chỉ dùng itemId) ---
@@ -57,7 +56,7 @@ public class OutletMenuItemController {
       description = "Chỉ Owner/Admin có thể cập nhật món ăn.")
   public OutletMenuItemResponse updateMenuItem(
       @PathVariable Integer itemId, @Valid @RequestBody OutletMenuItemUpdateRequest request) {
-    return outletMenuItemService.update(itemId, request);
+    return service.update(itemId, request);
   }
 
   // 3. AVAILABILITY
@@ -66,7 +65,7 @@ public class OutletMenuItemController {
       summary = "Bật/Tắt trạng thái Available của món ăn",
       description = "Owner/Admin có thể nhanh chóng kích hoạt hoặc ngừng bán một món ăn.")
   public OutletMenuItemResponse toggleAvailability(@PathVariable Integer itemId) {
-    return outletMenuItemService.toggleAvailability(itemId);
+    return service.toggleAvailability(itemId);
   }
 
   // 4. SOFT DELETE
@@ -75,19 +74,17 @@ public class OutletMenuItemController {
       summary = "Xóa mềm (Soft Delete) món ăn khỏi Menu",
       description = "Chỉ Owner/Admin có thể xóa mềm.")
   public OutletMenuItemResponse softDeleteMenuItem(@PathVariable Integer itemId) {
-    return outletMenuItemService.softDelete(itemId);
+    return service.softDelete(itemId);
   }
 
   // 5. GET DETAIL
-  @PermitAll
   @GetMapping("/{itemId}")
   @Operation(summary = "Lấy chi tiết món ăn tùy chỉnh theo ID")
   public OutletMenuItemResponse getMenuItemDetail(@PathVariable Integer itemId) {
-    return outletMenuItemService.getDetail(itemId);
+    return service.getDetail(itemId);
   }
 
   // 6. GET SEARCH (Filter theo Outlet ID)
-  @PermitAll
   @GetMapping("/search")
   @Operation(
       summary = "Tìm kiếm và Phân trang món ăn theo Outlet",
@@ -98,20 +95,6 @@ public class OutletMenuItemController {
       Pageable pageable) {
     OutletMenuItemFilterRequest finalFilter =
         new OutletMenuItemFilterRequest(filter.name(), outletId, filter.isAvailable());
-    return outletMenuItemService.getPage(finalFilter, pageable);
-  }
-
-  // 7. LIST (compatibility) - support GET /outlets/{outletId}/menu-items?page=..&size=..
-  @PermitAll
-  @GetMapping
-  @Operation(summary = "Lấy danh sách món ăn của Outlet (dưới dạng phân trang)")
-  public Page<OutletMenuItemResponse> listMenuItems(
-      @PathVariable UUID outletId,
-      @ModelAttribute OutletMenuItemFilterRequest filter,
-      Pageable pageable) {
-    // Reuse the same search logic but allow direct GET on the base path for compatibility with older clients
-    OutletMenuItemFilterRequest finalFilter =
-        new OutletMenuItemFilterRequest(filter.name(), outletId, filter.isAvailable());
-    return outletMenuItemService.getPage(finalFilter, pageable);
+    return service.getPage(finalFilter, pageable);
   }
 }

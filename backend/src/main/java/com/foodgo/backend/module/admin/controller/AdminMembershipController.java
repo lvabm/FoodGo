@@ -1,39 +1,28 @@
 package com.foodgo.backend.module.admin.controller;
 
-import com.foodgo.backend.module.admin.service.AdminMembershipService;
-import com.foodgo.backend.module.membership.dto.request.create.MembershipPlanCreateRequest;
-import com.foodgo.backend.module.membership.dto.request.update.MembershipPlanUpdateRequest;
-import com.foodgo.backend.module.membership.dto.response.MembershipPlanResponse;
+import com.foodgo.backend.module.membership.dto.MembershipRequest;
+import com.foodgo.backend.module.membership.dto.MembershipResponse;
+import com.foodgo.backend.module.membership.service.MembershipService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/admin/membership-plans")
-@PreAuthorize("hasRole('ADMIN')")
+@RequestMapping("/api/v1/admin/memberships/plans")
 public class AdminMembershipController {
+  private final MembershipService membershipService;
 
-  private final AdminMembershipService adminMembershipService;
-
-  @Operation(summary = "Tạo Membership Plan mới")
+  @Operation(summary = "Tạo membership plan mới")
   @PostMapping
-  public MembershipPlanResponse create(@Valid @RequestBody MembershipPlanCreateRequest request) {
-    return adminMembershipService.create(request);
+  public MembershipResponse createMembership(@Valid @RequestBody MembershipRequest request) {
+    return membershipService.createMembership(request);
   }
 
-  @Operation(summary = "Cập nhật Membership Plan")
-  @PatchMapping("/{id}")
-  public MembershipPlanResponse update(
-      @PathVariable Integer id, @Valid @RequestBody MembershipPlanUpdateRequest request) {
-    return adminMembershipService.update(id, request);
-  }
-
-  @Operation(summary = "Xóa mềm Membership Plan")
-  @DeleteMapping("/{id}")
-  public void softDelete(@PathVariable Integer id) {
-    adminMembershipService.softDelete(id);
+  @Operation(summary = "Lấy chi tiết membership plan theo ID")
+  @GetMapping("/{id}")
+  public MembershipResponse getMembershipById(@PathVariable Long id) {
+    return membershipService.getMembershipById(id);
   }
 }

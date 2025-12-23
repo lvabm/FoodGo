@@ -1,14 +1,11 @@
 package com.foodgo.backend.module.payment.entity;
 
 import com.foodgo.backend.common.base.dto.BaseUUIDEntity;
-import com.foodgo.backend.common.constant.PaymentMethod;
-import com.foodgo.backend.common.constant.PaymentStatus;
-import com.foodgo.backend.common.constant.PaymentType;
+import com.foodgo.backend.module.booking.entity.Booking;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
 @Entity
 @Table(name = "payment")
@@ -23,23 +20,18 @@ public class Payment extends BaseUUIDEntity {
   private BigDecimal amount;
 
   @Column(name = "payment_method", nullable = false, length = 20)
-  @Enumerated(EnumType.STRING)
-  private PaymentMethod paymentMethod;
+  private String paymentMethod;
 
   @Column(name = "payment_status", nullable = false, length = 20)
-  @Enumerated(EnumType.STRING)
   @Builder.Default
-  private PaymentStatus paymentStatus = PaymentStatus.PENDING;
+  private String paymentStatus = "pending";
 
   @Column(name = "transaction_id", length = 255, unique = true)
   private String transactionId;
 
-  // ID của đối tượng liên quan (BookingID hoặc UserMembershipID)
-  @Column(name = "related_id", nullable = false)
-  private String relatedId;
-
-  // Loại thanh toán: BOOKING hoặc MEMBERSHIP
-  @Column(name = "type", nullable = false, length = 20)
-  @Enumerated(EnumType.STRING)
-  private PaymentType type;
+  // 1. QUAN HỆ MANY - TO - ONE: Payment <--> Booking
+  // Payment sở hữu quan hệ (fk_booking_id_payment)
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "booking_id", nullable = false)
+  private Booking booking;
 }

@@ -6,7 +6,6 @@ import com.foodgo.backend.common.constant.EntityName;
 import com.foodgo.backend.common.context.SecurityContext;
 import com.foodgo.backend.common.context.SuccessMessageContext;
 import com.foodgo.backend.common.exception.ResourceNotFoundException;
-import com.foodgo.backend.module.admin.service.AdminMenuItemService;
 import com.foodgo.backend.module.location.repository.ProvinceRepository;
 import com.foodgo.backend.module.menu.dto.criteria.MenuItemSearchSpecification;
 import com.foodgo.backend.module.menu.dto.mapper.MenuItemMapper;
@@ -17,7 +16,6 @@ import com.foodgo.backend.module.menu.dto.response.MenuItemResponse;
 import com.foodgo.backend.module.menu.entity.MenuItem;
 import com.foodgo.backend.module.menu.repository.MenuItemRepository;
 import com.foodgo.backend.module.menu.repository.MenuItemSubCategoryRepository;
-import com.foodgo.backend.module.menu.service.MenuItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -39,7 +37,7 @@ public class MenuItemServiceImpl
         MenuItemUpdateRequest,
         MenuItemFilterRequest,
         MenuItemResponse>
-    implements MenuItemService, AdminMenuItemService {
+    implements com.foodgo.backend.module.menu.service.MenuItemService {
 
   private final MenuItemRepository menuItemRepository;
   private final MenuItemMapper menuItemMapper;
