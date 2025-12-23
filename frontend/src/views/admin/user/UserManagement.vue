@@ -155,7 +155,7 @@
                   <div
                     class="text-sm text-subtext-light dark:text-subtext-dark"
                   >
-                    {{ user.profile?.phoneNumber || "N/A" }}
+                    {{ user.phoneNumber || user.profile?.phoneNumber || "N/A" }}
                   </div>
                 </div>
               </div>
@@ -166,9 +166,9 @@
             <td class="px-6 py-4 whitespace-nowrap">
               <span
                 class="px-2 py-1 text-xs font-medium rounded-full"
-                :class="getRoleClass(user.roleName || user.role)"
+                :class="getRoleClass(user.roleType || user.roleName || user.role)"
               >
-                {{ formatRole(user.roleName || user.role) }}
+                {{ formatRole(user.roleType || user.roleName || user.role) }}
               </span>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
@@ -196,7 +196,7 @@
             <td
               class="px-6 py-4 whitespace-nowrap text-sm text-subtext-light dark:text-subtext-dark"
             >
-              {{ formatDate(user.createdAt || user.createdDate) }}
+              {{ user.createdAt || user.createdDate ? formatDate(user.createdAt || user.createdDate) : "Chưa có" }}
             </td>
             <td
               class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"
@@ -450,6 +450,10 @@ const visiblePages = computed(() => {
 });
 
 const formatRole = (role) => {
+  if (!role) return "N/A";
+  
+  // Handle enum RoleType (from backend)
+  const roleStr = typeof role === 'string' ? role : String(role);
   const roleMap = {
     ROLE_USER: "User",
     ROLE_OWNER: "Owner",
@@ -458,19 +462,43 @@ const formatRole = (role) => {
     OWNER: "Owner",
     ADMIN: "Admin",
   };
-  return roleMap[role] || role || "N/A";
+  
+  // Try exact match first
+  if (roleMap[roleStr]) {
+    return roleMap[roleStr];
+  }
+  
+  // Try case-insensitive match
+  const upperRole = roleStr.toUpperCase();
+  if (roleMap[upperRole]) {
+    return roleMap[upperRole];
+  }
+  
+  // If it's an enum value, try to extract the role name
+  if (roleStr.includes('ROLE_')) {
+    const roleName = roleStr.replace('ROLE_', '');
+    return roleMap[roleName] || roleName;
+  }
+  
+  return roleStr || "N/A";
 };
 
 const getRoleClass = (role) => {
+  if (!role) return "bg-gray-100 text-gray-800";
+  
+  const roleStr = typeof role === 'string' ? role : String(role);
+  const upperRole = roleStr.toUpperCase();
+  
   const classMap = {
-    ROLE_USER: "bg-blue-100 text-blue-800",
-    ROLE_OWNER: "bg-purple-100 text-purple-800",
-    ROLE_ADMIN: "bg-red-100 text-red-800",
-    USER: "bg-blue-100 text-blue-800",
-    OWNER: "bg-purple-100 text-purple-800",
-    ADMIN: "bg-red-100 text-red-800",
+    ROLE_USER: "bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400",
+    ROLE_OWNER: "bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-400",
+    ROLE_ADMIN: "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400",
+    USER: "bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400",
+    OWNER: "bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-400",
+    ADMIN: "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400",
   };
-  return classMap[role] || "bg-gray-100 text-gray-800";
+  
+  return classMap[upperRole] || classMap[roleStr] || "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300";
 };
 
 const formatDate = (date) => {
