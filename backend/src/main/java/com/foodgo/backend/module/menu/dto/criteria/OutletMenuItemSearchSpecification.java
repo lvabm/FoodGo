@@ -36,7 +36,16 @@ public record OutletMenuItemSearchSpecification(OutletMenuItemFilterRequest requ
               predicates.add(builder.equal(root.get("outlet").get("id"), outletId));
             });
 
-    // 3. Lọc theo trạng thái Available
+    // 3. Lọc theo MenuItem ID (Many-to-One Join)
+    request
+        .optionalMenuItemId()
+        .ifPresent(
+            menuItemId -> {
+              // Trường tên trong OutletMenuItem Entity là "menuItem"
+              predicates.add(builder.equal(root.get("menuItem").get("id"), menuItemId));
+            });
+
+    // 4. Lọc theo trạng thái Available
     request
         .optionalIsAvailable()
         .ifPresent(

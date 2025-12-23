@@ -97,7 +97,7 @@ public class OutletMenuItemController {
       @ModelAttribute OutletMenuItemFilterRequest filter,
       Pageable pageable) {
     OutletMenuItemFilterRequest finalFilter =
-        new OutletMenuItemFilterRequest(filter.name(), outletId, filter.isAvailable());
+        new OutletMenuItemFilterRequest(filter.name(), outletId, filter.menuItemId(), filter.isAvailable());
     return outletMenuItemService.getPage(finalFilter, pageable);
   }
 
@@ -111,7 +111,7 @@ public class OutletMenuItemController {
       Pageable pageable) {
     // Reuse the same search logic but allow direct GET on the base path for compatibility with older clients
     OutletMenuItemFilterRequest finalFilter =
-        new OutletMenuItemFilterRequest(filter.name(), outletId, filter.isAvailable());
+        new OutletMenuItemFilterRequest(filter.name(), outletId, filter.menuItemId(), filter.isAvailable());
     return outletMenuItemService.getPage(finalFilter, pageable);
   }
 }

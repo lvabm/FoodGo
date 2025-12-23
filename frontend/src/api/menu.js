@@ -65,4 +65,34 @@ export const menuApi = {
   getProvinces() {
     return apiClient.get("/provinces");
   },
+
+  // Tìm outlet menu item theo menuItemId để lấy ảnh
+  async findOutletMenuItemImage(menuItemId) {
+    if (!menuItemId) return null;
+    try {
+      // Lấy danh sách outlets (chỉ lấy một vài outlets để tối ưu)
+      const outletsResponse = await apiClient.get("/outlets/search", {params: {page: 0, size: 5}});
+      const outlets = outletsResponse?.data || outletsResponse?.content || [];
+      
+      // Tìm outlet menu item đầu tiên có menuItemId tương ứng
+      for (const outlet of outlets) {
+        try {
+          const menuItemsResponse = await apiClient.get(`/outlets/${outlet.id}/menu-items`, {
+            params: {menuItemId, page: 0, size: 1, isAvailable: true}
+          });
+          const items = menuItemsResponse?.data || menuItemsResponse?.content || [];
+          if (items.length > 0 && items[0]?.imageUrl) {
+            return items[0].imageUrl;
+          }
+        } catch (err) {
+          // Continue to next outlet
+          continue;
+        }
+      }
+      return null;
+    } catch (err) {
+      console.error("Error finding outlet menu item image:", err);
+      return null;
+    }
+  },
 };

@@ -621,14 +621,19 @@ const loadPopularMenuItems = async () => {
       selectedItems.map(async (item) => {
         // Try to get image from outlet menu items
         try {
-          // Get a sample outlet menu item that uses this master menu item
-          // Note: This requires an API endpoint to search outlet menu items by menuItemId
-          // For now, we'll keep the item as is and ImageDisplay will show placeholder
+          if (item.id) {
+            const imageUrl = await menuApi.findOutletMenuItemImage(item.id);
+            return {
+              ...item,
+              imageUrl: imageUrl || null,
+            };
+          }
           return {
             ...item,
-            imageUrl: item.imageUrl || null, // Will be null for master menu items
+            imageUrl: item.imageUrl || null,
           };
         } catch (err) {
+          console.warn(`Failed to get image for menu item ${item.id}:`, err);
           return item;
         }
       })

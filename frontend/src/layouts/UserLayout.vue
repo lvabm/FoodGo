@@ -270,9 +270,237 @@
     <footer
       class="w-full bg-surface-light dark:bg-surface-dark border-t border-border-light dark:border-border-dark"
     >
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="text-center text-text-light dark:text-text-dark">
-          <p class="text-sm">&copy; 2025 FoodGo. All rights reserved.</p>
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+          <!-- Brand Section -->
+          <div class="space-y-4">
+            <router-link to="/" class="flex items-center gap-3">
+              <svg
+                class="h-8 w-8 text-primary"
+                fill="none"
+                viewBox="0 0 48 48"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M44 4H30.6666V17.3334H17.3334V30.6666H4V44H44V4Z"
+                  fill="currentColor"
+                ></path>
+              </svg>
+              <h3 class="text-xl font-bold text-text-light dark:text-text-dark">
+                FoodGo
+              </h3>
+            </router-link>
+            <p class="text-sm text-subtext-light dark:text-subtext-dark leading-relaxed">
+              Nền tảng đặt bàn trực tuyến hàng đầu, kết nối bạn với những nhà hàng và quán ăn tuyệt vời nhất.
+            </p>
+            <!-- Social Media -->
+            <div class="flex items-center gap-4 pt-2">
+              <a
+                href="https://facebook.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="p-2 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-primary hover:text-white transition-colors"
+                aria-label="Facebook"
+              >
+                <span class="material-symbols-outlined text-lg">facebook</span>
+              </a>
+              <a
+                href="https://instagram.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="p-2 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-primary hover:text-white transition-colors"
+                aria-label="Instagram"
+              >
+                <span class="material-symbols-outlined text-lg">photo_camera</span>
+              </a>
+              <a
+                href="https://twitter.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="p-2 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-primary hover:text-white transition-colors"
+                aria-label="Twitter"
+              >
+                <span class="material-symbols-outlined text-lg">alternate_email</span>
+              </a>
+              <a
+                href="https://youtube.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="p-2 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-primary hover:text-white transition-colors"
+                aria-label="YouTube"
+              >
+                <span class="material-symbols-outlined text-lg">play_circle</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Quick Links -->
+          <div>
+            <h4 class="text-sm font-semibold text-text-light dark:text-text-dark mb-4">
+              Liên kết nhanh
+            </h4>
+            <ul class="space-y-3">
+              <li>
+                <router-link
+                  to="/"
+                  class="text-sm text-subtext-light dark:text-subtext-dark hover:text-primary transition-colors flex items-center gap-2"
+                >
+                  <span class="material-symbols-outlined text-base">home</span>
+                  Trang chủ
+                </router-link>
+              </li>
+              <li>
+                <router-link
+                  to="/search"
+                  class="text-sm text-subtext-light dark:text-subtext-dark hover:text-primary transition-colors flex items-center gap-2"
+                >
+                  <span class="material-symbols-outlined text-base">search</span>
+                  Khám phá
+                </router-link>
+              </li>
+              <li>
+                <router-link
+                  to="/membership"
+                  class="text-sm text-subtext-light dark:text-subtext-dark hover:text-primary transition-colors flex items-center gap-2"
+                >
+                  <span class="material-symbols-outlined text-base">workspace_premium</span>
+                  Gói thành viên
+                </router-link>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="text-sm text-subtext-light dark:text-subtext-dark hover:text-primary transition-colors flex items-center gap-2"
+                >
+                  <span class="material-symbols-outlined text-base">info</span>
+                  Về chúng tôi
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Support -->
+          <div>
+            <h4 class="text-sm font-semibold text-text-light dark:text-text-dark mb-4">
+              Hỗ trợ
+            </h4>
+            <ul class="space-y-3">
+              <li>
+                <a
+                  href="#"
+                  class="text-sm text-subtext-light dark:text-subtext-dark hover:text-primary transition-colors flex items-center gap-2"
+                >
+                  <span class="material-symbols-outlined text-base">help</span>
+                  Câu hỏi thường gặp
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="text-sm text-subtext-light dark:text-subtext-dark hover:text-primary transition-colors flex items-center gap-2"
+                >
+                  <span class="material-symbols-outlined text-base">support_agent</span>
+                  Liên hệ hỗ trợ
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="text-sm text-subtext-light dark:text-subtext-dark hover:text-primary transition-colors flex items-center gap-2"
+                >
+                  <span class="material-symbols-outlined text-base">description</span>
+                  Điều khoản sử dụng
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  class="text-sm text-subtext-light dark:text-subtext-dark hover:text-primary transition-colors flex items-center gap-2"
+                >
+                  <span class="material-symbols-outlined text-base">privacy_tip</span>
+                  Chính sách bảo mật
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Contact Info -->
+          <div>
+            <h4 class="text-sm font-semibold text-text-light dark:text-text-dark mb-4">
+              Liên hệ
+            </h4>
+            <ul class="space-y-3">
+              <li class="flex items-start gap-3">
+                <span class="material-symbols-outlined text-primary text-base mt-0.5">location_on</span>
+                <div class="text-sm text-subtext-light dark:text-subtext-dark">
+                  <p>2022 QL1A , Quận 12</p>
+                  <p>TP. Hồ Chí Minh, Việt Nam</p>
+                </div>
+              </li>
+              <li class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-primary text-base">call</span>
+                <a
+                  href="tel:+84354835071"
+                  class="text-sm text-subtext-light dark:text-subtext-dark hover:text-primary transition-colors"
+                >
+                  +84354835071
+                </a>
+              </li>
+              <li class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-primary text-base">mail</span>
+                <a
+                  href="mailto:contact@foodgo.vn"
+                  class="text-sm text-subtext-light dark:text-subtext-dark hover:text-primary transition-colors"
+                >
+                  contact@foodgo.vn
+                </a>
+              </li>
+              <li class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-primary text-base">schedule</span>
+                <div class="text-sm text-subtext-light dark:text-subtext-dark">
+                  <p>Thứ 2 - Chủ nhật: 8:00 - 22:00</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Newsletter Subscription -->
+        <div class="border-t border-border-light dark:border-border-dark pt-8 mb-8">
+          <div class="max-w-md mx-auto text-center">
+            <h4 class="text-sm font-semibold text-text-light dark:text-text-dark mb-2">
+              Đăng ký nhận tin tức
+            </h4>
+            <p class="text-xs text-subtext-light dark:text-subtext-dark mb-4">
+              Nhận thông tin về các ưu đãi và sự kiện đặc biệt
+            </p>
+            <div class="flex gap-2">
+              <input
+                type="email"
+                placeholder="Nhập email của bạn"
+                class="flex-1 px-4 py-2 rounded-lg border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+              <button
+                class="px-6 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-colors"
+              >
+                Đăng ký
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Copyright -->
+        <div class="border-t border-border-light dark:border-border-dark pt-8">
+          <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+            <p class="text-sm text-subtext-light dark:text-subtext-dark text-center md:text-left">
+              &copy; 2025 FoodGo. Tất cả quyền được bảo lưu.
+            </p>
+            <div class="flex items-center gap-6 text-sm text-subtext-light dark:text-subtext-dark">
+              <a href="#" class="hover:text-primary transition-colors">Điều khoản</a>
+              <a href="#" class="hover:text-primary transition-colors">Bảo mật</a>
+              <a href="#" class="hover:text-primary transition-colors">Cookie</a>
+            </div>
+          </div>
         </div>
       </div>
     </footer>
