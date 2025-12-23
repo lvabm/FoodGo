@@ -6,7 +6,7 @@
     >
       <div class="flex flex-col gap-4">
         <!-- Logo -->
-        <div class="flex items-center gap-3">
+        <router-link to="/" class="flex items-center gap-3">
           <div
             class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 bg-primary flex items-center justify-center"
           >
@@ -30,7 +30,7 @@
               Admin Panel
             </p>
           </div>
-        </div>
+        </router-link>
 
         <!-- Navigation -->
         <nav class="flex flex-col gap-2 mt-4">

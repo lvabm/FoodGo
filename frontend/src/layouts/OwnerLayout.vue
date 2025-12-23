@@ -10,7 +10,7 @@
         <div class="flex flex-col flex-1 p-4">
           <div class="flex flex-col gap-4">
             <!-- Logo -->
-            <div class="flex items-center gap-3 p-2">
+            <router-link to="/" class="flex items-center gap-3 p-2">
               <div
                 class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 bg-primary flex items-center justify-center"
               >
@@ -36,7 +36,7 @@
                   Quản lý Quán
                 </p>
               </div>
-            </div>
+            </router-link>
 
             <!-- Navigation -->
             <div class="flex flex-col gap-2 mt-4">
@@ -96,18 +96,13 @@
             </div>
           </div>
 
-          <!-- Bottom Actions -->
+          <!-- Bottom actions -->
           <div class="mt-auto flex flex-col gap-1">
             <button
-              class="flex items-center gap-3 px-3 py-2 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-primary/10 transition-colors"
+              @click="handleLogout"
+              class="flex items-center gap-3 px-3 py-2 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-primary/10"
             >
-              <span class="material-symbols-outlined">settings</span>
-              <p class="text-sm font-medium">Cài đặt</p>
-            </button>
-            <button
-              class="flex items-center gap-3 px-3 py-2 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-primary/10 transition-colors"
-            >
-              <span class="material-symbols-outlined">logout</span>
+              <span class="material-symbols-outlined text-xl">logout</span>
               <p class="text-sm font-medium">Đăng xuất</p>
             </button>
           </div>
@@ -149,5 +144,16 @@
 </template>
 
 <script setup>
-// Owner Layout Component
+import {useRouter} from "vue-router";
+import {useAuthStore} from "@/stores/auth";
+
+const router = useRouter();
+const authStore = useAuthStore();
+
+const handleLogout = () => {
+  if (confirm("Bạn có chắc muốn đăng xuất?")) {
+    authStore.logout();
+    router.push("/auth/login");
+  }
+};
 </script>
