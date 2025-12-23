@@ -10,6 +10,8 @@ public record ReviewResponse(
     UUID userId,
     String userName,
     String userAvatar,
+    UUID outletId,
+    String outletName,
     Integer overallRating,
     Integer foodRating,
     Integer serviceRating,

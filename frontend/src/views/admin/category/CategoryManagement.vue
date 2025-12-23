@@ -40,6 +40,11 @@
             <th
               class="px-6 py-3 text-left text-xs font-medium text-subtext-light dark:text-subtext-dark uppercase tracking-wider"
             >
+              Loại outlet
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-subtext-light dark:text-subtext-dark uppercase tracking-wider"
+            >
               Mô tả
             </th>
             <th
@@ -58,6 +63,9 @@
             <td class="px-6 py-4 whitespace-nowrap text-sm">{{ category.id }}</td>
             <td class="px-6 py-4 whitespace-nowrap">
               <div class="text-sm font-medium">{{ category.name }}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm">
+              {{ category.typeName || "N/A" }}
             </td>
             <td class="px-6 py-4">
               <div class="text-sm text-subtext-light dark:text-subtext-dark">
@@ -84,7 +92,7 @@
             </td>
           </tr>
           <tr v-if="categories.length === 0">
-            <td colspan="4" class="px-6 py-8 text-center text-subtext-light">
+            <td colspan="5" class="px-6 py-8 text-center text-subtext-light">
               Không có dữ liệu
             </td>
           </tr>
@@ -106,20 +114,39 @@
         </h2>
         <form @submit.prevent="saveCategory" class="space-y-4">
           <div>
-            <label class="block text-sm font-medium mb-2">Tên danh mục</label>
+            <label class="block text-sm font-medium mb-2">Tên danh mục *</label>
             <input
               v-model="form.name"
               type="text"
               required
+              maxlength="50"
               class="w-full px-4 py-2 border border-border-light dark:border-border-dark rounded-lg"
               placeholder="Nhập tên danh mục"
             />
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-2">Loại outlet *</label>
+            <select
+              v-model="form.typeId"
+              required
+              class="w-full px-4 py-2 border border-border-light dark:border-border-dark rounded-lg"
+            >
+              <option value="">Chọn loại outlet</option>
+              <option
+                v-for="type in outletTypes"
+                :key="type.id"
+                :value="type.id"
+              >
+                {{ type.name }}
+              </option>
+            </select>
           </div>
           <div>
             <label class="block text-sm font-medium mb-2">Mô tả</label>
             <textarea
               v-model="form.description"
               rows="3"
+              maxlength="255"
               class="w-full px-4 py-2 border border-border-light dark:border-border-dark rounded-lg"
               placeholder="Nhập mô tả"
             ></textarea>
@@ -148,28 +175,48 @@
 <script setup>
 import {ref, onMounted} from "vue";
 import {adminApi} from "@/api";
+import {useToast} from "@/composables/useToast";
+import {useConfirm} from "@/composables/useConfirm";
 import LoadingSpinner from "@/components/common/LoadingSpinner.vue";
 import ErrorMessage from "@/components/common/ErrorMessage.vue";
+
+const {success, error: showError} = useToast();
+const {confirm} = useConfirm();
 
 const isLoading = ref(false);
 const error = ref(null);
 const categories = ref([]);
+const outletTypes = ref([]);
 const showCreateModal = ref(false);
 const editingCategory = ref(null);
 const form = ref({
   name: "",
   description: "",
+  typeId: "",
 });
+
+const fetchOutletTypes = async () => {
+  try {
+    const response = await adminApi.getOutletTypes();
+    const data = response?.data || response;
+    outletTypes.value = Array.isArray(data) ? data : [];
+  } catch (err) {
+    console.warn("Could not fetch outlet types:", err);
+  }
+};
 
 const fetchCategories = async () => {
   isLoading.value = true;
   error.value = null;
   try {
     const response = await adminApi.getCategories();
-    categories.value = response.data || response || [];
+    // Ensure categories is always an array
+    const data = response?.data || response;
+    categories.value = Array.isArray(data) ? data : [];
   } catch (err) {
     console.error("Error fetching categories:", err);
     error.value = err.response?.data?.message || "Không thể tải danh sách danh mục";
+    categories.value = []; // Ensure empty array on error
   } finally {
     isLoading.value = false;
   }
@@ -180,33 +227,43 @@ const editCategory = (category) => {
   form.value = {
     name: category.name || "",
     description: category.description || "",
+    typeId: category.typeId || "",
   };
 };
 
 const deleteCategory = async (category) => {
-  if (!confirm(`Bạn có chắc muốn xóa danh mục "${category.name}"?`)) {
-    return;
-  }
+  const confirmed = await confirm(`Bạn có chắc muốn xóa danh mục "${category.name}"?`);
+  if (!confirmed) return;
 
   try {
     await adminApi.deleteCategory(category.id);
+    success("Xóa danh mục thành công");
     await fetchCategories();
   } catch (err) {
-    alert(err.response?.data?.message || "Có lỗi xảy ra");
+    showError(err.response?.data?.message || "Có lỗi xảy ra");
   }
 };
 
 const saveCategory = async () => {
   try {
+    const data = {
+      name: form.value.name,
+      description: form.value.description || null,
+      typeId: parseInt(form.value.typeId),
+    };
+
     if (editingCategory.value) {
-      await adminApi.updateCategory(editingCategory.value.id, form.value);
+      await adminApi.updateCategory(editingCategory.value.id, data);
+      success("Cập nhật danh mục thành công");
     } else {
-      await adminApi.createCategory(form.value);
+      await adminApi.createCategory(data);
+      success("Tạo danh mục mới thành công");
     }
     closeModal();
     await fetchCategories();
   } catch (err) {
-    alert(err.response?.data?.message || "Có lỗi xảy ra");
+    console.error("Error saving category:", err);
+    showError(err.response?.data?.message || err.message || "Có lỗi xảy ra");
   }
 };
 
@@ -216,10 +273,12 @@ const closeModal = () => {
   form.value = {
     name: "",
     description: "",
+    typeId: "",
   };
 };
 
 onMounted(() => {
+  fetchOutletTypes();
   fetchCategories();
 });
 </script>

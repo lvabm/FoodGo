@@ -33,9 +33,9 @@
           <h3 class="text-xl font-bold">{{ plan.name }}</h3>
           <span
             class="px-3 py-1 text-sm font-medium rounded-full"
-            :class="plan.isActive ? 'bg-positive/10 text-positive' : 'bg-gray-100 text-gray-600'"
+            :class="plan.type === 'USER' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800'"
           >
-            {{ plan.isActive ? "Hoạt động" : "Tạm dừng" }}
+            {{ plan.type === "USER" ? "Người dùng" : "Chủ quán" }}
           </span>
         </div>
         <div class="mb-4">
@@ -46,16 +46,17 @@
             / {{ plan.durationMonths }} tháng
           </p>
         </div>
-        <div class="mb-4 space-y-2">
-          <div
-            v-for="benefit in plan.benefits"
-            :key="benefit"
-            class="flex items-center gap-2 text-sm"
-          >
-            <span class="material-symbols-outlined text-positive text-lg"
-              >check_circle</span
-            >
-            <span>{{ benefit }}</span>
+        <div class="mb-4">
+          <p class="text-sm text-subtext-light dark:text-subtext-dark mb-2">
+            {{ plan.description || "Không có mô tả" }}
+          </p>
+          <div class="flex items-center gap-2 text-xs">
+            <span class="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded">
+              {{ plan.type === "USER" ? "Người dùng" : "Chủ quán" }}
+            </span>
+            <span v-if="plan.dishLimit" class="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded">
+              Giới hạn: {{ plan.dishLimit }} món
+            </span>
           </div>
         </div>
         <div class="flex gap-2">
@@ -133,14 +134,34 @@
             ></textarea>
           </div>
           <div>
-            <label class="flex items-center gap-2">
-              <input
-                v-model="form.isActive"
-                type="checkbox"
-                class="rounded"
-              />
-              <span class="text-sm">Hoạt động</span>
-            </label>
+            <label class="block text-sm font-medium mb-2">Loại gói</label>
+            <select
+              v-model="form.type"
+              required
+              class="w-full px-4 py-2 border border-border-light dark:border-border-dark rounded-lg"
+            >
+              <option value="USER">Người dùng</option>
+              <option value="OWNER">Chủ quán</option>
+            </select>
+          </div>
+          <div v-if="form.type === 'OWNER'">
+            <label class="block text-sm font-medium mb-2">Giới hạn món ăn</label>
+            <input
+              v-model.number="form.dishLimit"
+              type="number"
+              min="0"
+              class="w-full px-4 py-2 border border-border-light dark:border-border-dark rounded-lg"
+              placeholder="Để trống = không giới hạn"
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-2">Tính năng (JSON hoặc text)</label>
+            <textarea
+              v-model="form.features"
+              rows="3"
+              class="w-full px-4 py-2 border border-border-light dark:border-border-dark rounded-lg"
+              placeholder='VD: ["basic-listing", "priority-email"] hoặc text mô tả'
+            ></textarea>
           </div>
           <div class="flex gap-2 justify-end">
             <button
@@ -166,8 +187,13 @@
 <script setup>
 import {ref, onMounted} from "vue";
 import {adminApi} from "@/api";
+import {useToast} from "@/composables/useToast";
+import {useConfirm} from "@/composables/useConfirm";
 import LoadingSpinner from "@/components/common/LoadingSpinner.vue";
 import ErrorMessage from "@/components/common/ErrorMessage.vue";
+
+const {success, error: showError} = useToast();
+const {confirm} = useConfirm();
 
 const isLoading = ref(false);
 const error = ref(null);
@@ -179,8 +205,9 @@ const form = ref({
   price: 0,
   durationMonths: 1,
   description: "",
-  isActive: true,
-  benefits: [],
+  dishLimit: null,
+  features: "",
+  type: "USER",
 });
 
 const formatCurrency = (amount) => {
@@ -195,11 +222,22 @@ const fetchMembershipPlans = async () => {
   error.value = null;
   try {
     const response = await adminApi.getMembershipPlans({page: 0, size: 100});
-    const data = response.data || response;
-    membershipPlans.value = data.content || data.data || [];
+    // Handle different response structures
+    let allPlans = [];
+    if (response?.data?.content) {
+      allPlans = response.data.content;
+    } else if (response?.content) {
+      allPlans = response.content;
+    } else if (Array.isArray(response?.data)) {
+      allPlans = response.data;
+    } else if (Array.isArray(response)) {
+      allPlans = response;
+    }
+    membershipPlans.value = allPlans;
   } catch (err) {
     console.error("Error fetching membership plans:", err);
     error.value = err.response?.data?.message || "Không thể tải danh sách gói thành viên";
+    showError(error.value);
   } finally {
     isLoading.value = false;
   }
@@ -212,35 +250,56 @@ const editPlan = (plan) => {
     price: plan.price || 0,
     durationMonths: plan.durationMonths || 1,
     description: plan.description || "",
-    isActive: plan.isActive !== false,
-    benefits: plan.benefits || [],
+    dishLimit: plan.dishLimit || null,
+    features: plan.features || "",
+    type: plan.type || "USER",
   };
+  showCreateModal.value = true;
 };
 
 const deletePlan = async (plan) => {
-  if (!confirm(`Bạn có chắc muốn xóa gói thành viên "${plan.name}"?`)) {
-    return;
-  }
+  const confirmed = await confirm(
+    "Xác nhận xóa",
+    `Bạn có chắc muốn xóa gói thành viên "${plan.name}"?`
+  );
+  if (!confirmed) return;
 
   try {
     await adminApi.deleteMembershipPlan(plan.id);
+    success("Xóa gói thành viên thành công");
     await fetchMembershipPlans();
   } catch (err) {
-    alert(err.response?.data?.message || "Có lỗi xảy ra");
+    const errorMsg = err.response?.data?.message || "Có lỗi xảy ra khi xóa gói thành viên";
+    showError(errorMsg);
   }
 };
 
 const savePlan = async () => {
   try {
+    // Prepare data for backend
+    const data = {
+      name: form.value.name,
+      description: form.value.description || null,
+      price: form.value.price,
+      durationMonths: form.value.durationMonths,
+      dishLimit: form.value.type === "OWNER" ? (form.value.dishLimit || null) : null,
+      features: form.value.features || null,
+      type: form.value.type,
+    };
+
     if (editingPlan.value) {
-      await adminApi.updateMembershipPlan(editingPlan.value.id, form.value);
+      await adminApi.updateMembershipPlan(editingPlan.value.id, data);
+      success("Cập nhật gói thành viên thành công");
     } else {
-      await adminApi.createMembershipPlan(form.value);
+      await adminApi.createMembershipPlan(data);
+      success("Tạo gói thành viên thành công");
     }
     closeModal();
     await fetchMembershipPlans();
   } catch (err) {
-    alert(err.response?.data?.message || "Có lỗi xảy ra");
+    const errorMsg =
+      err.response?.data?.message || err.message || "Có lỗi xảy ra khi lưu gói thành viên";
+    showError(errorMsg);
   }
 };
 
@@ -252,8 +311,9 @@ const closeModal = () => {
     price: 0,
     durationMonths: 1,
     description: "",
-    isActive: true,
-    benefits: [],
+    dishLimit: null,
+    features: "",
+    type: "USER",
   };
 };
 

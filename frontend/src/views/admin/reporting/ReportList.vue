@@ -88,12 +88,12 @@
             <td class="px-6 py-4 whitespace-nowrap text-sm">{{ report.id }}</td>
             <td class="px-6 py-4 whitespace-nowrap">
               <div class="text-sm font-medium">
-                {{ report.reporter?.email || report.reporterId || "N/A" }}
+                {{ report.reporterName || "N/A" }}
               </div>
             </td>
             <td class="px-6 py-4">
               <div class="text-sm text-subtext-light dark:text-subtext-dark max-w-md truncate">
-                {{ report.reason || "N/A" }}
+                {{ formatReason(report.reason) || "N/A" }}
               </div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
@@ -108,13 +108,27 @@
               {{ formatDate(report.createdAt || report.createdDate) }}
             </td>
             <td
-              class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"
+              class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2"
             >
               <button
                 @click="viewReport(report)"
-                class="text-primary hover:text-primary/80"
+                class="text-primary hover:text-primary/80 mr-2"
               >
-                Xem chi tiết
+                Chi tiết
+              </button>
+              <button
+                v-if="report.status === 'PENDING'"
+                @click="handleUpdateStatus(report, 'RESOLVED')"
+                class="text-positive hover:text-positive/80"
+              >
+                Duyệt
+              </button>
+              <button
+                v-if="report.status === 'PENDING'"
+                @click="handleUpdateStatus(report, 'REJECTED')"
+                class="text-red-600 hover:text-red-700"
+              >
+                Từ chối
               </button>
             </td>
           </tr>
@@ -125,6 +139,118 @@
           </tr>
         </tbody>
       </table>
+
+      <!-- Pagination -->
+      <div
+        v-if="pagination.totalPages > 1"
+        class="px-6 py-4 flex items-center justify-between border-t border-border-light dark:border-border-dark"
+      >
+        <div class="text-sm text-subtext-light dark:text-subtext-dark">
+          Hiển thị {{ reports.length }} / {{ pagination.totalElements }} báo cáo
+        </div>
+        <div class="flex gap-2">
+          <button
+            @click="goToPage(pagination.currentPage - 1)"
+            :disabled="pagination.currentPage === 0"
+            class="px-4 py-2 border border-border-light dark:border-border-dark rounded-lg hover:bg-gray-50 dark:hover:bg-surface-light/5 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Trước
+          </button>
+          <span class="px-4 py-2 text-sm">
+            Trang {{ pagination.currentPage + 1 }} / {{ pagination.totalPages }}
+          </span>
+          <button
+            @click="goToPage(pagination.currentPage + 1)"
+            :disabled="pagination.currentPage >= pagination.totalPages - 1"
+            class="px-4 py-2 border border-border-light dark:border-border-dark rounded-lg hover:bg-gray-50 dark:hover:bg-surface-light/5 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Sau
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detail Modal -->
+    <div
+      v-if="showDetailModal"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      @click.self="closeDetailModal"
+    >
+      <div
+        class="bg-white dark:bg-surface-dark rounded-xl p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto"
+      >
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-xl font-bold">Chi tiết báo cáo #{{ selectedReport?.id }}</h2>
+          <button
+            @click="closeDetailModal"
+            class="text-subtext-light hover:text-text-light"
+          >
+            ✕
+          </button>
+        </div>
+
+        <div v-if="selectedReport" class="space-y-4">
+          <div>
+            <label class="text-sm font-medium text-subtext-light">Người báo cáo</label>
+            <p class="text-base">{{ selectedReport.reporterName || "N/A" }}</p>
+          </div>
+
+          <div>
+            <label class="text-sm font-medium text-subtext-light">Lý do báo cáo</label>
+            <p class="text-base">{{ formatReason(selectedReport.reason) || "N/A" }}</p>
+          </div>
+
+          <div v-if="selectedReport.description">
+            <label class="text-sm font-medium text-subtext-light">Mô tả</label>
+            <p class="text-base">{{ selectedReport.description }}</p>
+          </div>
+
+          <div>
+            <label class="text-sm font-medium text-subtext-light">Trạng thái</label>
+            <span
+              :class="getStatusClass(selectedReport.status)"
+              class="px-2 py-1 text-xs font-medium rounded-full"
+            >
+              {{ formatStatus(selectedReport.status) }}
+            </span>
+          </div>
+
+          <div>
+            <label class="text-sm font-medium text-subtext-light">Review ID</label>
+            <p class="text-base">{{ selectedReport.reviewId || "N/A" }}</p>
+          </div>
+
+          <div v-if="selectedReport.reviewSummary">
+            <label class="text-sm font-medium text-subtext-light">Nội dung review</label>
+            <p class="text-base">{{ selectedReport.reviewSummary }}</p>
+          </div>
+
+          <div>
+            <label class="text-sm font-medium text-subtext-light">Ngày tạo</label>
+            <p class="text-base">
+              {{ formatDate(selectedReport.createdAt || selectedReport.createdDate) }}
+            </p>
+          </div>
+
+          <div
+            v-if="selectedReport.status === 'PENDING'"
+            class="flex gap-2 pt-4 border-t border-border-light dark:border-border-dark"
+          >
+            <button
+              @click="handleUpdateStatus(selectedReport, 'RESOLVED')"
+              class="px-4 py-2 bg-positive text-white rounded-lg hover:bg-opacity-90"
+            >
+              Duyệt báo cáo
+            </button>
+            <button
+              @click="handleUpdateStatus(selectedReport, 'REJECTED')"
+              class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-opacity-90"
+            >
+              Từ chối báo cáo
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -132,15 +258,29 @@
 <script setup>
 import {ref, onMounted} from "vue";
 import {adminApi} from "@/api";
+import {useToast} from "@/composables/useToast";
+import {useConfirm} from "@/composables/useConfirm";
 import LoadingSpinner from "@/components/common/LoadingSpinner.vue";
 import ErrorMessage from "@/components/common/ErrorMessage.vue";
+
+const {success, error: showError} = useToast();
+const {confirm} = useConfirm();
 
 const isLoading = ref(false);
 const error = ref(null);
 const reports = ref([]);
+const pagination = ref({
+  currentPage: 0,
+  totalPages: 0,
+  totalElements: 0,
+  size: 10,
+});
 const filters = ref({
   status: "",
 });
+
+const showDetailModal = ref(false);
+const selectedReport = ref(null);
 
 const formatStatus = (status) => {
   const statusMap = {
@@ -151,11 +291,21 @@ const formatStatus = (status) => {
   return statusMap[status] || status || "N/A";
 };
 
+const formatReason = (reason) => {
+  const reasonMap = {
+    SPAM: "Spam, quảng cáo",
+    FAKE_CONTENT: "Nội dung giả mạo",
+    INAPPROPRIATE: "Ngôn từ không phù hợp",
+    OTHER: "Khác",
+  };
+  return reasonMap[reason] || reason || "N/A";
+};
+
 const getStatusClass = (status) => {
   const classMap = {
-    PENDING: "bg-yellow-100 text-yellow-600",
+    PENDING: "bg-yellow-100 text-yellow-600 dark:bg-yellow-900/20 dark:text-yellow-400",
     RESOLVED: "bg-positive/10 text-positive",
-    REJECTED: "bg-red-100 text-red-600",
+    REJECTED: "bg-red-100 text-red-600 dark:bg-red-900/20 dark:text-red-400",
   };
   return classMap[status] || "bg-gray-100 text-gray-600";
 };
@@ -163,7 +313,13 @@ const getStatusClass = (status) => {
 const formatDate = (date) => {
   if (!date) return "N/A";
   try {
-    return new Date(date).toLocaleDateString("vi-VN");
+    return new Date(date).toLocaleDateString("vi-VN", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   } catch {
     return date;
   }
@@ -173,22 +329,50 @@ const fetchReports = async () => {
   isLoading.value = true;
   error.value = null;
   try {
-    const params = {};
+    const params = {
+      page: pagination.value.currentPage,
+      size: pagination.value.size,
+    };
     if (filters.value.status) {
       params.status = filters.value.status;
     }
     const response = await adminApi.getReports(params);
-    const data = response.data || response;
-    reports.value = data.content || data.data || [];
+    // Handle different response structures
+    let allReports = [];
+    if (response?.data?.content) {
+      allReports = response.data.content;
+      pagination.value = {
+        currentPage: response.data.pageNumber || 0,
+        totalPages: response.data.totalPages || 0,
+        totalElements: response.data.totalElements || 0,
+        size: response.data.size || 10,
+      };
+    } else if (response?.content) {
+      allReports = response.content;
+      pagination.value = {
+        currentPage: response.pageNumber || 0,
+        totalPages: response.totalPages || 0,
+        totalElements: response.totalElements || 0,
+        size: response.size || 10,
+      };
+    } else if (Array.isArray(response?.data)) {
+      allReports = response.data;
+    } else if (Array.isArray(response)) {
+      allReports = response;
+    }
+    reports.value = allReports || [];
   } catch (err) {
     console.error("Error fetching reports:", err);
     error.value = err.response?.data?.message || "Không thể tải danh sách báo cáo";
+    showError(error.value);
+    reports.value = [];
   } finally {
     isLoading.value = false;
   }
 };
 
 const handleSearch = () => {
+  pagination.value.currentPage = 0;
   fetchReports();
 };
 
@@ -199,9 +383,44 @@ const resetFilters = () => {
   handleSearch();
 };
 
-const viewReport = (report) => {
-  // Navigate to report detail or show modal
-  alert(`Chi tiết báo cáo #${report.id}\nLý do: ${report.reason || "N/A"}`);
+const viewReport = async (report) => {
+  try {
+    const detail = await adminApi.getReportDetail(report.id);
+    selectedReport.value = detail;
+    showDetailModal.value = true;
+  } catch (err) {
+    const errorMsg = err.response?.data?.message || "Không thể tải chi tiết báo cáo";
+    showError(errorMsg);
+  }
+};
+
+const closeDetailModal = () => {
+  showDetailModal.value = false;
+  selectedReport.value = null;
+};
+
+const handleUpdateStatus = async (report, newStatus) => {
+  const statusText = formatStatus(newStatus);
+  const confirmed = await confirm(
+    `Xác nhận cập nhật trạng thái`,
+    `Bạn có chắc chắn muốn ${statusText.toLowerCase()} báo cáo #${report.id}?`
+  );
+  if (!confirmed) return;
+
+  try {
+    await adminApi.updateReportStatus(report.id, newStatus);
+    success(`Đã cập nhật trạng thái báo cáo thành ${statusText.toLowerCase()}`);
+    closeDetailModal();
+    fetchReports();
+  } catch (err) {
+    const errorMsg = err.response?.data?.message || "Không thể cập nhật trạng thái báo cáo";
+    showError(errorMsg);
+  }
+};
+
+const goToPage = (page) => {
+  pagination.value.currentPage = page;
+  fetchReports();
 };
 
 onMounted(() => {

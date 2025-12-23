@@ -35,16 +35,23 @@ apiClient.interceptors.response.use(
     console.log("✅ Status:", response.status);
     console.log("✅ Raw response.data:", response.data);
 
-    // Backend có 2 loại response:
+    // Backend có 3 loại response:
     // 1. BaseResponse<T>: { success, message, data: T, timestamp }
     // 2. PageResponse<T> extends BaseResponse<List<T>>: { pageNumber, pageSize, totalElements, totalPages, success, message, data: List<T>, timestamp }
+    // 3. Spring Data Page<T>: { content: [...], totalElements, totalPages, ... } (trả về trực tiếp, không wrap)
 
     const responseData = response.data;
+
+    // Nếu là Spring Data Page (có content array), trả về toàn bộ object
+    if (responseData?.content && Array.isArray(responseData.content)) {
+      console.log("📊 Spring Data Page detected, returning full object");
+      return responseData;
+    }
 
     // Nếu là PageResponse (có pageNumber), trả về toàn bộ object
     if (
       responseData?.pageNumber !== undefined ||
-      responseData?.totalPages !== undefined
+      (responseData?.totalPages !== undefined && responseData?.data)
     ) {
       console.log("📊 PageResponse detected, returning full object");
       return responseData;

@@ -29,6 +29,9 @@ import OutletDetailAdmin from "@/views/admin/outlet/OutletDetail.vue";
 import CategoryManagement from "@/views/admin/category/CategoryManagement.vue";
 import OutletTypeManagement from "@/views/admin/category/OutletTypeManagement.vue";
 import FeatureManagement from "@/views/admin/category/FeatureManagement.vue";
+import MenuManagement from "@/views/admin/menu/MenuManagement.vue";
+import OrderManagement from "@/views/admin/order/OrderManagement.vue";
+import ReviewManagement from "@/views/admin/review/ReviewManagement.vue";
 import CountryManagement from "@/views/admin/geographic/CountryManagement.vue";
 import ProvinceManagement from "@/views/admin/geographic/ProvinceManagement.vue";
 import DistrictManagement from "@/views/admin/geographic/DistrictManagement.vue";
@@ -40,7 +43,7 @@ import TransactionHistory from "@/views/admin/reporting/TransactionHistory.vue";
 import OwnerDashboard from "@/views/owner/Dashboard.vue";
 import BookingManagement from "@/views/owner/booking/BookingManagement.vue";
 import BookingDetail from "@/views/owner/booking/BookingDetail.vue";
-import MenuManagement from "@/views/owner/menu/MenuManagement.vue";
+import OwnerMenuManagement from "@/views/owner/menu/MenuManagement.vue";
 import OutletInformation from "@/views/owner/outlet/OutletInformation.vue";
 import FeedbackReview from "@/views/owner/feedback/FeedbackReview.vue";
 import OwnerStatistics from "@/views/owner/statistics/Statistics.vue";
@@ -106,6 +109,11 @@ const routes = [
         component: OutletDetailAdmin,
       },
       {
+        path: "menus",
+        name: "MenuManagement",
+        component: MenuManagement,
+      },
+      {
         path: "categories",
         name: "CategoryManagement",
         component: CategoryManagement,
@@ -119,6 +127,16 @@ const routes = [
         path: "features",
         name: "FeatureManagement",
         component: FeatureManagement,
+      },
+      {
+        path: "orders",
+        name: "OrderManagement",
+        component: OrderManagement,
+      },
+      {
+        path: "reviews",
+        name: "ReviewManagement",
+        component: ReviewManagement,
       },
       {
         path: "countries",
@@ -160,7 +178,7 @@ const routes = [
         component: BookingManagement,
       },
       {path: "bookings/:id", name: "BookingDetail", component: BookingDetail},
-      {path: "menu", name: "MenuManagement", component: MenuManagement},
+      {path: "menu", name: "OwnerMenuManagement", component: OwnerMenuManagement},
       {path: "outlet", name: "OutletInformation", component: OutletInformation},
       {path: "feedback", name: "FeedbackReview", component: FeedbackReview},
       {path: "statistics", name: "OwnerStatistics", component: OwnerStatistics},
@@ -177,21 +195,35 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore();
 
+  // Check admin routes - require authentication and ADMIN role
+  if (to.path.startsWith("/admin")) {
+    if (!authStore.isAuthenticated) {
+      next("/auth/login");
+      return;
+    }
+    if (!authStore.isAdmin) {
+      // Show 403 or redirect to home
+      next("/");
+      return;
+    }
+  }
+
+  // Check owner routes - require authentication and OWNER role
+  if (to.path.startsWith("/owner")) {
+    if (!authStore.isAuthenticated) {
+      next("/auth/login");
+      return;
+    }
+    if (!authStore.isOwner) {
+      // Show 403 or redirect to home
+      next("/");
+      return;
+    }
+  }
+
   // Check if route requires auth
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     next("/auth/login");
-    return;
-  }
-
-  // Check admin routes
-  if (to.path.startsWith("/admin") && !authStore.isAdmin) {
-    next("/");
-    return;
-  }
-
-  // Check owner routes
-  if (to.path.startsWith("/owner") && !authStore.isOwner) {
-    next("/");
     return;
   }
 

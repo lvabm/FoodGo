@@ -49,10 +49,11 @@ public record UserAccountSearchSpecification(UserAccountFilterRequest filter)
       // Filter: Search Term (Email or FullName)
       if (StringUtils.hasText(filter.searchTerm())) {
         String pattern = "%" + filter.searchTerm().toLowerCase() + "%";
-        predicates.add(
-            cb.or(
-                cb.like(cb.lower(root.get("email")), pattern),
-                cb.like(cb.lower(root.get("profile").get("fullName")), pattern)));
+        // Search in email and profile.fullName (handle null profile safely)
+        var emailPredicate = cb.like(cb.lower(root.get("email")), pattern);
+        var profileJoin = root.join("profile", JoinType.LEFT);
+        var fullNamePredicate = cb.like(cb.lower(profileJoin.get("fullName")), pattern);
+        predicates.add(cb.or(emailPredicate, fullNamePredicate));
       }
     }
 

@@ -1,7 +1,6 @@
 package com.foodgo.backend.module.outlet.service.impl;
 
 import com.foodgo.backend.common.base.mapper.BaseMapper;
-
 import com.foodgo.backend.common.base.service.impl.BaseServiceImpl;
 import com.foodgo.backend.common.constant.EntityName;
 import com.foodgo.backend.module.outlet.dto.criteria.OutletCategorySearchSpecification;
@@ -33,7 +32,7 @@ public class OutletCategoryServiceImpl
   private final OutletCategoryRepository repository;
   private final OutletCategoryMapper mapper;
 
-  // --- Triển khai các phương thức trừu tượng từ ReadOnlyServiceImpl ---
+  // --- Triển khai các phương thức trừu tượng từ BaseServiceImpl ---
 
   @Override
   protected JpaRepository<OutletCategory, Integer> getRepository() {
@@ -47,7 +46,32 @@ public class OutletCategoryServiceImpl
 
   @Override
   protected BaseMapper<OutletCategory, Object, Object, OutletCategoryResponse> getMapper() {
-    return mapper;
+    // Wrapper để adapt OutletCategoryMapper (với CreateRequest/UpdateRequest) 
+    // thành BaseMapper với Object, Object cho ReadableService
+    return new BaseMapper<OutletCategory, Object, Object, OutletCategoryResponse>() {
+      @Override
+      public OutletCategoryResponse toResponse(OutletCategory entity) {
+        return mapper.toResponse(entity);
+      }
+
+      @Override
+      public java.util.List<OutletCategoryResponse> toResponseList(
+          java.util.List<OutletCategory> entities) {
+        return mapper.toResponseList(entities);
+      }
+
+      @Override
+      public OutletCategory toEntity(Object createRequest) {
+        throw new UnsupportedOperationException(
+            "OutletCategoryServiceImpl chỉ hỗ trợ Read operations");
+      }
+
+      @Override
+      public void updateEntity(Object updateRequest, OutletCategory entity) {
+        throw new UnsupportedOperationException(
+            "OutletCategoryServiceImpl chỉ hỗ trợ Read operations");
+      }
+    };
   }
 
   @Override
