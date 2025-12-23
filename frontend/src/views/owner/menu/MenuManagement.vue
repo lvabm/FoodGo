@@ -88,8 +88,11 @@
             <div>
               <div class="font-medium text-text-light">{{ item.name }}</div>
               <div class="text-sm text-subtext-light">
-                <span v-if="item.menuItemName">Món gốc: {{ item.menuItemName }} • </span>
-                {{ item.categoryName || "Chung" }} • {{ formatCurrency(item.price) }}
+                <span v-if="item.menuItemName"
+                  >Món gốc: {{ item.menuItemName }} •
+                </span>
+                {{ item.categoryName || "Chung" }} •
+                {{ formatCurrency(item.price) }}
               </div>
             </div>
           </div>
@@ -127,12 +130,27 @@
           <div>
             <label class="block text-sm mb-1">Món gốc</label>
             <div class="flex gap-2">
-              <input v-model="masterQuery" @keyup.enter="loadMasterItems(masterQuery)" placeholder="Tìm món gốc..." class="px-3 py-2 border rounded-l-lg w-full" />
-              <button @click="loadMasterItems(masterQuery)" class="px-3 py-2 bg-primary text-white rounded-r-lg">Tìm</button>
+              <input
+                v-model="masterQuery"
+                @keyup.enter="loadMasterItems(masterQuery)"
+                placeholder="Tìm món gốc..."
+                class="px-3 py-2 border rounded-l-lg w-full"
+              />
+              <button
+                @click="loadMasterItems(masterQuery)"
+                class="px-3 py-2 bg-primary text-white rounded-r-lg"
+              >
+                Tìm
+              </button>
             </div>
-            <select v-model="form.menuItemId" class="w-full px-3 py-2 border rounded-lg mt-2">
+            <select
+              v-model="form.menuItemId"
+              class="w-full px-3 py-2 border rounded-lg mt-2"
+            >
               <option value="">Chọn món gốc</option>
-              <option v-for="m in masterItems" :key="m.id" :value="m.id">{{ m.name }} • {{ m.categoryName || '' }}</option>
+              <option v-for="m in masterItems" :key="m.id" :value="m.id">
+                {{ m.name }} • {{ m.categoryName || "" }}
+              </option>
             </select>
           </div>
           <div>
