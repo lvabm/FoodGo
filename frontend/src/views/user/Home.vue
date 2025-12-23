@@ -137,11 +137,19 @@
                 >star</span
               >
               <span class="text-sm font-bold">
-                <template v-if="restaurant.rating !== null && restaurant.rating !== undefined">{{ restaurant.rating }}</template>
+                <template
+                  v-if="
+                    restaurant.rating !== null &&
+                    restaurant.rating !== undefined
+                  "
+                  >{{ restaurant.rating }}</template
+                >
                 <template v-else>Chưa có</template>
               </span>
               <span class="text-sm text-subtext-light dark:text-subtext-dark">
-                <template v-if="restaurant.reviews > 0">({{ restaurant.reviews }} đánh giá)</template>
+                <template v-if="restaurant.reviews > 0"
+                  >({{ restaurant.reviews }} đánh giá)</template
+                >
                 <template v-else>(Chưa có đánh giá)</template>
               </span>
             </div>

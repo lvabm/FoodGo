@@ -100,18 +100,32 @@
                 <!-- Rating + Aspect summary -->
                 <div class="flex items-center gap-4">
                   <div class="flex items-center gap-2">
-                    <span class="material-symbols-outlined text-yellow-500 text-xl">star</span>
+                    <span
+                      class="material-symbols-outlined text-yellow-500 text-xl"
+                      >star</span
+                    >
                     <div>
                       <div class="font-medium text-lg">{{ ratingDisplay }}</div>
-                      <div class="text-xs text-subtext-light dark:text-subtext-dark">
-                        <template v-if="numReviews > 0">{{ numReviews }} đánh giá</template>
+                      <div
+                        class="text-xs text-subtext-light dark:text-subtext-dark"
+                      >
+                        <template v-if="numReviews > 0"
+                          >{{ numReviews }} đánh giá</template
+                        >
                         <template v-else>Chưa có đánh giá</template>
                       </div>
                     </div>
                   </div>
 
-                  <div v-if="numReviews > 0" class="flex items-center gap-2 text-sm">
-                    <span v-for="(val,label) in aspectAverages" :key="label" class="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded text-xs">
+                  <div
+                    v-if="numReviews > 0"
+                    class="flex items-center gap-2 text-sm"
+                  >
+                    <span
+                      v-for="(val, label) in aspectAverages"
+                      :key="label"
+                      class="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded text-xs"
+                    >
                       <strong>{{ label }}:</strong> {{ val }}
                     </span>
                   </div>
@@ -179,8 +193,16 @@
                           {{ outlet.province?.name }}
                         </p>
 
-                        <div v-if="outlet.latitude && outlet.longitude" class="mt-1">
-                          <a :href="`https://www.google.com/maps/search/?api=1&query=${outlet.latitude},${outlet.longitude}`" target="_blank" class="text-primary text-sm">Xem trên bản đồ</a>
+                        <div
+                          v-if="outlet.latitude && outlet.longitude"
+                          class="mt-1"
+                        >
+                          <a
+                            :href="`https://www.google.com/maps/search/?api=1&query=${outlet.latitude},${outlet.longitude}`"
+                            target="_blank"
+                            class="text-primary text-sm"
+                            >Xem trên bản đồ</a
+                          >
                         </div>
                       </div>
                     </div>
@@ -423,7 +445,11 @@
                 <button
                   @click="handleBookingClick"
                   :disabled="isBookingDisabled || isLoading"
-                  :title="isBookingDisabled ? 'Bạn không thể đặt bàn tại chính quán của mình' : ''"
+                  :title="
+                    isBookingDisabled
+                      ? 'Bạn không thể đặt bàn tại chính quán của mình'
+                      : ''
+                  "
                   class="flex-1 bg-primary text-white text-center font-bold py-3 rounded-lg hover:bg-opacity-90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Đặt bàn ngay
@@ -431,7 +457,7 @@
 
                 <button
                   type="button"
-                  @click="(activeTab = 'menu')"
+                  @click="activeTab = 'menu'"
                   class="px-4 py-3 border border-border-light dark:border-border-dark rounded-lg text-sm hover:bg-gray-100 dark:hover:bg-gray-800"
                 >
                   Xem thực đơn
@@ -929,7 +955,10 @@ const formatDate = (dateString) => {
 
 // Number of reviews (prefer outlet.totalReviews if backend provides it)
 const numReviews = computed(() => {
-  return outlet.value?.totalReviews ?? (Array.isArray(reviews.value) ? reviews.value.length : 0);
+  return (
+    outlet.value?.totalReviews ??
+    (Array.isArray(reviews.value) ? reviews.value.length : 0)
+  );
 });
 
 // Compute aspect averages from reviews as fallback when backend doesn't provide per-aspect aggregates
@@ -944,7 +973,9 @@ const aspectAverages = computed(() => {
     const service = Number(r.serviceRating ?? r.service_rating ?? 0);
     const ambiance = Number(r.ambianceRating ?? r.ambiance_rating ?? 0);
     const price = Number(r.priceRating ?? r.price_rating ?? 0);
-    const overall = Number(r.overallRating ?? r.overall_rating ?? r.rating ?? 0);
+    const overall = Number(
+      r.overallRating ?? r.overall_rating ?? r.rating ?? 0
+    );
 
     sum.food += food;
     sum.service += service;
