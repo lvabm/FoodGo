@@ -22,8 +22,8 @@ export const reviewApi = {
   },
 
   // Owner: Reply review
-  replyReview(id, reply) {
-    return apiClient.post(`/reviews/${id}/reply`, {reply});
+  replyReview(id, replyText) {
+    return apiClient.post(`/reviews/${id}/reply`, {text: replyText});
   },
 
   // Lấy reviews của tôi

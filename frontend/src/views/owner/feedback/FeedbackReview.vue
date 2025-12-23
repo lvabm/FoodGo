@@ -29,21 +29,31 @@
       </div>
     </div>
 
-    <div class="mb-4 flex items-center gap-3">
+    <div class="mb-4 flex items-center gap-3 flex-wrap">
       <input
         v-model="q"
-        @keyup.enter="loadReviews"
+        @keyup.enter="refresh"
         placeholder="Tìm theo tên hoặc nội dung"
-        class="px-3 py-2 border rounded-lg w-96"
+        class="px-3 py-2 border rounded-lg w-96 focus:outline-none focus:ring-2 focus:ring-primary"
       />
-      <select v-model="minRating" class="px-3 py-2 border rounded-lg pr-8 truncate appearance-none">
+      <select 
+        v-model="minRating" 
+        @change="refresh"
+        class="px-3 py-2 border rounded-lg pr-8 truncate appearance-none focus:outline-none focus:ring-2 focus:ring-primary"
+      >
         <option :value="0">Tất cả</option>
         <option :value="5">5⭐</option>
         <option :value="4">4⭐+</option>
         <option :value="3">3⭐+</option>
       </select>
-      <label class="flex items-center gap-2 text-sm text-subtext-light">
-        <input type="checkbox" v-model="onlyUnreplied" /> Chưa trả lời
+      <label class="flex items-center gap-2 text-sm text-subtext-light cursor-pointer">
+        <input 
+          type="checkbox" 
+          v-model="onlyUnreplied"
+          @change="refresh"
+          class="cursor-pointer"
+        /> 
+        Chưa trả lời
       </label>
     </div>
 
@@ -183,12 +193,15 @@
               </div>
 
               <div class="mt-3">
-                <div v-if="rev.reply" class="p-3 bg-primary/5 rounded">
-                  <div class="text-sm font-medium">Phản hồi của chủ quán</div>
-                  <div class="text-sm text-subtext-light">
+                <div v-if="rev.reply" class="p-3 bg-primary/5 rounded-lg border border-primary/20">
+                  <div class="flex items-center gap-2 mb-2">
+                    <span class="material-symbols-outlined text-primary text-sm">reply</span>
+                    <div class="text-sm font-medium text-text-light">Phản hồi của chủ quán</div>
+                  </div>
+                  <div class="text-sm text-subtext-light whitespace-pre-wrap">
                     {{ rev.reply.replyText }}
                   </div>
-                  <div class="text-xs text-subtext-light mt-1">
+                  <div class="text-xs text-subtext-light mt-2">
                     {{ formatDate(rev.reply.createdAt) }}
                   </div>
                 </div>
@@ -196,25 +209,32 @@
                 <div v-else class="mt-2">
                   <textarea
                     v-model="replyMap[rev.id]"
-                    class="w-full p-3 border rounded-lg"
+                    class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     rows="3"
                     placeholder="Viết phản hồi..."
+                    :maxlength="1000"
                   />
-                  <div class="flex gap-2 mt-2">
-                    <button
-                      @click="submitReply(rev.id)"
-                      :disabled="replyLoading[rev.id]"
-                      class="px-4 py-2 bg-primary text-white rounded-lg"
-                    >
-                      <span v-if="replyLoading[rev.id]">Đang gửi...</span>
-                      <span v-else>Gửi phản hồi</span>
-                    </button>
-                    <button
-                      @click="replyMap[rev.id] = ''"
-                      class="px-4 py-2 border rounded-lg"
-                    >
-                      Huỷ
-                    </button>
+                  <div class="flex items-center justify-between mt-2">
+                    <span class="text-xs text-subtext-light">
+                      {{ (replyMap[rev.id] || '').length }}/1000 ký tự
+                    </span>
+                    <div class="flex gap-2">
+                      <button
+                        @click="submitReply(rev.id)"
+                        :disabled="replyLoading[rev.id] || !replyMap[rev.id]?.trim()"
+                        class="px-4 py-2 bg-primary text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary/90"
+                      >
+                        <span v-if="replyLoading[rev.id]">Đang gửi...</span>
+                        <span v-else>Gửi phản hồi</span>
+                      </button>
+                      <button
+                        @click="replyMap[rev.id] = ''"
+                        :disabled="replyLoading[rev.id]"
+                        class="px-4 py-2 border rounded-lg hover:bg-gray-50 disabled:opacity-50"
+                      >
+                        Huỷ
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -261,8 +281,9 @@
 </template>
 
 <script setup>
-import {ref, computed, onMounted} from "vue";
+import {ref, computed, onMounted, watch} from "vue";
 import {reviewApi, outletApi} from "@/api";
+import {useToast} from "@/composables/useToast";
 
 const outlets = ref([]);
 const selectedOutletId = ref("");
@@ -280,6 +301,8 @@ const totalPages = ref(0);
 
 const replyMap = ref({});
 const replyLoading = ref({});
+
+const {success, error: showError} = useToast();
 
 const visiblePages = computed(() => {
   const pages = [];
@@ -318,7 +341,8 @@ const buildParams = () => {
   const params = {page: currentPage.value, size: pageSize.value};
   if (q.value) params.q = q.value;
   if (minRating.value) params.minRating = minRating.value;
-  if (onlyUnreplied.value) params.onlyUnreplied = true;
+  // Map onlyUnreplied to hasReply=false for backend
+  if (onlyUnreplied.value) params.hasReply = false;
   if (selectedOutletId.value) params.outletId = selectedOutletId.value;
   return params;
 };
@@ -338,27 +362,48 @@ const loadReviews = async () => {
     totalPages.value = tp;
     // init replyMap
     reviews.value.forEach((r) => {
-      replyMap.value[r.id] = "";
-      replyLoading.value[r.id] = false;
+      if (!replyMap.value[r.id]) replyMap.value[r.id] = "";
+      if (replyLoading.value[r.id] === undefined) replyLoading.value[r.id] = false;
     });
   } catch (err) {
     console.error(err);
-    error.value = "Không thể tải đánh giá";
+    const errorMsg = err.response?.data?.message || err.message || "Không thể tải đánh giá";
+    error.value = errorMsg;
+    showError(errorMsg);
   } finally {
     loading.value = false;
   }
 };
 
 const submitReply = async (reviewId) => {
-  if (!replyMap.value[reviewId]?.trim()) return;
+  const replyText = replyMap.value[reviewId]?.trim();
+  if (!replyText) {
+    showError("Vui lòng nhập nội dung phản hồi");
+    return;
+  }
+  
+  // Validate length
+  if (replyText.length < 5) {
+    showError("Phản hồi phải có ít nhất 5 ký tự");
+    return;
+  }
+  
+  if (replyText.length > 1000) {
+    showError("Phản hồi không được vượt quá 1000 ký tự");
+    return;
+  }
+  
   replyLoading.value[reviewId] = true;
   try {
-    await reviewApi.replyReview(reviewId, replyMap.value[reviewId].trim());
+    await reviewApi.replyReview(reviewId, replyText);
+    replyMap.value[reviewId] = "";
+    success("Đã gửi phản hồi thành công");
     // reload reviews to show reply
     await loadReviews();
   } catch (err) {
     console.error(err);
-    error.value = "Gửi phản hồi thất bại";
+    const errorMsg = err.response?.data?.message || err.message || "Gửi phản hồi thất bại";
+    showError(errorMsg);
   } finally {
     replyLoading.value[reviewId] = false;
   }
@@ -371,7 +416,16 @@ const changePage = (p) => {
   }
 };
 
-const refresh = () => loadReviews();
+const refresh = () => {
+  currentPage.value = 0;
+  loadReviews();
+};
+
+// Watch filter changes to auto-reload
+watch([onlyUnreplied, minRating], () => {
+  currentPage.value = 0;
+  loadReviews();
+});
 
 onMounted(async () => {
   await loadOutlets();

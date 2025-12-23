@@ -491,6 +491,48 @@ INSERT INTO outlet_image (id, outlet_id, image_url, display_order, is_primary, i
 -- Chill Skybar
 INSERT INTO outlet_image (id, outlet_id, image_url, display_order, is_primary, is_deleted) VALUES (9, (SELECT id FROM outlet WHERE name = 'Chill Skybar'), 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=800', 1, true, false);
 INSERT INTO outlet_image (id, outlet_id, image_url, display_order, is_primary, is_deleted) VALUES (10, (SELECT id FROM outlet WHERE name = 'Chill Skybar'), 'https://images.unsplash.com/photo-1551218808-94e220e084d2?w=800', 2, false, false);
+-- Vintage Emporium Coffee
+INSERT INTO outlet_image (id, outlet_id, image_url, display_order, is_primary, is_deleted) VALUES (11, (SELECT id FROM outlet WHERE name = 'Vintage Emporium Coffee'), 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=800', 1, true, false);
+INSERT INTO outlet_image (id, outlet_id, image_url, display_order, is_primary, is_deleted) VALUES (12, (SELECT id FROM outlet WHERE name = 'Vintage Emporium Coffee'), 'https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=800', 2, false, false);
+-- Bosgaurus Coffee Roasters
+INSERT INTO outlet_image (id, outlet_id, image_url, display_order, is_primary, is_deleted) VALUES (13, (SELECT id FROM outlet WHERE name = 'Bosgaurus Coffee Roasters'), 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800', 1, true, false);
+INSERT INTO outlet_image (id, outlet_id, image_url, display_order, is_primary, is_deleted) VALUES (14, (SELECT id FROM outlet WHERE name = 'Bosgaurus Coffee Roasters'), 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800', 2, false, false);
+-- Trung Nguyên Legend Cafe
+INSERT INTO outlet_image (id, outlet_id, image_url, display_order, is_primary, is_deleted) VALUES (15, (SELECT id FROM outlet WHERE name = 'Trung Nguyên Legend Cafe'), 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=800', 1, true, false);
+INSERT INTO outlet_image (id, outlet_id, image_url, display_order, is_primary, is_deleted) VALUES (16, (SELECT id FROM outlet WHERE name = 'Trung Nguyên Legend Cafe'), 'https://images.unsplash.com/photo-1442512595331-e89e73853f31?w=800', 2, false, false);
+-- Soo Kafe
+INSERT INTO outlet_image (id, outlet_id, image_url, display_order, is_primary, is_deleted) VALUES (17, (SELECT id FROM outlet WHERE name = 'Soo Kafe'), 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800', 1, true, false);
+INSERT INTO outlet_image (id, outlet_id, image_url, display_order, is_primary, is_deleted) VALUES (18, (SELECT id FROM outlet WHERE name = 'Soo Kafe'), 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=800', 2, false, false);
+-- Okkio Caffe
+INSERT INTO outlet_image (id, outlet_id, image_url, display_order, is_primary, is_deleted) VALUES (19, (SELECT id FROM outlet WHERE name = 'Okkio Caffe'), 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800', 1, true, false);
+INSERT INTO outlet_image (id, outlet_id, image_url, display_order, is_primary, is_deleted) VALUES (20, (SELECT id FROM outlet WHERE name = 'Okkio Caffe'), 'https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=800', 2, false, false);
+-- Broma Not A Bar
+INSERT INTO outlet_image (id, outlet_id, image_url, display_order, is_primary, is_deleted) VALUES (21, (SELECT id FROM outlet WHERE name = 'Broma Not A Bar'), 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=800', 1, true, false);
+INSERT INTO outlet_image (id, outlet_id, image_url, display_order, is_primary, is_deleted) VALUES (22, (SELECT id FROM outlet WHERE name = 'Broma Not A Bar'), 'https://images.unsplash.com/photo-1551218808-94e220e084d2?w=800', 2, false, false);
+-- Apocalypse Now
+INSERT INTO outlet_image (id, outlet_id, image_url, display_order, is_primary, is_deleted) VALUES (23, (SELECT id FROM outlet WHERE name = 'Apocalypse Now'), 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=800', 1, true, false);
+INSERT INTO outlet_image (id, outlet_id, image_url, display_order, is_primary, is_deleted) VALUES (24, (SELECT id FROM outlet WHERE name = 'Apocalypse Now'), 'https://images.unsplash.com/photo-1551218808-94e220e084d2?w=800', 2, false, false);
+-- The Gin House
+INSERT INTO outlet_image (id, outlet_id, image_url, display_order, is_primary, is_deleted) VALUES (25, (SELECT id FROM outlet WHERE name = 'The Gin House'), 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=800', 1, true, false);
+INSERT INTO outlet_image (id, outlet_id, image_url, display_order, is_primary, is_deleted) VALUES (26, (SELECT id FROM outlet WHERE name = 'The Gin House'), 'https://images.unsplash.com/photo-1551218808-94e220e084d2?w=800', 2, false, false);
+-- The Shamrock Irish Pub
+INSERT INTO outlet_image (id, outlet_id, image_url, display_order, is_primary, is_deleted) VALUES (27, (SELECT id FROM outlet WHERE name = 'The Shamrock Irish Pub'), 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=800', 1, true, false);
+INSERT INTO outlet_image (id, outlet_id, image_url, display_order, is_primary, is_deleted) VALUES (28, (SELECT id FROM outlet WHERE name = 'The Shamrock Irish Pub'), 'https://images.unsplash.com/photo-1551218808-94e220e084d2?w=800', 2, false, false);
+-- Bánh Xèo 46A
+INSERT INTO outlet_image (id, outlet_id, image_url, display_order, is_primary, is_deleted) VALUES (29, (SELECT id FROM outlet WHERE name = 'Bánh Xèo 46A'), 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=800', 1, true, false);
+INSERT INTO outlet_image (id, outlet_id, image_url, display_order, is_primary, is_deleted) VALUES (30, (SELECT id FROM outlet WHERE name = 'Bánh Xèo 46A'), 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800', 2, false, false);
+-- Bánh Mì Huỳnh Hoa
+INSERT INTO outlet_image (id, outlet_id, image_url, display_order, is_primary, is_deleted) VALUES (31, (SELECT id FROM outlet WHERE name = 'Bánh Mì Huỳnh Hoa'), 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800', 1, true, false);
+INSERT INTO outlet_image (id, outlet_id, image_url, display_order, is_primary, is_deleted) VALUES (32, (SELECT id FROM outlet WHERE name = 'Bánh Mì Huỳnh Hoa'), 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=800', 2, false, false);
+-- Lẩu Bò Tơ Hòn Sơn
+INSERT INTO outlet_image (id, outlet_id, image_url, display_order, is_primary, is_deleted) VALUES (33, (SELECT id FROM outlet WHERE name = 'Lẩu Bò Tơ Hòn Sơn'), 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=800', 1, true, false);
+INSERT INTO outlet_image (id, outlet_id, image_url, display_order, is_primary, is_deleted) VALUES (34, (SELECT id FROM outlet WHERE name = 'Lẩu Bò Tơ Hòn Sơn'), 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800', 2, false, false);
+-- Cơm Niêu Singapore
+INSERT INTO outlet_image (id, outlet_id, image_url, display_order, is_primary, is_deleted) VALUES (35, (SELECT id FROM outlet WHERE name = 'Cơm Niêu Singapore'), 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=800', 1, true, false);
+INSERT INTO outlet_image (id, outlet_id, image_url, display_order, is_primary, is_deleted) VALUES (36, (SELECT id FROM outlet WHERE name = 'Cơm Niêu Singapore'), 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800', 2, false, false);
+-- The Coffee House Signature
+INSERT INTO outlet_image (id, outlet_id, image_url, display_order, is_primary, is_deleted) VALUES (37, (SELECT id FROM outlet WHERE name = 'The Coffee House Signature'), 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=800', 1, true, false);
+INSERT INTO outlet_image (id, outlet_id, image_url, display_order, is_primary, is_deleted) VALUES (38, (SELECT id FROM outlet WHERE name = 'The Coffee House Signature'), 'https://images.unsplash.com/photo-1442512595331-e89e73853f31?w=800', 2, false, false);
 
 --========================================================
 --25. OPERATING_HOURS

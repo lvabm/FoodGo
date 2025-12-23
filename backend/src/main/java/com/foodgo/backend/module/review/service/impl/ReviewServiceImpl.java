@@ -25,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import jakarta.persistence.criteria.Fetch;
 import jakarta.persistence.criteria.JoinType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -217,11 +218,25 @@ public class ReviewServiceImpl
       throw new BadRequestException("Đánh giá này đã được phản hồi.");
     }
 
+    // Validate reply text
+    if (replyText == null || replyText.trim().isEmpty()) {
+      throw new BadRequestException("Nội dung phản hồi không được để trống.");
+    }
+
+    String trimmedText = replyText.trim();
+    if (trimmedText.length() < 5) {
+      throw new BadRequestException("Phản hồi phải có ít nhất 5 ký tự.");
+    }
+
+    if (trimmedText.length() > 1000) {
+      throw new BadRequestException("Phản hồi không được vượt quá 1000 ký tự.");
+    }
+
     replyRepository.save(
         ReviewReply.builder()
             .review(review)
             .owner(userAccountRepository.getReferenceById(userId))
-            .replyText(replyText)
+            .replyText(trimmedText)
             .build());
 
     SuccessMessageContext.setMessage("Đã gửi phản hồi thành công.");
@@ -307,6 +322,9 @@ public class ReviewServiceImpl
         root.fetch("outlet", JoinType.LEFT);
         root.fetch("user", JoinType.LEFT).fetch("profile", JoinType.LEFT);
         root.fetch("booking", JoinType.LEFT);
+        // Fetch reviewReply và owner.profile để hiển thị phản hồi của chủ quán
+        Fetch<Review, ReviewReply> replyFetch = root.fetch("reviewReply", JoinType.LEFT);
+        replyFetch.fetch("owner", JoinType.LEFT).fetch("profile", JoinType.LEFT);
         query.distinct(true);
       }
       return cb.equal(root.get("id"), id);
