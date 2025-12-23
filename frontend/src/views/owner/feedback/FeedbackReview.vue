@@ -303,11 +303,12 @@ const extractPageData = (resp) => {
 
 const loadOutlets = async () => {
   try {
-    const resp = await outletApi.getOutlets({page: 0, size: 50});
-    outlets.value = resp.data?.data || resp.data || resp || [];
+    const resp = await outletApi.getMyOutlets();
+    outlets.value = resp.data || resp || [];
     if (outlets.value.length) selectedOutletId.value = outlets.value[0].id;
   } catch (err) {
     console.error(err);
+    outlets.value = [];
   }
 };
 

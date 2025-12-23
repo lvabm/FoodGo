@@ -22,7 +22,8 @@
         </select>
         <button
           @click="openCreate"
-          class="px-4 py-2 bg-primary text-white rounded-lg"
+          :disabled="!selectedOutletId"
+          :class="['px-4 py-2 rounded-lg', selectedOutletId ? 'bg-primary text-white' : 'bg-gray-100 text-subtext-light cursor-not-allowed']"
         >
           Tạo món
         </button>
@@ -298,11 +299,14 @@ const formatCurrency = (amount) => {
 // Load outlets and categories/types
 const loadOutlets = async () => {
   try {
-    const resp = await outletApi.getOutlets({page: 0, size: 50});
-    outlets.value = resp.data?.data || resp.data || resp || [];
+    // Only load outlets owned by current owner
+    const resp = await outletApi.getMyOutlets();
+    // Response should be a list
+    outlets.value = resp.data || resp || [];
     if (outlets.value.length > 0) selectedOutletId.value = outlets.value[0].id;
   } catch (err) {
-    console.error(err);
+    console.error("Failed to load owner's outlets:", err);
+    outlets.value = [];
   }
 };
 

@@ -6,6 +6,11 @@ export const outletApi = {
     return apiClient.get("/outlets/search", {params});
   },
 
+  // Lấy danh sách outlets của owner hiện tại - Backend: GET /outlets/my-outlets
+  getMyOutlets() {
+    return apiClient.get("/outlets/my-outlets");
+  },
+
   // Lấy chi tiết outlet
   getOutletDetail(id) {
     return apiClient.get(`/outlets/${id}`);
