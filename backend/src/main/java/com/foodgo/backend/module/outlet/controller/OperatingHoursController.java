@@ -7,6 +7,7 @@ import com.foodgo.backend.module.outlet.dto.response.OperatingHoursResponse;
 import com.foodgo.backend.module.outlet.service.OperatingHoursService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -24,7 +25,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class OperatingHoursController {
 
-  private final OperatingHoursService service;
+  private final OperatingHoursService operatingHoursService;
 
   // 1. CREATE
   @PostMapping
@@ -41,7 +42,7 @@ public class OperatingHoursController {
             request.closeTime(),
             request.isClosed(),
             outletId);
-    return service.create(finalRequest);
+    return operatingHoursService.create(finalRequest);
   }
 
   // 2. UPDATE
@@ -51,7 +52,7 @@ public class OperatingHoursController {
       description = "Owner/Admin cập nhật giờ hoạt động theo ID.")
   public OperatingHoursResponse updateHours(
       @PathVariable Integer id, @Valid @RequestBody OperatingHoursUpdateRequest request) {
-    return service.update(id, request);
+    return operatingHoursService.update(id, request);
   }
 
   // 3. SOFT DELETE
@@ -60,17 +61,19 @@ public class OperatingHoursController {
       summary = "Xóa mềm (Soft Delete) giờ hoạt động",
       description = "Owner/Admin xóa mềm một giờ hoạt động.")
   public OperatingHoursResponse softDeleteHours(@PathVariable Integer id) {
-    return service.softDelete(id);
+    return operatingHoursService.softDelete(id);
   }
 
   // 4. GET DETAIL
+  @PermitAll
   @GetMapping("/{id}")
   @Operation(summary = "Lấy chi tiết giờ hoạt động theo ID")
   public OperatingHoursResponse getDetailHours(@PathVariable Integer id) {
-    return service.getDetail(id);
+    return operatingHoursService.getDetail(id);
   }
 
   // 5. GET SEARCH / List theo Outlet
+  @PermitAll
   @GetMapping
   @Operation(
       summary = "Lấy danh sách giờ hoạt động của một Outlet",
@@ -82,6 +85,6 @@ public class OperatingHoursController {
     // Tùy chỉnh FilterRequest để buộc lọc theo Outlet ID từ PathVariable
     OperatingHoursFilterRequest finalFilter =
         new OperatingHoursFilterRequest(outletId, filter.dayOfWeek());
-    return service.getPage(finalFilter, pageable);
+    return operatingHoursService.getPage(finalFilter, pageable);
   }
 }

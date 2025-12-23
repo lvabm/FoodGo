@@ -30,7 +30,6 @@ public abstract class BaseServiceImpl<
 
   protected abstract BaseMapper<Entity, CreateRequest, UpdateRequest, Response> getMapper();
 
-  /** Tên hiển thị của Entity (VD: "Cửa hàng", "Loại cửa hàng",...) */
   protected abstract String getEntityName();
 
   // ================= II. HOOK – CHO CUSTOM LOGIC =================
@@ -43,26 +42,17 @@ public abstract class BaseServiceImpl<
 
   protected void afterUpdate(Entity entity) {}
 
-  /**
-   * * 🔑 HOOK QUAN TRỌNG: Override trong service con để kiểm tra quyền truy cập/sở hữu (VD: Outlet,
-   * Booking...)
-   */
-  protected void ensurePermission(Entity entity) {
-    // Mặc định: Không làm gì. Logic kiểm tra quyền Admin/Owner sẽ được thêm ở lớp con.
-  }
+  protected void ensurePermission(Entity entity) {}
 
   protected Specification<Entity> buildSpecification(FilterRequest filterRequest) {
-    // Mặc định trả về Specification rỗng
     return (root, query, cb) -> cb.conjunction();
   }
 
   // ================= III. SOFT DELETE =================
 
-  /** HARD RULE: Specification lọc isDeleted = false */
-  private Specification<Entity> notDeletedSpec() {
+  protected Specification<Entity> notDeletedSpec() {
     return (root, query, cb) -> {
       Class<?> type = root.getJavaType();
-      // Dùng isAssignableFrom để kiểm tra xem Entity có kế thừa Base Entity không
       boolean supportSoftDelete =
           BaseUUIDEntity.class.isAssignableFrom(type)
               || BaseIntegerEntity.class.isAssignableFrom(type);
@@ -83,7 +73,6 @@ public abstract class BaseServiceImpl<
 
     afterCreate(saved);
 
-    // 🔑 HARD RULE: Success Message
     SuccessMessageContext.setMessage(
         String.format(SuccessMessageContext.CREATE_SUCCESS, getEntityName(), getId(saved)));
 
@@ -96,7 +85,6 @@ public abstract class BaseServiceImpl<
     validateBeforeUpdate(id, request);
 
     Entity entity = findByIdOrThrow(id);
-    // 🔑 HOOK: Kiểm tra quyền truy cập/sở hữu
     ensurePermission(entity);
 
     getMapper().updateEntity(request, entity);
@@ -113,11 +101,9 @@ public abstract class BaseServiceImpl<
   @Override
   @Transactional(readOnly = true)
   public Response getDetail(Id id) {
-    // 1. Kết hợp Soft Delete Filter và Filter theo ID
     Specification<Entity> specById = (root, query, cb) -> cb.equal(root.get("id"), id);
     Specification<Entity> finalSpec = notDeletedSpec().and(specById);
 
-    // 2. Tìm kiếm tường minh để có thể gán message
     Entity entity =
         getSpecRepository().findAll(finalSpec).stream()
             .findFirst()
@@ -125,6 +111,8 @@ public abstract class BaseServiceImpl<
                 () ->
                     new ResourceNotFoundException(
                         getEntityName() + " không tìm thấy với ID: " + id));
+
+    ensurePermission(entity); // Thêm check permission khi view detail
 
     SuccessMessageContext.setMessage(
         String.format(SuccessMessageContext.FETCH_DETAIL_SUCCESS, getEntityName(), id));
@@ -135,8 +123,7 @@ public abstract class BaseServiceImpl<
   @Override
   @Transactional(readOnly = true)
   public List<Response> getAll() {
-    List<Entity> entities =
-        getSpecRepository().findAll(notDeletedSpec()); // Áp dụng Soft Delete Filter
+    List<Entity> entities = getSpecRepository().findAll(notDeletedSpec());
 
     SuccessMessageContext.setMessage(
         String.format(SuccessMessageContext.FETCH_SUCCESS, getEntityName()));
@@ -148,13 +135,10 @@ public abstract class BaseServiceImpl<
   @Transactional(readOnly = true)
   public Page<Response> getPage(FilterRequest filterRequest, Pageable pageable) {
     Specification<Entity> customSpec = buildSpecification(filterRequest);
-
-    // Kết hợp Soft Delete Filter với Custom Filter
     Specification<Entity> finalSpec = notDeletedSpec().and(customSpec);
 
     Page<Entity> page = getSpecRepository().findAll(finalSpec, pageable);
 
-    // 🔑 HARD RULE: Success Message
     SuccessMessageContext.setMessage(
         String.format(
             SuccessMessageContext.FETCH_SUCCESS_PAGE,
@@ -169,7 +153,6 @@ public abstract class BaseServiceImpl<
   @Transactional
   public Response softDelete(Id id) {
     Entity entity = findByIdOrThrow(id);
-    // 🔑 HOOK: Kiểm tra quyền truy cập/sở hữu
     ensurePermission(entity);
 
     if (entity instanceof BaseUUIDEntity e) e.setIsDeleted(true);
@@ -188,12 +171,10 @@ public abstract class BaseServiceImpl<
   @Transactional
   public void hardDelete(Id id) {
     Entity entity = findByIdOrThrow(id);
-    // 🔑 HOOK: Kiểm tra quyền truy cập/sở hữu
     ensurePermission(entity);
 
     getRepository().deleteById(id);
 
-    // 🔑 HARD RULE: Success Message
     SuccessMessageContext.setMessage(
         String.format(SuccessMessageContext.HARD_DELETE_SUCCESS, getEntityName(), id));
   }
@@ -206,8 +187,6 @@ public abstract class BaseServiceImpl<
   // ================= V. HELPER =================
 
   protected Entity findByIdOrThrow(Id id) {
-    // NOTE: FindByIdOrThrow không áp dụng Soft Delete Filter, nó chỉ kiểm tra sự tồn tại trong DB.
-    // Lớp con phải gọi ensurePermission ngay sau khi gọi findByIdOrThrow.
     return getRepository()
         .findById(id)
         .orElseThrow(

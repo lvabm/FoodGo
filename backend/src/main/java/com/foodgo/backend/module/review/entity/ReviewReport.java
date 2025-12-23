@@ -1,6 +1,8 @@
 package com.foodgo.backend.module.review.entity;
 
 import com.foodgo.backend.common.base.dto.BaseIntegerEntity;
+import com.foodgo.backend.common.constant.ReportReason;
+import com.foodgo.backend.common.constant.ReportStatus;
 import com.foodgo.backend.module.user.entity.UserAccount;
 import jakarta.persistence.*;
 import lombok.*;
@@ -14,12 +16,17 @@ import lombok.*;
 @Builder
 public class ReviewReport extends BaseIntegerEntity<Integer> {
 
-  @Column(name = "reason", nullable = false, length = 255)
-  private String reason;
+  @Column(name = "reason", nullable = false, length = 20)
+  @Enumerated(EnumType.STRING)
+  private ReportReason reason;
 
-  @Column(name = "status", length = 20)
+  @Column(name = "description", length = 500)
+  private String description;
+
+  @Column(name = "status", nullable = false, length = 20)
+  @Enumerated(EnumType.STRING)
   @Builder.Default
-  private String status = "pending";
+  private ReportStatus status = ReportStatus.PENDING;
 
   // 1. QUAN HỆ MANY - TO - ONE: ReviewReport <--> UserAccount
   // ReviewReport sở hữu quan hệ (fk_user_account_id_review_report)
