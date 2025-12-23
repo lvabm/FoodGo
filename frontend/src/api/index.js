@@ -8,3 +8,4 @@ export {menuApi} from "./menu";
 export {locationApi} from "./location";
 export {membershipApi} from "./membership";
 export {adminApi} from "./admin";
+export {ownerApi} from "./owner";
