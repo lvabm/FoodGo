@@ -136,10 +136,14 @@
                 class="material-symbols-outlined fill text-yellow-500 text-base"
                 >star</span
               >
-              <span class="text-sm font-bold">{{ restaurant.rating }}</span>
-              <span class="text-sm text-subtext-light dark:text-subtext-dark"
-                >({{ restaurant.reviews }}+ đánh giá)</span
-              >
+              <span class="text-sm font-bold">
+                <template v-if="restaurant.rating !== null && restaurant.rating !== undefined">{{ restaurant.rating }}</template>
+                <template v-else>Chưa có</template>
+              </span>
+              <span class="text-sm text-subtext-light dark:text-subtext-dark">
+                <template v-if="restaurant.reviews > 0">({{ restaurant.reviews }} đánh giá)</template>
+                <template v-else>(Chưa có đánh giá)</template>
+              </span>
             </div>
             <div class="flex items-center gap-2 mt-2">
               <span class="material-symbols-outlined text-primary text-lg"
@@ -200,8 +204,12 @@ onMounted(async () => {
         name: outlet.name,
         category: outlet.outletCategory?.name || "Nhà hàng",
         district: outlet.district?.name || "TPHCM",
-        rating: outlet.averageRating || 4.5,
-        reviews: outlet.totalReviews || 0,
+        // Use averageRating when available, format to 1 decimal. Do NOT default to 4.5.
+        rating:
+          outlet.averageRating !== undefined && outlet.averageRating !== null
+            ? Number(outlet.averageRating).toFixed(1)
+            : null,
+        reviews: outlet.totalReviews ?? 0,
         badge: outlet.featured ? "Nổi bật" : "Mới",
         hours: outlet.openingHours || "8:00 - 22:00",
       }));

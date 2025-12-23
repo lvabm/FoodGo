@@ -97,13 +97,24 @@
               <div
                 class="flex flex-wrap items-center gap-4 text-sm text-subtext-light dark:text-subtext-dark"
               >
-                <!-- Rating -->
-                <div class="flex items-center gap-1">
-                  <span class="material-symbols-outlined text-yellow-500"
-                    >star</span
-                  >
-                  <span class="font-medium">{{ outlet.rating || "N/A" }}</span>
-                  <span>({{ outlet.totalReviews || 0 }} đánh giá)</span>
+                <!-- Rating + Aspect summary -->
+                <div class="flex items-center gap-4">
+                  <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-yellow-500 text-xl">star</span>
+                    <div>
+                      <div class="font-medium text-lg">{{ ratingDisplay }}</div>
+                      <div class="text-xs text-subtext-light dark:text-subtext-dark">
+                        <template v-if="numReviews > 0">{{ numReviews }} đánh giá</template>
+                        <template v-else>Chưa có đánh giá</template>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div v-if="numReviews > 0" class="flex items-center gap-2 text-sm">
+                    <span v-for="(val,label) in aspectAverages" :key="label" class="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded text-xs">
+                      <strong>{{ label }}:</strong> {{ val }}
+                    </span>
+                  </div>
                 </div>
 
                 <!-- Category -->
@@ -167,6 +178,10 @@
                           {{ outlet.address }}, {{ outlet.district?.name }},
                           {{ outlet.province?.name }}
                         </p>
+
+                        <div v-if="outlet.latitude && outlet.longitude" class="mt-1">
+                          <a :href="`https://www.google.com/maps/search/?api=1&query=${outlet.latitude},${outlet.longitude}`" target="_blank" class="text-primary text-sm">Xem trên bản đồ</a>
+                        </div>
                       </div>
                     </div>
 
@@ -397,19 +412,31 @@
             >
               <div class="mb-6">
                 <div class="text-3xl font-bold text-primary mb-2">
-                  {{ formatPrice(outlet.averagePrice || 0) }}
+                  {{ displayPrice }}
                 </div>
                 <p class="text-sm text-subtext-light dark:text-subtext-dark">
                   Giá trung bình / người
                 </p>
               </div>
 
-              <button
-                @click="handleBookingClick"
-                class="block w-full bg-primary text-white text-center font-bold py-3 rounded-lg hover:bg-opacity-90 transition-colors mb-4"
-              >
-                Đặt bàn ngay
-              </button>
+              <div class="flex gap-3 mb-4">
+                <button
+                  @click="handleBookingClick"
+                  :disabled="isBookingDisabled || isLoading"
+                  :title="isBookingDisabled ? 'Bạn không thể đặt bàn tại chính quán của mình' : ''"
+                  class="flex-1 bg-primary text-white text-center font-bold py-3 rounded-lg hover:bg-opacity-90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Đặt bàn ngay
+                </button>
+
+                <button
+                  type="button"
+                  @click="(activeTab = 'menu')"
+                  class="px-4 py-3 border border-border-light dark:border-border-dark rounded-lg text-sm hover:bg-gray-100 dark:hover:bg-gray-800"
+                >
+                  Xem thực đơn
+                </button>
+              </div>
 
               <div
                 class="space-y-3 pt-4 border-t border-border-light dark:border-border-dark"
@@ -899,6 +926,78 @@ const formatDate = (dateString) => {
     day: "numeric",
   }).format(date);
 };
+
+// Number of reviews (prefer outlet.totalReviews if backend provides it)
+const numReviews = computed(() => {
+  return outlet.value?.totalReviews ?? (Array.isArray(reviews.value) ? reviews.value.length : 0);
+});
+
+// Compute aspect averages from reviews as fallback when backend doesn't provide per-aspect aggregates
+const aspectAverages = computed(() => {
+  if (!reviews.value || reviews.value.length === 0) return {};
+
+  const sum = {food: 0, service: 0, ambiance: 0, price: 0, overall: 0};
+  let count = 0;
+  reviews.value.forEach((r) => {
+    // support different field names in review payload
+    const food = Number(r.foodRating ?? r.food_rating ?? 0);
+    const service = Number(r.serviceRating ?? r.service_rating ?? 0);
+    const ambiance = Number(r.ambianceRating ?? r.ambiance_rating ?? 0);
+    const price = Number(r.priceRating ?? r.price_rating ?? 0);
+    const overall = Number(r.overallRating ?? r.overall_rating ?? r.rating ?? 0);
+
+    sum.food += food;
+    sum.service += service;
+    sum.ambiance += ambiance;
+    sum.price += price;
+    sum.overall += overall;
+    count++;
+  });
+
+  const toStr = (n) => (count ? (n / count).toFixed(1) : "N/A");
+
+  return {
+    Food: toStr(sum.food),
+    Service: toStr(sum.service),
+    Ambiance: toStr(sum.ambiance),
+    Price: toStr(sum.price),
+    Overall: toStr(sum.overall),
+  };
+});
+
+// Disable booking button when the current user is the owner of this outlet
+const isBookingDisabled = computed(() => {
+  return authStore.isOwner && outlet.value?.owner?.id === authStore.user?.id;
+});
+
+// Computed helpers for rating and price
+const ratingDisplay = computed(() => {
+  const r = outlet.value?.averageRating;
+  if (r === undefined || r === null) return "N/A";
+  // Ensure numeric and show one decimal
+  const num = Number(r);
+  if (Number.isNaN(num)) return "N/A";
+  return num.toFixed(1);
+});
+
+const displayPrice = computed(() => {
+  // Prefer priceRange (string like "₫ - ₫") if provided by backend
+  if (outlet.value?.priceRange) return outlet.value.priceRange;
+
+  // If backend provides averagePrice, format it
+  if (outlet.value?.averagePrice) return formatPrice(outlet.value.averagePrice);
+
+  // Fallback: compute average from menu items
+  const prices = (menuItems.value || [])
+    .map((i) => Number(i?.price || i?.priceAmount || 0))
+    .filter((p) => p > 0);
+  if (prices.length > 0) {
+    const avg = prices.reduce((s, v) => s + v, 0) / prices.length;
+    return formatPrice(avg);
+  }
+
+  return "N/A";
+});
 
 // Handle booking click with membership check
 const handleBookingClick = () => {

@@ -163,7 +163,7 @@
                   >
                     star
                   </span>
-                  <span class="font-medium">{{ outlet.rating || "N/A" }}</span>
+                  <span class="font-medium">{{ getRating(outlet) }}</span>
                   <span class="text-subtext-light dark:text-subtext-dark">
                     ({{ outlet.totalReviews || 0 }})
                   </span>
@@ -197,7 +197,7 @@
                     >payments</span
                   >
                   <span class="font-semibold text-primary">
-                    {{ formatPrice(outlet.averagePrice) }}
+                    {{ getDisplayPrice(outlet) }}
                   </span>
                   <span class="text-subtext-light dark:text-subtext-dark"
                     >/ người</span
@@ -433,6 +433,26 @@ const resetSearch = () => {
   hasSearched.value = false;
   errorMessage.value = "";
   router.replace({query: {}});
+};
+
+// Helpers for rating and price display
+const getRating = (o) => {
+  const r = o?.averageRating ?? o?.rating;
+  if (r === undefined || r === null) return "N/A";
+  const num = Number(r);
+  if (Number.isNaN(num)) return "N/A";
+  return num.toFixed(1);
+};
+
+const getDisplayPrice = (o) => {
+  if (o?.priceRange) return o.priceRange;
+  if (o?.averagePrice) return formatPrice(o.averagePrice);
+  const prices = (o?.menuItems || []).map((i) => Number(i?.price || i?.priceAmount || 0)).filter((p) => p > 0);
+  if (prices.length > 0) {
+    const avg = prices.reduce((s, v) => s + v, 0) / prices.length;
+    return formatPrice(avg);
+  }
+  return "N/A";
 };
 
 // Format price
