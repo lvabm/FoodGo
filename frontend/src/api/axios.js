@@ -93,7 +93,19 @@ apiClient.interceptors.response.use(
         console.error("❌ 401 Unauthorized - clearing tokens");
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
-        window.location.href = "/auth/login";
+        
+        // Chỉ redirect sang login nếu không phải là trang chủ hoặc trang public
+        // và không phải là API public (không yêu cầu authentication)
+        const currentPath = window.location.pathname;
+        const isPublicPath = currentPath === "/" || 
+                            currentPath === "/search" || 
+                            currentPath.startsWith("/outlet/") ||
+                            currentPath.startsWith("/auth/");
+        
+        // Chỉ redirect nếu đang ở trang yêu cầu authentication
+        if (!isPublicPath) {
+          window.location.href = "/auth/login";
+        }
       }
 
       // Backend error response structure: { success: false, message: string, data: any }

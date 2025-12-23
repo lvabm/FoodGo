@@ -49,7 +49,26 @@ public class SecurityConfig {
                         "/api/v1/auth/**", // Đường dẫn hiện tại
                         "/v3/api-docs/**", // Đường dẫn tài liệu OpenAPI
                         "/swagger-ui/**", // Đường dẫn giao diện Swagger UI
-                        "/swagger-ui.html" // File HTML chính
+                        "/swagger-ui.html", // File HTML chính
+                        // Public APIs - cho phép khách vãng lai xem
+                        // Note: Các controller methods có @PermitAll sẽ override SecurityConfig
+                        "/api/v1/outlets/search", // Tìm kiếm outlets
+                        "/api/v1/outlets/*", // Chi tiết outlet (GET)
+                        "/api/v1/outlets/*/menu-items", // Menu items của outlet
+                        "/api/v1/outlets/*/menu-items/search", // Search menu items
+                        "/api/v1/menu-items", // Tìm kiếm menu items
+                        "/api/v1/reviews/search", // Tìm kiếm reviews
+                        "/api/v1/reviews/*/react", // React to review
+                        "/api/v1/outlet-types/**", // Outlet types
+                        "/api/v1/outlet-categories/**", // Outlet categories
+                        "/api/v1/outlet-features/**", // Outlet features
+                        "/api/v1/menu-item-categories/**", // Menu categories
+                        "/api/v1/menu-item-types/**", // Menu types
+                        "/api/v1/menu-item-sub-categories/**", // Menu sub categories
+                        "/api/v1/menu-item-features/**", // Menu features
+                        "/api/v1/countries/**", // Countries
+                        "/api/v1/provinces/**", // Provinces
+                        "/api/v1/districts/**" // Districts
                         )
                     .permitAll()
                     .anyRequest()

@@ -57,7 +57,12 @@ const routes = [
       {path: "", name: "Home", component: UserHome},
       {path: "search", name: "Search", component: UserSearch},
       {path: "outlet/:id", name: "OutletDetail", component: OutletDetail},
-      {path: "booking/:outletId", name: "BookingForm", component: BookingForm},
+      {
+        path: "booking/:outletId",
+        name: "BookingForm",
+        component: BookingForm,
+        meta: {requiresAuth: true},
+      },
       {
         path: "booking-history",
         name: "BookingHistory",

@@ -609,6 +609,12 @@ INSERT INTO outlet_menu_item (id, outlet_id, menu_item_id, name, description, pr
 -- Cơm Tấm Sườn Bì Chả
 INSERT INTO outlet_menu_item (id, outlet_id, menu_item_id, name, description, price, image_url, is_available) VALUES (15, (SELECT id FROM outlet WHERE name = 'Highlands Coffee Lý Tự Trọng'), (SELECT id FROM menu_item WHERE name = 'Cơm Tấm Sườn Bì Chả'), 'Cơm Tấm Sườn Bì Chả', 'Cơm tấm sườn bì chả trứng', 70000.00, 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600', true);
 
+-- Thêm ảnh cho các món phổ biến còn thiếu
+-- Phở Bò Tái
+INSERT INTO outlet_menu_item (id, outlet_id, menu_item_id, name, description, price, image_url, is_available) VALUES (16, (SELECT id FROM outlet WHERE name = 'The Workshop Coffee'), (SELECT id FROM menu_item WHERE name = 'Phở Bò Tái'), 'Phở Bò Tái', 'Phở bò tái chín, tái nạm thơm ngon', 80000.00, 'https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?w=600', true);
+-- Phở Bò Đặc Biệt (thêm cho outlet khác để có ảnh)
+INSERT INTO outlet_menu_item (id, outlet_id, menu_item_id, name, description, price, image_url, is_available) VALUES (17, (SELECT id FROM outlet WHERE name = 'LUsine Cafe'), (SELECT id FROM menu_item WHERE name = 'Phở Bò Đặc Biệt'), 'Phở Bò Đặc Biệt', 'Phở bò đủ các loại thịt bò tái, chín, gân, sách', 90000.00, 'https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?w=600', true);
+
 --========================================================
 --27. MENU_ITEM_FEATURE
 --========================================================

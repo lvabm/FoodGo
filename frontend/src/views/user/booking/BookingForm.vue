@@ -323,6 +323,24 @@ const handleSubmit = async () => {
 
 // Lifecycle
 onMounted(() => {
+  // Check authentication first
+  if (!authStore.isAuthenticated) {
+    errorMessage.value = "Vui lòng đăng nhập để đặt bàn";
+    setTimeout(() => {
+      router.push("/auth/login");
+    }, 2000);
+    return;
+  }
+  
+  // Check membership
+  if (!authStore.user?.membershipIsActive) {
+    errorMessage.value = "Bạn cần đăng ký gói membership để đặt bàn";
+    setTimeout(() => {
+      router.push("/membership");
+    }, 2000);
+    return;
+  }
+  
   fetchOutlet();
 });
 </script>

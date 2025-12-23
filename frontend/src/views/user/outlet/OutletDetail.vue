@@ -473,11 +473,24 @@
                   :title="
                     isBookingDisabled
                       ? 'Bạn không thể đặt bàn tại chính quán của mình'
+                      : !authStore.isAuthenticated
+                      ? 'Vui lòng đăng nhập để đặt bàn'
+                      : !authStore.user?.membershipIsActive
+                      ? 'Bạn cần đăng ký gói membership để đặt bàn'
                       : ''
                   "
-                  class="flex-1 bg-primary text-white text-center font-bold py-3 rounded-lg hover:bg-opacity-90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  :class="[
+                    'flex-1 text-center font-bold py-3 rounded-lg transition-colors',
+                    !authStore.isAuthenticated
+                      ? 'bg-gray-400 text-white cursor-pointer hover:bg-gray-500'
+                      : isBookingDisabled || isLoading
+                      ? 'bg-primary text-white opacity-50 cursor-not-allowed'
+                      : 'bg-primary text-white hover:bg-opacity-90'
+                  ]"
                 >
-                  Đặt bàn ngay
+                  <span v-if="!authStore.isAuthenticated">Đăng nhập để đặt bàn</span>
+                  <span v-else-if="!authStore.user?.membershipIsActive">Cần gói membership</span>
+                  <span v-else>Đặt bàn ngay</span>
                 </button>
 
                 <button
@@ -1029,12 +1042,12 @@ const handleBookingClick = () => {
   errorMessage.value = "";
   successMessage.value = "";
 
-  // Check authentication
+  // Check authentication - redirect to login if not authenticated
   if (!authStore.isAuthenticated) {
     errorMessage.value = "Vui lòng đăng nhập để đặt bàn. Đang chuyển hướng...";
     setTimeout(() => {
       router.push("/auth/login");
-    }, 2000);
+    }, 1500);
     return;
   }
 
@@ -1044,7 +1057,7 @@ const handleBookingClick = () => {
       "Bạn cần đăng ký gói membership để đặt bàn. Đang chuyển hướng...";
     setTimeout(() => {
       router.push("/membership");
-    }, 2000);
+    }, 1500);
     return;
   }
 

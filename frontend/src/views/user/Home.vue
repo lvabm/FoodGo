@@ -396,7 +396,7 @@
             Khám phá ngay
           </button>
           <button
-            @click="router.push('/booking')"
+            @click="handleBookingClick"
             class="px-8 py-3 bg-white/10 backdrop-blur-sm text-white border-2 border-white rounded-lg font-bold hover:bg-white/20 transition-colors"
           >
             Đặt bàn ngay
@@ -411,13 +411,17 @@
 import {ref, onMounted} from "vue";
 import {useRouter} from "vue-router";
 import {useOutletStore} from "@/stores/outlet";
+import {useAuthStore} from "@/stores/auth";
 import {menuApi, outletApi, adminApi} from "@/api";
 import apiClient from "@/api/axios";
 import ImageDisplay from "@/components/common/ImageDisplay.vue";
 import {processImageUrl} from "@/utils/imageUtils";
+import {useToast} from "@/composables/useToast";
 
 const router = useRouter();
 const outletStore = useOutletStore();
+const authStore = useAuthStore();
+const {error: showError, info: showInfo} = useToast();
 
 const searchQuery = ref("");
 const quickFilters = ref([
@@ -815,6 +819,27 @@ const handleSearch = () => {
   if (searchQuery.value.trim()) {
     router.push({path: "/search", query: {q: searchQuery.value}});
   }
+};
+
+const handleBookingClick = () => {
+  if (!authStore.isAuthenticated) {
+    showError("Vui lòng đăng nhập để đặt bàn");
+    setTimeout(() => {
+      router.push("/auth/login");
+    }, 1500);
+    return;
+  }
+  
+  if (!authStore.user?.membershipIsActive) {
+    showError("Bạn cần đăng ký gói membership để đặt bàn");
+    setTimeout(() => {
+      router.push("/membership");
+    }, 1500);
+    return;
+  }
+  
+  // Redirect to search page for booking
+  router.push("/search");
 };
 
 const handleCategoryClick = (categoryId) => {
