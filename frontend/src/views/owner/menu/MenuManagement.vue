@@ -23,7 +23,12 @@
         <button
           @click="openCreate"
           :disabled="!selectedOutletId"
-          :class="['px-4 py-2 rounded-lg', selectedOutletId ? 'bg-primary text-white' : 'bg-gray-100 text-subtext-light cursor-not-allowed']"
+          :class="[
+            'px-4 py-2 rounded-lg',
+            selectedOutletId
+              ? 'bg-primary text-white'
+              : 'bg-gray-100 text-subtext-light cursor-not-allowed',
+          ]"
         >
           Tạo món
         </button>

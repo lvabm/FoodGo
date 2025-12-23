@@ -98,16 +98,32 @@ public class BookingServiceImpl
 
     UUID userId = SecurityContext.getCurrentUserId();
 
-    // Check Membership: User phải có gói Membership loại USER mới được đặt bàn
-    boolean isMember =
+    // Check Membership: Require an active membership of type USER or OWNER (check package, not role)
+    boolean hasUserMembership =
         userMembershipRepository.existsByUserAccount_IdAndIsActiveTrueAndMembershipPlan_Type(
             userId, PlanType.USER);
-    if (!isMember) {
+    boolean hasOwnerMembership =
+        userMembershipRepository.existsByUserAccount_IdAndIsActiveTrueAndMembershipPlan_Type(
+            userId, PlanType.OWNER);
+
+    if (!hasUserMembership && !hasOwnerMembership) {
       throw new ForbiddenException("Chức năng Đặt bàn chỉ dành cho Hội viên. Vui lòng nâng cấp!");
     }
 
     if (!outletRepository.existsById(request.outletId())) {
       throw new ResourceNotFoundException("Cửa hàng không tồn tại.");
+    }
+
+    // Additional business rule: If user has OWNER role, prevent booking at their own outlet
+    boolean isOwnerRole = SecurityContext.hasRole(com.foodgo.backend.common.constant.RoleType.ROLE_OWNER.getName());
+    if (isOwnerRole) {
+      var outletOpt = outletRepository.findById(request.outletId());
+      if (outletOpt.isPresent()) {
+        var outlet = outletOpt.get();
+        if (outlet.getOwner() != null && outlet.getOwner().getId().equals(userId)) {
+          throw new ForbiddenException("Chủ quán không thể đặt bàn tại chính quán của mình. Vui lòng chọn quán khác.");
+        }
+      }
     }
   }
 

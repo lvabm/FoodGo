@@ -506,11 +506,16 @@ const loadMyReviews = async () => {
     console.error("❌ Error loading my reviews", err);
     // Fallback: load persisted reviewed IDs from localStorage so UI remains consistent
     try {
-      const persisted = JSON.parse(localStorage.getItem("localReviewedBookingIds") || "[]");
+      const persisted = JSON.parse(
+        localStorage.getItem("localReviewedBookingIds") || "[]"
+      );
       if (Array.isArray(persisted) && persisted.length) {
         const s2 = new Set(persisted.map((id) => String(id)));
         reviewedBookingIds.value = s2;
-        console.log("💾 Fallback loaded persisted reviewed IDs:", Array.from(s2));
+        console.log(
+          "💾 Fallback loaded persisted reviewed IDs:",
+          Array.from(s2)
+        );
       } else {
         reviewedBookingIds.value = new Set();
       }
@@ -657,6 +662,7 @@ const fetchBookings = async (page = 0) => {
       size: 10,
       // backend Booking entity doesn't have 'createdAt', use bookingDate instead
       sort: "bookingDate,desc",
+      viewType: "MY_BOOKINGS", // Owner/User xem booking cá nhân của mình
     });
 
     console.log("✅ Bookings response:", response);

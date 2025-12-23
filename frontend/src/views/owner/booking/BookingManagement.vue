@@ -357,6 +357,7 @@ async function computeCounts(response) {
       const resAll = await bookingApi.getMyBookings({
         page: 0,
         size: counts.value.ALL,
+        viewType: "MANAGE_BOOKINGS", // Owner quản lý booking của người khác vào quán mình
       });
       const items = resAll.data || resAll || [];
       const map = {PENDING: 0, CONFIRMED: 0, COMPLETED: 0, CANCELLED: 0};
@@ -467,6 +468,9 @@ const loadBookings = async () => {
     if (activeTab.value !== "ALL") {
       params.status = activeTab.value;
     }
+
+    // Owner quản lý booking của người khác tại quán mình
+    params.viewType = "MANAGE_BOOKINGS";
 
     const response = await bookingApi.getMyBookings(params);
     console.log("📋 Full response:", response);

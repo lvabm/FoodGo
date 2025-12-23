@@ -456,7 +456,7 @@
 
             <!-- Review Form Section (moved to Bookings List) -->
             <!-- Removed: review per outlet; reviews are now per-booking in Lịch sử đặt bàn -->
-            <div style="display:none">
+            <div style="display: none">
               <div class="flex items-center justify-between mb-4">
                 <h3
                   class="text-lg font-bold text-text-light dark:text-text-dark"
@@ -914,13 +914,20 @@ const handleBookingClick = () => {
     return;
   }
 
-  // Check membership requirement
-  if (!authStore.user?.membershipName) {
+  // Check membership requirement: require active membership (package), regardless of role
+  if (!authStore.user?.membershipIsActive) {
     errorMessage.value =
       "Bạn cần đăng ký gói membership để đặt bàn. Đang chuyển hướng...";
     setTimeout(() => {
       router.push("/membership");
     }, 2000);
+    return;
+  }
+
+  // Owners cannot book at their own outlet
+  if (authStore.isOwner && outlet.value?.owner?.id === authStore.user?.id) {
+    errorMessage.value =
+      "Bạn không thể đặt bàn tại chính quán của mình. Vui lòng chọn quán khác.";
     return;
   }
 
