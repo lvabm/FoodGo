@@ -87,6 +87,14 @@ public class ReviewServiceImpl
   // --- CREATE LOGIC ---
   @Override
   protected void validateBeforeCreate(ReviewCreateRequest request) {
+    // Defensive validation: all four rating aspects must be present
+    if (request.foodRating() == null
+        || request.serviceRating() == null
+        || request.ambianceRating() == null
+        || request.priceRating() == null) {
+      throw new BadRequestException("Vui lòng đánh giá tất cả tiêu chí: đồ ăn, phục vụ, không gian và giá cả.");
+    }
+
     Booking booking =
         bookingRepository
             .findById(request.bookingId())

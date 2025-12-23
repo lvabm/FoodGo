@@ -11,6 +11,7 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.Instant;
 
 @Entity
 @Table(name = "booking")
@@ -61,4 +62,10 @@ public class Booking extends BaseUUIDEntity {
   // Review sở hữu quan hệ (fk_booking_id_review)
   @OneToOne(mappedBy = "booking", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private Review review;
+
+  @Column(name = "user_checked_in_at")
+  private Instant userCheckedInAt;
+
+  @Column(name = "owner_checked_in_at")
+  private Instant ownerCheckedInAt;
 }

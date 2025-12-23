@@ -30,6 +30,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Service
@@ -96,16 +98,32 @@ public class BookingServiceImpl
 
     UUID userId = SecurityContext.getCurrentUserId();
 
-    // Check Membership: User phải có gói Membership loại USER mới được đặt bàn
-    boolean isMember =
+    // Check Membership: Require an active membership of type USER or OWNER (check package, not role)
+    boolean hasUserMembership =
         userMembershipRepository.existsByUserAccount_IdAndIsActiveTrueAndMembershipPlan_Type(
             userId, PlanType.USER);
-    if (!isMember) {
+    boolean hasOwnerMembership =
+        userMembershipRepository.existsByUserAccount_IdAndIsActiveTrueAndMembershipPlan_Type(
+            userId, PlanType.OWNER);
+
+    if (!hasUserMembership && !hasOwnerMembership) {
       throw new ForbiddenException("Chức năng Đặt bàn chỉ dành cho Hội viên. Vui lòng nâng cấp!");
     }
 
     if (!outletRepository.existsById(request.outletId())) {
       throw new ResourceNotFoundException("Cửa hàng không tồn tại.");
+    }
+
+    // Additional business rule: If user has OWNER role, prevent booking at their own outlet
+    boolean isOwnerRole = SecurityContext.hasRole(com.foodgo.backend.common.constant.RoleType.ROLE_OWNER.getName());
+    if (isOwnerRole) {
+      var outletOpt = outletRepository.findById(request.outletId());
+      if (outletOpt.isPresent()) {
+        var outlet = outletOpt.get();
+        if (outlet.getOwner() != null && outlet.getOwner().getId().equals(userId)) {
+          throw new ForbiddenException("Chủ quán không thể đặt bàn tại chính quán của mình. Vui lòng chọn quán khác.");
+        }
+      }
     }
   }
 
@@ -122,7 +140,7 @@ public class BookingServiceImpl
 
     // 2. [PAYMENT MANUAL LOGIC] - Tự động tính và tạo Payment
     // Logic: Tiền cọc = Số khách * 20
-    BigDecimal depositRate = new BigDecimal("20"); // Định mức cọc: 20 (đơn vị tiền tệ)
+    BigDecimal depositRate = new BigDecimal("20000"); // Định mức cọc: 20 (đơn vị tiền tệ)
     BigDecimal depositAmount = depositRate.multiply(BigDecimal.valueOf(request.numberOfGuests()));
     entity.setDepositAmount(depositAmount);
 
@@ -212,6 +230,74 @@ public class BookingServiceImpl
 
     Booking saved = bookingRepository.save(booking);
     SuccessMessageContext.setMessage("Đã từ chối đơn đặt bàn.");
+    return bookingMapper.toResponse(saved);
+  }
+
+  @Override
+  @Transactional
+  public BookingResponse userCheckIn(UUID bookingId) {
+    Booking booking = findByIdOrThrow(bookingId);
+
+    UUID currentUserId = SecurityContext.getCurrentUserId();
+    if (!booking.getUser().getId().equals(currentUserId) && !SecurityContext.isAdmin()) {
+      throw new ForbiddenException("Bạn không có quyền xác nhận tới quán cho đơn này.");
+    }
+
+    if (booking.getStatus() != BookingStatus.CONFIRMED) {
+      throw new BadRequestException("Chỉ có thể check-in cho đơn đã được xác nhận.");
+    }
+
+    if (!booking.getBookingDate().equals(LocalDate.now())) {
+      throw new BadRequestException("Chỉ có thể check-in trong ngày đặt bàn.");
+    }
+
+    // Idempotent: nếu đã check-in rồi thì trả về success
+    if (booking.getUserCheckedInAt() != null) {
+      return bookingMapper.toResponse(booking);
+    }
+
+    booking.setUserCheckedInAt(Instant.now());
+
+    if (booking.getOwnerCheckedInAt() != null && booking.getStatus() == BookingStatus.CONFIRMED) {
+      booking.setStatus(BookingStatus.COMPLETED);
+    }
+
+    Booking saved = bookingRepository.save(booking);
+    SuccessMessageContext.setMessage("Bạn đã check-in thành công.");
+    return bookingMapper.toResponse(saved);
+  }
+
+  @Override
+  @Transactional
+  public BookingResponse ownerCheckIn(UUID bookingId) {
+    Booking booking = findByIdOrThrow(bookingId);
+
+    UUID currentUserId = SecurityContext.getCurrentUserId();
+    if (!booking.getOutlet().getOwner().getId().equals(currentUserId) && !SecurityContext.isAdmin()) {
+      throw new ForbiddenException("Bạn không có quyền xác nhận khách tới cho đơn này.");
+    }
+
+    if (booking.getStatus() != BookingStatus.CONFIRMED) {
+      throw new BadRequestException("Chỉ có thể xác nhận khách tới cho đơn đã được xác nhận.");
+    }
+
+    if (!booking.getBookingDate().equals(LocalDate.now())) {
+      throw new BadRequestException("Chỉ có thể xác nhận khách trong ngày đặt bàn.");
+    }
+
+    // Idempotent
+    if (booking.getOwnerCheckedInAt() != null) {
+      return bookingMapper.toResponse(booking);
+    }
+
+    booking.setOwnerCheckedInAt(Instant.now());
+
+    if (booking.getUserCheckedInAt() != null && booking.getStatus() == BookingStatus.CONFIRMED) {
+      booking.setStatus(BookingStatus.COMPLETED);
+    }
+
+    Booking saved = bookingRepository.save(booking);
+    SuccessMessageContext.setMessage("Đã xác nhận khách đã tới.");
     return bookingMapper.toResponse(saved);
   }
 }

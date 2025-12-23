@@ -100,4 +100,18 @@ public class OutletMenuItemController {
         new OutletMenuItemFilterRequest(filter.name(), outletId, filter.isAvailable());
     return outletMenuItemService.getPage(finalFilter, pageable);
   }
+
+  // 7. LIST (compatibility) - support GET /outlets/{outletId}/menu-items?page=..&size=..
+  @PermitAll
+  @GetMapping
+  @Operation(summary = "Lấy danh sách món ăn của Outlet (dưới dạng phân trang)")
+  public Page<OutletMenuItemResponse> listMenuItems(
+      @PathVariable UUID outletId,
+      @ModelAttribute OutletMenuItemFilterRequest filter,
+      Pageable pageable) {
+    // Reuse the same search logic but allow direct GET on the base path for compatibility with older clients
+    OutletMenuItemFilterRequest finalFilter =
+        new OutletMenuItemFilterRequest(filter.name(), outletId, filter.isAvailable());
+    return outletMenuItemService.getPage(finalFilter, pageable);
+  }
 }

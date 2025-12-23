@@ -21,8 +21,21 @@ public record BookingSpecification(BookingFilterRequest filter) implements Speci
     if (!SecurityContext.isAdmin()) {
       UUID currentUserId = SecurityContext.getCurrentUserId();
       if (SecurityContext.hasRole("ROLE_OWNER")) {
-        predicates.add(cb.equal(root.get("outlet").get("ownerId"), currentUserId));
+        // Check viewType to determine which bookings to show
+        String viewType = filter.optionalViewType().orElse("MY_BOOKINGS");
+        
+        if ("MANAGE_BOOKINGS".equals(viewType)) {
+          // Owner management view: show bookings made by OTHER users at owner's outlets
+          predicates.add(
+              cb.and(
+                  cb.equal(root.get("outlet").get("owner").get("id"), currentUserId),
+                  cb.notEqual(root.get("user").get("id"), currentUserId)));
+        } else {
+          // Owner personal view (MY_BOOKINGS): show owner's own bookings at OTHER outlets
+          predicates.add(cb.equal(root.get("user").get("id"), currentUserId));
+        }
       } else {
+        // Regular users: only see their own bookings
         predicates.add(cb.equal(root.get("user").get("id"), currentUserId));
       }
     } else {

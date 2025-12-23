@@ -50,7 +50,7 @@ public abstract class BaseServiceImpl<
 
   // ================= III. SOFT DELETE =================
 
-  private Specification<Entity> notDeletedSpec() {
+  protected Specification<Entity> notDeletedSpec() {
     return (root, query, cb) -> {
       Class<?> type = root.getJavaType();
       boolean supportSoftDelete =

@@ -47,6 +47,8 @@ public class OutletServiceImpl
   private final DistrictRepository districtRepository;
   private final OutletTypeRepository outletTypeRepository;
   private final RoleRepository roleRepository;
+  private final com.foodgo.backend.module.membership.repository.UserMembershipRepository userMembershipRepository;
+  private final com.foodgo.backend.module.membership.service.MembershipService membershipService;
 
   private final String outletEntityName = EntityName.OUTLET.getFriendlyName();
 
@@ -103,6 +105,24 @@ public class OutletServiceImpl
 
     // [FIX BUG] 1.5: Tự động thăng cấp ROLE_OWNER (trừ khi là Admin)
     promoteToOwnerIfNecessary(owner);
+
+    // [NEW] Auto-subscribe owner to owner membership plan (id 1) if they don't have it
+    try {
+      boolean hasOwnerMembership =
+          userMembershipRepository.existsByUserAccount_IdAndIsActiveTrueAndMembershipPlan_Type(ownerId, com.foodgo.backend.common.constant.PlanType.OWNER);
+      if (!hasOwnerMembership) {
+        // plan id 1 is the free OWNER plan (as per business requirement)
+        try {
+          membershipService.subscribe(1);
+        } catch (Exception e) {
+          // Don't fail outlet creation because of membership subscription issues
+          System.err.println("Warning: auto-subscribe failed for owner: " + e.getMessage());
+        }
+      }
+    } catch (Exception e) {
+      // swallow and log — do not block outlet creation
+      System.err.println("Warning: could not check/assign owner membership: " + e.getMessage());
+    }
 
     // 2. Validate FK
     if (!districtRepository.existsById(request.districtId())) {
@@ -163,6 +183,19 @@ public class OutletServiceImpl
         String.format(SuccessMessageContext.UPDATE_SUCCESS, getEntityName(), id));
 
     return outletMapper.toResponse(updatedEntity);
+  }
+
+  // Override getDetail to allow public access to outlet details (no owner permission check)
+  @Override
+  @Transactional(readOnly = true)
+  public OutletResponse getDetail(UUID id) {
+    // Use findByIdOrThrow (no ensurePermission) so non-owner users can view outlet details
+    Outlet entity = findByIdOrThrow(id);
+
+    SuccessMessageContext.setMessage(
+        String.format(SuccessMessageContext.FETCH_DETAIL_SUCCESS, getEntityName(), id));
+
+    return outletMapper.toResponse(entity);
   }
 
   // ==================== III. SPECIFICATION ====================

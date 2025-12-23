@@ -7,6 +7,7 @@ import com.foodgo.backend.common.context.SuccessMessageContext;
 import com.foodgo.backend.common.exception.ResourceNotFoundException;
 import com.foodgo.backend.module.admin.dto.user.AssignRolesRequest;
 import com.foodgo.backend.module.admin.dto.user.ChangeUserStatusRequest;
+import com.foodgo.backend.module.auth.dto.RegisterRequest;
 import com.foodgo.backend.module.user.dto.response.UserAccountResponse;
 import com.foodgo.backend.module.admin.service.AdminUserAccountService;
 import com.foodgo.backend.module.user.dto.criteria.UserAccountSearchSpecification;
@@ -29,7 +30,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class AdminUserAccountServiceImpl
     extends BaseServiceImpl<
-        UserAccount, UUID, Object, Object, UserAccountFilterRequest, UserAccountResponse>
+        UserAccount, UUID, RegisterRequest, Object, UserAccountFilterRequest, UserAccountResponse>
     implements AdminUserAccountService {
 
   private final String entityName = EntityName.USER_ACCOUNT.getFriendlyName();
@@ -51,7 +52,7 @@ public class AdminUserAccountServiceImpl
   }
 
   @Override
-  protected BaseMapper<UserAccount, Object, Object, UserAccountResponse> getMapper() {
+  protected BaseMapper<UserAccount, RegisterRequest, Object, UserAccountResponse> getMapper() {
     return userAccountMapper;
   }
 

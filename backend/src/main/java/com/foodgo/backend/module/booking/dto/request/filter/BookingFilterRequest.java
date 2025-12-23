@@ -10,10 +10,15 @@ public record BookingFilterRequest(
     UUID userId,
     String bookingDateFrom,
     String bookingDateTo,
-    String searchTerm) {
+    String searchTerm,
+    String viewType) { // "MY_BOOKINGS" or "MANAGE_BOOKINGS"
 
   public Optional<String> optionalStatus() {
     return Optional.ofNullable(status).filter(s -> !s.isBlank());
+  }
+
+  public Optional<String> optionalViewType() {
+    return Optional.ofNullable(viewType).filter(s -> !s.isBlank());
   }
 
   public Optional<UUID> optionalOutletId() {
