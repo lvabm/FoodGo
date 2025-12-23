@@ -45,7 +45,7 @@ public class ProfileServiceImpl implements ProfileService {
 
   @Override
   @Transactional
-  public ProfileResponse updateMyProfile(ProfileUpdateRequest request) {
+  public ProfileResponse update(ProfileUpdateRequest request) {
 
     // 1. Validation FK tồn tại
     request

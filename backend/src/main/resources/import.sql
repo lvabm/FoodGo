@@ -368,18 +368,16 @@ INSERT INTO password_reset_token (id, user_id, token, expires_at, is_used) VALUE
 --========================================================
 --17. MEMBERSHIP_PLAN
 --========================================================
-INSERT INTO membership_plan (id, name, description, price, duration_months, dish_limit, features, type, is_deleted) VALUES (1, 'Free Owner', 'Gói miễn phí', 0.00, 0, 10, '["basic-listing"]', 'OWNER', false);
-INSERT INTO membership_plan (id, name, description, price, duration_months, dish_limit, features, type, is_deleted) VALUES (2, 'Basic Owner', 'Gói đăng ký cơ bản dành cho cá nhân.', 9.99, 12, 50, '["basic-listing", "priority-email"]', 'OWNER', false);
-INSERT INTO membership_plan (id, name, description, price, duration_months, dish_limit, features, type, is_deleted) VALUES (3, 'Standard Owner', 'Gói tiêu chuẩn, phù hợp cho các nhóm nhỏ.', 29.99, 12, 100, '["basic-listing", "priority-email", "analytics-dashboard"]', 'OWNER', false);
-INSERT INTO membership_plan (id, name, description, price, duration_months, dish_limit, features, type, is_deleted) VALUES (4, 'Premium Owner', 'Gói cao cấp với đầy đủ tính năng.', 49.99, 12, 300, '["all-standard-features", "dedicated-support", "early-access-features"]', 'OWNER', false);
-INSERT INTO membership_plan (id, name, description, price, duration_months, dish_limit, features, type, is_deleted) VALUES (5, 'Enterprise Owner', 'Gói tùy chỉnh dành cho các tổ chức lớn.', 99.99, 0, 0, '["all-premium-features", "custom-sla", "account-manager"]', 'OWNER', false);
-INSERT INTO membership_plan (id, name, description, price, duration_months, dish_limit, features, type, is_deleted) VALUES (6, 'Silver Member', 'Thành viên Bạc: Mở khóa tính năng Đặt bàn', 59000.00, 1, NULL, '["booking-access"]', 'USER', false);
-INSERT INTO membership_plan (id, name, description, price, duration_months, dish_limit, features, type, is_deleted) VALUES (7, 'Gold Member', 'Thành viên Vàng: Đặt bàn + Ưu đãi đặc quyền', 199000.00, 12, NULL, '["booking-access", "priority-support", "voucher"]', 'USER', false);
+INSERT INTO membership_plan (id, name, description, price, duration_months, dish_limit, features) VALUES (1, 'Free', 'Gói miễn phí', 0.00, 0, 10, '["basic-listing"]');
+INSERT INTO membership_plan (id, name, description, price, duration_months, dish_limit, features) VALUES (2, 'Basic', 'Gói đăng ký cơ bản dành cho cá nhân.', 9.99, 12, 50, '["basic-listing", "priority-email"]');
+INSERT INTO membership_plan (id, name, description, price, duration_months, dish_limit, features) VALUES (3, 'Standard', 'Gói tiêu chuẩn, phù hợp cho các nhóm nhỏ (small teams).', 29.99, 12, 100, '["basic-listing", "priority-email", "analytics-dashboard"]');
+INSERT INTO membership_plan (id, name, description, price, duration_months, dish_limit, features) VALUES (4, 'Premium', 'Gói cao cấp với đầy đủ tính năng và hỗ trợ chuyên biệt (dedicated support).', 49.99, 12, 300, '["all-standard-features", "dedicated-support", "early-access-features"]');
+INSERT INTO membership_plan (id, name, description, price, duration_months, dish_limit, features) VALUES (5, 'Enterprise', 'Gói tùy chỉnh dành cho các tổ chức lớn (large organizations).', 99.99, 0, 0, '["all-premium-features", "custom-sla", "account-manager"]');
 
 --========================================================
 --18. USER_MEMBERSHIP
 --========================================================
-INSERT INTO user_membership (id, user_id, plan_id, start_date, end_date, is_active, is_deleted) VALUES (1, (SELECT id FROM user_account WHERE username = 'user1'), (SELECT id FROM membership_plan WHERE name = 'Silver Member'), CURRENT_DATE, CURRENT_DATE + INTERVAL '30 days', true, false);
+INSERT INTO user_membership (id, user_id, plan_id, start_date, end_date, is_active) VALUES (1, (SELECT id FROM user_account WHERE username = 'user1'), (SELECT id FROM membership_plan WHERE name = 'Free'), CURRENT_DATE, CURRENT_DATE + INTERVAL '30 days', true);
 
 --========================================================
 --19. SHARING_LIST
@@ -472,13 +470,12 @@ INSERT INTO outlet_menu_item_feature (id, outlet_menu_item_id, feature_id, value
 --========================================================
 --29. BOOKING
 --========================================================
-INSERT INTO booking (id, outlet_id, user_id, booking_date, booking_time, number_of_guests, status, deposit_amount, user_notes, owner_notes) VALUES ('30000000-0000-0000-0000-000000000001', (SELECT id FROM outlet WHERE name = 'Quán Phở Alice'), (SELECT id FROM user_account WHERE username = 'user1'), CURRENT_DATE + INTERVAL '3 days', '19:00', 4, 'COMPLETED', 100000.00, 'Ngồi tầng 1, gần cửa sổ', NULL);
-INSERT INTO booking (id, outlet_id, user_id, booking_date, booking_time, number_of_guests, status, deposit_amount, user_notes, owner_notes) VALUES ('30000000-0000-0000-0000-000000000002', (SELECT id FROM outlet WHERE name = 'Quán Phở Alice'), (SELECT id FROM user_account WHERE username = 'user1'), CURRENT_DATE + INTERVAL '6 days', '21:00', 4, 'COMPLETED', 100000.00, 'Ngồi tầng 1, gần cửa sổ', NULL);
+INSERT INTO booking (id, outlet_id, user_id, booking_date, booking_time, number_of_guests, status, deposit_amount, user_notes, owner_notes) VALUES ('30000000-0000-0000-0000-000000000001', (SELECT id FROM outlet WHERE name = 'Quán Phở Alice'), (SELECT id FROM user_account WHERE username = 'user1'), CURRENT_DATE + INTERVAL '3 days', '19:00', 4, 'PENDING', 100000.00, 'Ngồi tầng 1, gần cửa sổ', NULL);
 
 --========================================================
 --30. PAYMENT
 --========================================================
-INSERT INTO payment (id, related_id, amount, payment_method, payment_status, transaction_id, type, is_deleted) VALUES ('40000000-0000-0000-0000-000000000001', '30000000-0000-0000-0000-000000000001', 100000.00, 'BANK_TRANSFER', 'PENDING', 'TXN123456789', 'BOOKING', false);
+INSERT INTO payment (id, booking_id, amount, payment_method, payment_status, transaction_id) VALUES ('40000000-0000-0000-0000-000000000001', (SELECT id FROM booking WHERE id = '30000000-0000-0000-0000-000000000001'), 100000.00, 'MOMO', 'PENDING', 'TXN123456789');
 
 --========================================================
 --31. REVIEW
@@ -498,12 +495,12 @@ INSERT INTO review_reply (id, review_id, owner_id, reply_text) VALUES (1, (SELEC
 --========================================================
 --34. REVIEW_REACTION
 --========================================================
-INSERT INTO review_reaction (id, review_id, user_id, reaction_type) VALUES (1, (SELECT id FROM review WHERE comment = 'Nước dùng đậm đà, thịt mềm'), (SELECT id FROM user_account WHERE username = 'user1'), 'LIKE');
+INSERT INTO review_reaction (id, review_id, user_id, reaction_type) VALUES (1, (SELECT id FROM review WHERE comment = 'Nước dùng đậm đà, thịt mềm'), (SELECT id FROM user_account WHERE username = 'user1'), 'like');
 
 --========================================================
 --35. REVIEW_REPORT
 --========================================================
-INSERT INTO review_report (id, review_id, reporter_id, reason, status) VALUES (1, (SELECT id FROM review WHERE comment = 'Nước dùng đậm đà, thịt mềm'), (SELECT id FROM user_account WHERE username = 'user1'), 'SPAM', 'PENDING');
+INSERT INTO review_report (id, review_id, reporter_id, reason, status) VALUES (1, (SELECT id FROM review WHERE comment = 'Nước dùng đậm đà, thịt mềm'), (SELECT id FROM user_account WHERE username = 'user1'), 'Nội dung không phù hợp', 'pending');
 
 --========================================================
 --36. NOTIFICATION

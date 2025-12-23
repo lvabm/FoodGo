@@ -5,7 +5,6 @@ import com.foodgo.backend.module.outlet.dto.response.OutletFeatureResponse;
 import com.foodgo.backend.module.outlet.service.OutletFeatureService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.annotation.security.PermitAll;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,27 +20,24 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OutletFeatureController {
 
-  private final OutletFeatureService outletFeatureService;
+  private final OutletFeatureService service;
 
-  @PermitAll
   @GetMapping
   @Operation(summary = "Lấy tất cả Đặc điểm Outlet (Không phân trang)")
   public List<OutletFeatureResponse> getAll() {
-    return outletFeatureService.getAll();
+    return service.getAll();
   }
 
-  @PermitAll
   @GetMapping("/{id}")
   @Operation(summary = "Lấy chi tiết Đặc điểm Outlet theo ID")
   public OutletFeatureResponse getDetail(@PathVariable Integer id) {
-    return outletFeatureService.getDetail(id);
+    return service.getDetail(id);
   }
 
-  @PermitAll
   @GetMapping("/search")
   @Operation(summary = "Tìm kiếm và phân trang Đặc điểm Outlet")
   public Page<OutletFeatureResponse> search(
       @ModelAttribute OutletFeatureFilterRequest filter, Pageable pageable) {
-    return outletFeatureService.getPage(filter, pageable);
+    return service.getPage(filter, pageable);
   }
 }

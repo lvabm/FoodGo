@@ -7,7 +7,6 @@ import com.foodgo.backend.module.outlet.dto.response.OutletResponse;
 import com.foodgo.backend.module.outlet.service.OutletService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -15,7 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @Tag(
@@ -26,7 +24,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class OutletController {
 
-  private final OutletService outletService;
+  private final OutletService service;
 
   // --- 🔑 API Ghi Dữ Liệu (Yêu cầu Owner ID) ---
 
@@ -36,14 +34,14 @@ public class OutletController {
       summary = "Tạo mới Outlet",
       description = "Chỉ Owner mới có thể tạo Outlet và Owner ID được gán tự động.")
   public OutletResponse createOutlet(@Valid @RequestBody OutletCreateRequest request) {
-    return outletService.create(request);
+    return service.create(request);
   }
 
   @PatchMapping("/{id}")
   @Operation(summary = "Cập nhật Outlet", description = "Chỉ Owner sở hữu mới có thể cập nhật.")
   public OutletResponse updateOutlet(
       @PathVariable UUID id, @Valid @RequestBody OutletUpdateRequest request) {
-    return outletService.update(id, request);
+    return service.update(id, request);
   }
 
   @DeleteMapping("/{id}")
@@ -52,29 +50,23 @@ public class OutletController {
       summary = "Xóa mềm (Soft Delete) Outlet",
       description = "Chỉ Owner sở hữu mới có thể xóa.")
   public void softDeleteOutlet(@PathVariable UUID id) {
-    outletService.softDelete(id);
+    service.softDelete(id);
   }
 
-  @GetMapping("/my-outlets")
-  @Operation(summary = "Lấy danh sách Outlet của Owner")
-  public List<OutletResponse> getMyOutlets() {
-    return outletService.getOwnerOutlets();
-  }
+  // --- API Đọc Dữ Liệu (API Ưu tiên số 1) ---
 
-  @PermitAll
   @GetMapping("/search")
   @Operation(
       summary = "Tìm kiếm và Phân trang Outlet (Hiệu suất cao)",
       description = "Hỗ trợ lọc theo tên, quận, loại, Price Range, và Đặc điểm (features).")
   public Page<OutletResponse> searchOutlets(
       @ModelAttribute OutletFilterRequest filter, Pageable pageable) {
-    return outletService.getPage(filter, pageable);
+    return service.getPage(filter, pageable);
   }
 
-  @PermitAll
   @GetMapping("/{id}")
   @Operation(summary = "Lấy chi tiết Outlet theo ID")
   public OutletResponse getDetail(@PathVariable UUID id) {
-    return outletService.getDetail(id);
+    return service.getDetail(id);
   }
 }

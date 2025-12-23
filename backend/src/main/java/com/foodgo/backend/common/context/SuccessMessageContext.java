@@ -20,7 +20,6 @@ public final class SuccessMessageContext {
   // Thông báo đặc thù
   public static final String REGISTRATION_SUCCESS = "Đăng ký tài khoản thành công. With: %s";
   public static final String LOGIN_SUCCESSFUL = "Đăng nhập tài khoản thành công. With: %s";
-  public static final String LOGOUT_SUCCESS = "Đăng xuất tài khoản thành công";
 
   // ThreadLocal lưu trữ thông báo thành công
   private static final ThreadLocal<String> messageHolder = new ThreadLocal<>();

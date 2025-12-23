@@ -11,6 +11,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Tag(
     name = "Admin | User Profile",
     description = "API Đọc dữ liệu Profile trên toàn hệ thống (Chỉ Admin).")
@@ -20,16 +22,16 @@ import org.springframework.web.bind.annotation.*;
 @PreAuthorize("hasRole('ADMIN')")
 public class AdminProfileController {
 
-  private final AdminProfileService adminProfileService;
+  private final AdminProfileService service;
 
   // 1. GET ALL / SEARCH (Admin có thể tìm kiếm và phân trang tất cả)
-  @GetMapping("/search")
+  @GetMapping
   @Operation(
       summary = "Tìm kiếm và Phân trang tất cả Profile (Admin)",
       description = "Sử dụng Specification để lọc Profile theo tên, ID User, Quốc gia, v.v.")
   public Page<ProfileResponse> searchProfiles(
       @ModelAttribute ProfileFilterRequest filter, Pageable pageable) {
-    return adminProfileService.getPage(filter, pageable);
+    return service.getPage(filter, pageable);
   }
 
   // 2. GET DETAIL (Admin có thể xem chi tiết bất kỳ Profile nào)
@@ -38,6 +40,6 @@ public class AdminProfileController {
       summary = "Lấy chi tiết Profile theo ID (Admin)",
       description = "Lấy thông tin của bất kỳ Profile nào bằng ID Profile.")
   public ProfileResponse getDetailProfile(@PathVariable Long id) {
-    return adminProfileService.getDetail(id);
+    return service.getDetail(id);
   }
 }

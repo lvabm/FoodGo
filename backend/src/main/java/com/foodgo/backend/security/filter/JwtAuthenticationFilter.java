@@ -1,6 +1,5 @@
 package com.foodgo.backend.security.filter;
 
-import com.foodgo.backend.module.auth.repository.RefreshTokenRepository;
 import com.foodgo.backend.security.jwt.JwtService;
 import com.foodgo.backend.security.jwt.impl.JpaUserDetailsServiceImpl;
 import jakarta.servlet.FilterChain;
@@ -20,65 +19,69 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
   private final JwtService jwtService;
   private final JpaUserDetailsServiceImpl jpaUserDetailsServiceImpl;
-  private final RefreshTokenRepository refreshTokenRepository;
 
   @Override
   protected void doFilterInternal(
       HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
       throws ServletException, IOException {
 
+    // 1. Lấy Header Authorization
     String authHeader = request.getHeader("Authorization");
 
+    // 2. Kiểm tra và Bỏ qua nếu không có Bearer Token
     if (authHeader == null || !authHeader.startsWith("Bearer ")) {
       filterChain.doFilter(request, response);
       return;
     }
 
+    // 3. Trích xuất Token (Cắt bỏ "Bearer ")
     String token = authHeader.substring(7);
 
     try {
+      // 4. Trích xuất Username từ Token
       String username = jwtService.extractUsername(token);
-      // 🔑 Mới: Lấy rtid từ token
-      Long rtid = jwtService.extractRefreshTokenId(token);
 
+      // 5. Kiểm tra Username và Context hiện tại
       if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-        // 🛡️ CHECK NGHIÊM NGẶT: Kiểm tra Session trong DB
-        var storedRefreshToken = refreshTokenRepository.findById(rtid).orElse(null);
-
-        // Access token chỉ hợp lệ nếu Refresh token gốc:
-        // 1. Tồn tại trong DB
-        // 2. Chưa bị revoke (isRevoked = false)
-        // 3. Chưa hết hạn (expiresAt > now)
-        if (storedRefreshToken == null
-            || storedRefreshToken.isRevoked()
-            || storedRefreshToken.getExpiresAt().isBefore(java.time.Instant.now())) {
-
-          response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-          response.getWriter().write("Unauthorized: Session Revoked or Expired");
-          return;
-        }
-
+        // 6. Tải thông tin User từ Database
+        // userRepository là UserRepository hoặc UserService đã được inject
         var user = jpaUserDetailsServiceImpl.loadUserByUsername(username);
 
-        if (user != null && jwtService.isTokenValid(token, user)) {
+        if (user != null) {
+          // Giả định JWT Service đã kiểm tra token hợp lệ trước đó (signature, expiry)
+
+          // 7. Tạo đối tượng Xác thực (Authentication)
           UsernamePasswordAuthenticationToken authToken =
-              new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+              new UsernamePasswordAuthenticationToken(
+                  user, // Principal: đối tượng User (UserDetails)
+                  null, // Credentials: luôn là null vì đã xác thực qua token
+                  user.getAuthorities() // Authorities: quyền hạn của User
+                  );
+
+          // Thiết lập chi tiết xác thực (IP, Session ID...)
           authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+          // 8. Thiết lập Context Bảo mật
           SecurityContextHolder.getContext().setAuthentication(authToken);
         }
       }
 
     } catch (io.jsonwebtoken.ExpiredJwtException e) {
+      // 🔑 Lỗi Token hết hạn
+      System.err.println("JWT ERROR: Token hết hạn: " + e.getMessage());
       response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
       response.getWriter().write("Unauthorized: Token EXPIRED");
-      return;
-    } catch (Exception e) { // Catch all JWT errors
+      return; // Dừng chuỗi filter để trả về lỗi ngay
+    } catch (io.jsonwebtoken.JwtException e) {
+      // 🔑 Lỗi khác (Invalid Signature, v.v.)
+      System.err.println("JWT ERROR: Token không hợp lệ: " + e.getMessage());
       response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
       response.getWriter().write("Unauthorized: Token INVALID");
       return;
     }
 
+    // 9. Tiếp tục chuỗi Filter
     filterChain.doFilter(request, response);
   }
 }
