@@ -307,32 +307,102 @@ const rejectReason = ref("");
 const rejectLoading = ref(false);
 const selectedBooking = ref(null);
 
-// Tabs configuration
+// Tabs configuration and counts
+const counts = ref({
+  ALL: 0,
+  PENDING: 0,
+  CONFIRMED: 0,
+  COMPLETED: 0,
+  CANCELLED: 0,
+});
+const countsLimited = ref(false); // true when we couldn't fetch full counts due to size
+const MAX_COUNT_FETCH = 1000; // safety limit to avoid huge fetches
+
+async function computeCounts(response) {
+  countsLimited.value = false;
+
+  // Try to resolve totalElements from multiple possible response shapes
+  const totalFromResp =
+    response?.totalElements ??
+    response?.data?.totalElements ??
+    bookings.value.length;
+  counts.value.ALL = totalFromResp || bookings.value.length || 0;
+
+  // If total is reasonably small, fetch all items to compute accurate counts
+  if (counts.value.ALL > 0 && counts.value.ALL <= MAX_COUNT_FETCH) {
+    try {
+      const resAll = await bookingApi.getMyBookings({
+        page: 0,
+        size: counts.value.ALL,
+      });
+      const items = resAll.data || resAll || [];
+      const map = {PENDING: 0, CONFIRMED: 0, COMPLETED: 0, CANCELLED: 0};
+      items.forEach((b) => {
+        if (b && b.status) {
+          map[b.status] = (map[b.status] || 0) + 1;
+        }
+      });
+      counts.value = {...counts.value, ...map};
+    } catch (err) {
+      console.error("❌ Error fetching all bookings for counts:", err);
+      // Fallback to page-level counts
+      counts.value.PENDING = bookings.value.filter(
+        (b) => b.status === "PENDING"
+      ).length;
+      counts.value.CONFIRMED = bookings.value.filter(
+        (b) => b.status === "CONFIRMED"
+      ).length;
+      counts.value.COMPLETED = bookings.value.filter(
+        (b) => b.status === "COMPLETED"
+      ).length;
+      counts.value.CANCELLED = bookings.value.filter(
+        (b) => b.status === "CANCELLED"
+      ).length;
+      countsLimited.value = true;
+    }
+  } else {
+    // Total too large or zero - use page counts as fallback
+    counts.value.PENDING = bookings.value.filter(
+      (b) => b.status === "PENDING"
+    ).length;
+    counts.value.CONFIRMED = bookings.value.filter(
+      (b) => b.status === "CONFIRMED"
+    ).length;
+    counts.value.COMPLETED = bookings.value.filter(
+      (b) => b.status === "COMPLETED"
+    ).length;
+    counts.value.CANCELLED = bookings.value.filter(
+      (b) => b.status === "CANCELLED"
+    ).length;
+    if (counts.value.ALL > MAX_COUNT_FETCH) countsLimited.value = true;
+  }
+}
+
 const tabs = computed(() => [
   {
     label: "Tất cả",
     value: "ALL",
-    count: bookings.value.length,
+    count: counts.value.ALL ?? bookings.value.length,
   },
   {
     label: "Chờ xác nhận",
     value: "PENDING",
-    count: bookings.value.filter((b) => b.status === "PENDING").length,
+    count: counts.value.PENDING ?? 0,
   },
   {
     label: "Đã xác nhận",
     value: "CONFIRMED",
-    count: bookings.value.filter((b) => b.status === "CONFIRMED").length,
+    count: counts.value.CONFIRMED ?? 0,
   },
   {
     label: "Hoàn thành",
     value: "COMPLETED",
-    count: bookings.value.filter((b) => b.status === "COMPLETED").length,
+    count: counts.value.COMPLETED ?? 0,
   },
   {
     label: "Đã hủy",
     value: "CANCELLED",
-    count: bookings.value.filter((b) => b.status === "CANCELLED").length,
+    count: counts.value.CANCELLED ?? 0,
   },
 ]);
 
@@ -380,10 +450,17 @@ const loadBookings = async () => {
 
     // response.data is already the array of bookings
     bookings.value = response.data || [];
-    totalElements.value = response.totalElements || 0;
-    totalPages.value = response.totalPages || 0;
+    totalElements.value =
+      (response.totalElements ??
+        response.data?.totalElements ??
+        bookings.value.length) ||
+      0;
+    totalPages.value = (response.totalPages ?? response.data?.totalPages) || 0;
 
     console.log("📋 Loaded bookings:", bookings.value.length, "items");
+
+    // Recompute stable counts (may fetch all records if safe)
+    await computeCounts(response);
   } catch (err) {
     console.error("❌ Error loading bookings:", err);
     error.value =
