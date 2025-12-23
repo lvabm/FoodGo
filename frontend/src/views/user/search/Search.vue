@@ -866,9 +866,9 @@ const resetSearch = () => {
 // Helpers for rating and price display
 const getRating = (o) => {
   const r = o?.averageRating ?? o?.rating;
-  if (r === undefined || r === null) return "N/A";
+  if (r === undefined || r === null) return "0.0";
   const num = Number(r);
-  if (Number.isNaN(num)) return "N/A";
+  if (Number.isNaN(num)) return "0.0";
   return num.toFixed(1);
 };
 
@@ -880,12 +880,12 @@ const getDisplayPrice = (o) => {
     const avg = prices.reduce((s, v) => s + v, 0) / prices.length;
     return formatPrice(avg);
   }
-  return "N/A";
+  return "Liên hệ";
 };
 
 // Format price
 const formatPrice = (price) => {
-  if (!price) return "N/A";
+  if (!price || price === 0) return "Liên hệ";
   return new Intl.NumberFormat("vi-VN", {
     style: "currency",
     currency: "VND",

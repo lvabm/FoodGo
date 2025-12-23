@@ -134,9 +134,9 @@
                 </div>
 
                 <!-- Category -->
-                <div class="flex items-center gap-1">
+                <div v-if="outlet.outletCategory?.name" class="flex items-center gap-1">
                   <span class="material-symbols-outlined">restaurant</span>
-                  <span>{{ outlet.outletCategory?.name || "N/A" }}</span>
+                  <span>{{ outlet.outletCategory.name }}</span>
                 </div>
 
                 <!-- Price Range -->
@@ -943,7 +943,7 @@ const getDayName = (dayOfWeek) => {
 };
 
 const formatPrice = (price) => {
-  if (!price) return "N/A";
+  if (!price || price === 0) return "Liên hệ";
   return new Intl.NumberFormat("vi-VN", {
     style: "currency",
     currency: "VND",
@@ -992,7 +992,7 @@ const aspectAverages = computed(() => {
     count++;
   });
 
-  const toStr = (n) => (count ? (n / count).toFixed(1) : "N/A");
+  const toStr = (n) => (count ? (n / count).toFixed(1) : "0.0");
 
   return {
     Food: toStr(sum.food),
@@ -1011,10 +1011,10 @@ const isBookingDisabled = computed(() => {
 // Computed helpers for rating and price
 const ratingDisplay = computed(() => {
   const r = outlet.value?.averageRating;
-  if (r === undefined || r === null) return "N/A";
+  if (r === undefined || r === null) return "0.0";
   // Ensure numeric and show one decimal
   const num = Number(r);
-  if (Number.isNaN(num)) return "N/A";
+  if (Number.isNaN(num)) return "0.0";
   return num.toFixed(1);
 });
 
@@ -1034,7 +1034,7 @@ const displayPrice = computed(() => {
     return formatPrice(avg);
   }
 
-  return "N/A";
+  return "Liên hệ";
 });
 
 // Handle booking click with membership check
