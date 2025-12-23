@@ -101,6 +101,15 @@ public class AuthServiceImpl implements AuthService {
             .orElseThrow(
                 () -> new DataConflictException("Email chưa có tài khoản hoặc không hợp lệ"));
 
+    // 🔒 KIỂM TRA TRẠNG THÁI TÀI KHOẢN
+    if (Boolean.TRUE.equals(user.getIsDeleted())) {
+      throw new UnauthorizedException("Tài khoản đã bị xóa. Vui lòng liên hệ quản trị viên.");
+    }
+
+    if (!user.isActive()) {
+      throw new UnauthorizedException("Tài khoản đã bị khóa. Vui lòng liên hệ quản trị viên.");
+    }
+
     // 1. XÁC THỰC
     var authentication =
         authenticationManager.authenticate(

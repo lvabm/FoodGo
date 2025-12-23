@@ -155,7 +155,7 @@
                   <div
                     class="text-sm text-subtext-light dark:text-subtext-dark"
                   >
-                    {{ user.profile?.phoneNumber || "N/A" }}
+                    {{ user.phoneNumber || user.profile?.phoneNumber || "N/A" }}
                   </div>
                 </div>
               </div>
@@ -166,15 +166,15 @@
             <td class="px-6 py-4 whitespace-nowrap">
               <span
                 class="px-2 py-1 text-xs font-medium rounded-full"
-                :class="getRoleClass(user.roleName || user.role)"
+                :class="getRoleClass(user.roleType || user.roleName || user.role)"
               >
-                {{ formatRole(user.roleName || user.role) }}
+                {{ formatRole(user.roleType || user.roleName || user.role) }}
               </span>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
               <span
                 :class="
-                  user.isActive !== false
+                  isUserActive(user)
                     ? 'text-positive'
                     : 'text-red-500'
                 "
@@ -183,20 +183,20 @@
                 <span
                   class="w-2 h-2 rounded-full"
                   :class="
-                    user.isActive !== false
+                    isUserActive(user)
                       ? 'bg-positive'
                       : 'bg-red-500'
                   "
                 ></span>
                 {{
-                  user.isActive !== false ? "Hoạt động" : "Bị khóa"
+                  isUserActive(user) ? "Hoạt động" : "Bị khóa"
                 }}
               </span>
             </td>
             <td
               class="px-6 py-4 whitespace-nowrap text-sm text-subtext-light dark:text-subtext-dark"
             >
-              {{ formatDate(user.createdAt || user.createdDate) }}
+              {{ user.createdAt || user.createdDate ? formatDate(user.createdAt || user.createdDate) : "Chưa có" }}
             </td>
             <td
               class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"
@@ -212,12 +212,12 @@
                   v-if="!isCurrentUser(user)"
                   @click="toggleUserStatus(user)"
                   :class="
-                    user.isActive !== false
+                    isUserActive(user)
                       ? 'text-yellow-600 hover:text-yellow-500'
                       : 'text-positive hover:text-green-600'
                   "
                 >
-                  {{ user.isActive !== false ? "Khóa" : "Mở khóa" }}
+                  {{ isUserActive(user) ? "Khóa" : "Mở khóa" }}
                 </button>
                 <span
                   v-else
@@ -450,6 +450,10 @@ const visiblePages = computed(() => {
 });
 
 const formatRole = (role) => {
+  if (!role) return "N/A";
+  
+  // Handle enum RoleType (from backend)
+  const roleStr = typeof role === 'string' ? role : String(role);
   const roleMap = {
     ROLE_USER: "User",
     ROLE_OWNER: "Owner",
@@ -458,19 +462,43 @@ const formatRole = (role) => {
     OWNER: "Owner",
     ADMIN: "Admin",
   };
-  return roleMap[role] || role || "N/A";
+  
+  // Try exact match first
+  if (roleMap[roleStr]) {
+    return roleMap[roleStr];
+  }
+  
+  // Try case-insensitive match
+  const upperRole = roleStr.toUpperCase();
+  if (roleMap[upperRole]) {
+    return roleMap[upperRole];
+  }
+  
+  // If it's an enum value, try to extract the role name
+  if (roleStr.includes('ROLE_')) {
+    const roleName = roleStr.replace('ROLE_', '');
+    return roleMap[roleName] || roleName;
+  }
+  
+  return roleStr || "N/A";
 };
 
 const getRoleClass = (role) => {
+  if (!role) return "bg-gray-100 text-gray-800";
+  
+  const roleStr = typeof role === 'string' ? role : String(role);
+  const upperRole = roleStr.toUpperCase();
+  
   const classMap = {
-    ROLE_USER: "bg-blue-100 text-blue-800",
-    ROLE_OWNER: "bg-purple-100 text-purple-800",
-    ROLE_ADMIN: "bg-red-100 text-red-800",
-    USER: "bg-blue-100 text-blue-800",
-    OWNER: "bg-purple-100 text-purple-800",
-    ADMIN: "bg-red-100 text-red-800",
+    ROLE_USER: "bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400",
+    ROLE_OWNER: "bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-400",
+    ROLE_ADMIN: "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400",
+    USER: "bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400",
+    OWNER: "bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-400",
+    ADMIN: "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400",
   };
-  return classMap[role] || "bg-gray-100 text-gray-800";
+  
+  return classMap[upperRole] || classMap[roleStr] || "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300";
 };
 
 const formatDate = (date) => {
@@ -480,6 +508,36 @@ const formatDate = (date) => {
   } catch {
     return date;
   }
+};
+
+// Helper function to check if user is active (handle various formats)
+const isUserActive = (user) => {
+  if (!user) {
+    return false;
+  }
+  
+  // Check multiple possible field names (camelCase, snake_case, etc.)
+  const isActive = user.isActive ?? user.active ?? user.is_active;
+  
+  // Handle boolean true/false (most common case from backend)
+  if (typeof isActive === 'boolean') {
+    return isActive === true;
+  }
+  
+  // Handle string "true"/"false"
+  if (typeof isActive === 'string') {
+    const lower = isActive.toLowerCase().trim();
+    return lower === 'true' || lower === '1' || lower === 'yes';
+  }
+  
+  // Handle number 1/0
+  if (typeof isActive === 'number') {
+    return isActive === 1 || isActive > 0;
+  }
+  
+  // If undefined/null, default to false (safer - user must be explicitly active)
+  // This prevents accidentally showing inactive users as active
+  return false;
 };
 
 const isCurrentUser = (user) => {
@@ -550,6 +608,18 @@ const fetchUsers = async () => {
     users.value = Array.isArray(allUsers) ? allUsers : [];
     console.log("✅ [UserManagement] Final users.value:", users.value);
     console.log("✅ [UserManagement] Final users.value.length:", users.value.length);
+    if (users.value.length > 0) {
+      const firstUser = users.value[0];
+      console.log("🔍 [UserManagement] First user object:", JSON.stringify(firstUser, null, 2));
+      console.log("🔍 [UserManagement] First user isActive:", firstUser.isActive, "Type:", typeof firstUser.isActive);
+      console.log("🔍 [UserManagement] First user keys:", Object.keys(firstUser));
+      console.log("🔍 [UserManagement] isUserActive result:", isUserActive(firstUser));
+      
+      // Check all users' isActive status - log first 5 only to avoid spam
+      users.value.slice(0, 5).forEach((user, index) => {
+        console.log(`🔍 [UserManagement] User ${index} (${user.email || user.username}): isActive=${user.isActive} (${typeof user.isActive}), isUserActive=${isUserActive(user)}`);
+      });
+    }
     
     // Update pagination
     if (pageData && typeof pageData === 'object' && !Array.isArray(pageData)) {
@@ -612,16 +682,17 @@ const toggleUserStatus = async (user) => {
     return;
   }
 
+  const isActive = isUserActive(user);
   const confirmed = await confirm(
-    `Bạn có chắc muốn ${user.isActive !== false ? "khóa" : "mở khóa"} người dùng này?`
+    `Bạn có chắc muốn ${isActive ? "khóa" : "mở khóa"} người dùng này?`
   );
   if (!confirmed) return;
 
   try {
     await adminApi.changeUserStatus(user.id, {
-      isActive: user.isActive === false,
+      isActive: !isActive,
     });
-    success(`${user.isActive !== false ? "Khóa" : "Mở khóa"} người dùng thành công`);
+    success(`${isActive ? "Khóa" : "Mở khóa"} người dùng thành công`);
     await fetchUsers();
   } catch (err) {
     showError(err.response?.data?.message || "Có lỗi xảy ra");
