@@ -147,9 +147,14 @@
 
 <script setup>
 import {ref, onMounted} from "vue";
-import {locationApi} from "@/api";
+import {adminApi} from "@/api";
+import {useToast} from "@/composables/useToast";
+import {useConfirm} from "@/composables/useConfirm";
 import LoadingSpinner from "@/components/common/LoadingSpinner.vue";
 import ErrorMessage from "@/components/common/ErrorMessage.vue";
+
+const {success, error: showError} = useToast();
+const {confirm} = useConfirm();
 
 const isLoading = ref(false);
 const error = ref(null);
@@ -165,11 +170,21 @@ const fetchCountries = async () => {
   isLoading.value = true;
   error.value = null;
   try {
-    const response = await locationApi.getCountries();
-    countries.value = response.data || response || [];
+    const response = await adminApi.getCountries();
+    // Handle different response structures
+    let allCountries = [];
+    if (Array.isArray(response.data)) {
+      allCountries = response.data;
+    } else if (Array.isArray(response)) {
+      allCountries = response;
+    } else if (response?.data && Array.isArray(response.data)) {
+      allCountries = response.data;
+    }
+    countries.value = allCountries;
   } catch (err) {
     console.error("Error fetching countries:", err);
     error.value = err.response?.data?.message || "Không thể tải danh sách quốc gia";
+    showError(error.value);
   } finally {
     isLoading.value = false;
   }
@@ -181,32 +196,41 @@ const editCountry = (country) => {
     name: country.name || "",
     code: country.code || "",
   };
+  showCreateModal.value = true;
 };
 
 const deleteCountry = async (country) => {
-  if (!confirm(`Bạn có chắc muốn xóa quốc gia "${country.name}"?`)) {
-    return;
-  }
+  const confirmed = await confirm(
+    "Xác nhận xóa",
+    `Bạn có chắc muốn xóa quốc gia "${country.name}"?`
+  );
+  if (!confirmed) return;
 
   try {
-    await locationApi.deleteCountry(country.id);
+    await adminApi.deleteCountry(country.id);
+    success("Xóa quốc gia thành công");
     await fetchCountries();
   } catch (err) {
-    alert(err.response?.data?.message || "Có lỗi xảy ra");
+    const errorMsg = err.response?.data?.message || "Có lỗi xảy ra khi xóa quốc gia";
+    showError(errorMsg);
   }
 };
 
 const saveCountry = async () => {
   try {
     if (editingCountry.value) {
-      await locationApi.updateCountry(editingCountry.value.id, form.value);
+      await adminApi.updateCountry(editingCountry.value.id, form.value);
+      success("Cập nhật quốc gia thành công");
     } else {
-      await locationApi.createCountry(form.value);
+      await adminApi.createCountry(form.value);
+      success("Tạo quốc gia thành công");
     }
     closeModal();
     await fetchCountries();
   } catch (err) {
-    alert(err.response?.data?.message || "Có lỗi xảy ra");
+    const errorMsg =
+      err.response?.data?.message || err.message || "Có lỗi xảy ra khi lưu quốc gia";
+    showError(errorMsg);
   }
 };
 

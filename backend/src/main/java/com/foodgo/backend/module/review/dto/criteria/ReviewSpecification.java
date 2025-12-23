@@ -14,6 +14,14 @@ public record ReviewSpecification(ReviewFilterRequest filter) implements Specifi
   public Predicate toPredicate(Root<Review> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
     List<Predicate> predicates = new ArrayList<>();
 
+    // Fetch join để tránh LazyInitializationException khi map ReviewResponse
+    if (Long.class != query.getResultType()) {
+      root.fetch("outlet", JoinType.LEFT);
+      root.fetch("user", JoinType.LEFT).fetch("profile", JoinType.LEFT);
+      root.fetch("booking", JoinType.LEFT);
+      query.distinct(true);
+    }
+
     filter
         .optionalOutletId()
         .ifPresent(id -> predicates.add(cb.equal(root.get("outlet").get("id"), id)));

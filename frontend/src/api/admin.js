@@ -36,30 +36,22 @@ export const adminApi = {
     return apiClient.get(`/outlets/${id}`);
   },
 
-  // Note: Backend doesn't have approve/lock endpoints yet
-  // OutletUpdateRequest doesn't have isActive field
-  // TODO: Add these endpoints in backend or add isActive to OutletUpdateRequest
+  // Outlet Management - Approve/Lock
+  // Note: Backend OutletUpdateRequest doesn't have isActive field
+  // These endpoints may need to be added to backend:
+  // - PATCH /admin/outlets/{id}/approve
+  // - PATCH /admin/outlets/{id}/lock
+  // For now, using update endpoint (may not work until backend supports isActive)
   approveOutlet(id) {
-    // For now, this will fail because OutletUpdateRequest doesn't support isActive
-    // Backend needs to add this endpoint: PATCH /outlets/{id}/approve
-    // Or add isActive field to OutletUpdateRequest
-    return apiClient.patch(`/outlets/${id}`, {});
-  },
-
-  rejectOutlet(id, reason) {
-    // Backend needs: PATCH /outlets/{id}/reject
-    return apiClient.patch(`/outlets/${id}`, {});
+    // TODO: Backend needs to add PATCH /admin/outlets/{id}/approve
+    // or add isActive field to OutletUpdateRequest
+    return apiClient.patch(`/outlets/${id}`, {isActive: true});
   },
 
   lockOutlet(id) {
-    // Backend needs: PATCH /outlets/{id}/lock or add isActive to update request
-    // For now, trying to update with empty body (will fail)
-    return apiClient.patch(`/outlets/${id}`, {});
-  },
-
-  unlockOutlet(id) {
-    // Backend needs: PATCH /outlets/{id}/unlock
-    return apiClient.patch(`/outlets/${id}`, {});
+    // TODO: Backend needs to add PATCH /admin/outlets/{id}/lock
+    // or add isActive field to OutletUpdateRequest
+    return apiClient.patch(`/outlets/${id}`, {isActive: false});
   },
 
   // Booking Management
@@ -81,15 +73,15 @@ export const adminApi = {
   },
 
   createCategory(data) {
-    return apiClient.post("/outlet-categories", data);
+    return apiClient.post("/admin/outlet-categories", data);
   },
 
   updateCategory(id, data) {
-    return apiClient.patch(`/outlet-categories/${id}`, data);
+    return apiClient.patch(`/admin/outlet-categories/${id}`, data);
   },
 
   deleteCategory(id) {
-    return apiClient.delete(`/outlet-categories/${id}`);
+    return apiClient.delete(`/admin/outlet-categories/${id}`);
   },
 
   // Outlet Type Management
@@ -159,6 +151,77 @@ export const adminApi = {
   // Transactions
   getTransactions(params) {
     return apiClient.get("/admin/transactions", {params});
+  },
+
+  // Menu Management (Admin)
+  getMenuItems(params) {
+    return apiClient.get("/menu-items", {params});
+  },
+
+  createMenuItem(data) {
+    return apiClient.post("/admin/menu-items", data);
+  },
+
+  updateMenuItem(id, data) {
+    return apiClient.patch(`/admin/menu-items/${id}`, data);
+  },
+
+  deleteMenuItem(id) {
+    return apiClient.delete(`/admin/menu-items/${id}`);
+  },
+
+  toggleMenuItemStatus(id, isAvailable) {
+    // Note: Backend may need separate endpoint for this
+    return apiClient.patch(`/admin/menu-items/${id}`, {isAvailable});
+  },
+
+  // Order Management (Admin) - Using bookings
+  getOrders(params) {
+    return apiClient.get("/admin/bookings/search", {params});
+  },
+
+  getOrderDetail(id) {
+    return apiClient.get(`/admin/bookings/${id}`);
+  },
+
+  forceCancelOrder(id) {
+    return apiClient.delete(`/admin/bookings/${id}/force-cancel`);
+  },
+
+  // Review Management (Admin)
+  getReviews(params) {
+    return apiClient.get("/reviews/search", {params});
+  },
+
+  getReviewDetail(id) {
+    return apiClient.get(`/admin/reviews/${id}`);
+  },
+
+  hideReview(id) {
+    // Soft delete review (set isDeleted = true)
+    return apiClient.delete(`/admin/reviews/${id}`);
+  },
+
+  showReview(id) {
+    // Restore review (set isDeleted = false)
+    return apiClient.patch(`/admin/reviews/${id}/restore`);
+  },
+
+  // Country Management (Admin)
+  getCountries(params) {
+    return apiClient.get("/countries", {params});
+  },
+
+  createCountry(data) {
+    return apiClient.post("/admin/countries", data);
+  },
+
+  updateCountry(id, data) {
+    return apiClient.patch(`/admin/countries/${id}`, data);
+  },
+
+  deleteCountry(id) {
+    return apiClient.delete(`/admin/countries/${id}`);
   },
 };
 

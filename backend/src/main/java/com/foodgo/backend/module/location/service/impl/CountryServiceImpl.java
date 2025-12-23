@@ -40,7 +40,32 @@ public class CountryServiceImpl
 
   @Override
   protected BaseMapper<Country, Object, Object, CountryResponse> getMapper() {
-    return mapper;
+    // Wrapper để adapt CountryMapper (với CreateRequest/UpdateRequest)
+    // thành BaseMapper với Object, Object cho ReadableService
+    return new BaseMapper<Country, Object, Object, CountryResponse>() {
+      @Override
+      public CountryResponse toResponse(Country entity) {
+        return mapper.toResponse(entity);
+      }
+
+      @Override
+      public java.util.List<CountryResponse> toResponseList(
+          java.util.List<Country> entities) {
+        return mapper.toResponseList(entities);
+      }
+
+      @Override
+      public Country toEntity(Object createRequest) {
+        throw new UnsupportedOperationException(
+            "CountryServiceImpl chỉ hỗ trợ Read operations");
+      }
+
+      @Override
+      public void updateEntity(Object updateRequest, Country entity) {
+        throw new UnsupportedOperationException(
+            "CountryServiceImpl chỉ hỗ trợ Read operations");
+      }
+    };
   }
 
   @Override

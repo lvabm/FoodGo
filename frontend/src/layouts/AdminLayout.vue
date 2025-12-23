@@ -62,12 +62,39 @@
           </router-link>
 
           <router-link
+            to="/admin/menus"
+            class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-primary/10"
+            active-class="bg-primary/20 text-primary dark:text-white dark:bg-primary/30"
+          >
+            <span class="material-symbols-outlined text-xl">restaurant_menu</span>
+            <p class="text-sm font-medium">Quản lý menu</p>
+          </router-link>
+
+          <router-link
             to="/admin/categories"
             class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-primary/10"
             active-class="bg-primary/20 text-primary dark:text-white dark:bg-primary/30"
           >
             <span class="material-symbols-outlined text-xl">category</span>
             <p class="text-sm font-medium">Quản lý danh mục</p>
+          </router-link>
+
+          <router-link
+            to="/admin/orders"
+            class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-primary/10"
+            active-class="bg-primary/20 text-primary dark:text-white dark:bg-primary/30"
+          >
+            <span class="material-symbols-outlined text-xl">receipt_long</span>
+            <p class="text-sm font-medium">Quản lý đơn hàng</p>
+          </router-link>
+
+          <router-link
+            to="/admin/reviews"
+            class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-primary/10"
+            active-class="bg-primary/20 text-primary dark:text-white dark:bg-primary/30"
+          >
+            <span class="material-symbols-outlined text-xl">star</span>
+            <p class="text-sm font-medium">Đánh giá & Phản hồi</p>
           </router-link>
 
           <router-link
@@ -133,9 +160,24 @@
             <span class="material-symbols-outlined">notifications</span>
           </button>
           <div class="flex items-center gap-3">
-            <div
-              class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 bg-gray-300"
-            ></div>
+            <div class="flex items-center gap-2">
+              <div class="h-10 w-10 flex-shrink-0">
+                <ImageDisplay
+                  :image-url="currentUser?.profile?.avatarUrl || currentUser?.avatarUrl"
+                  :alt="currentUser?.profile?.fullName || currentUser?.email || 'Admin'"
+                  placeholder-icon="person"
+                  container-class="h-10 w-10 rounded-full"
+                  image-class="h-10 w-10 rounded-full"
+                  icon-size="24px"
+                />
+              </div>
+              <div class="hidden md:block">
+                <p class="text-sm font-medium">
+                  {{ currentUser?.profile?.fullName || currentUser?.email || "Admin" }}
+                </p>
+                <p class="text-xs text-subtext-light dark:text-subtext-dark">Quản trị viên</p>
+              </div>
+            </div>
           </div>
         </div>
       </header>
@@ -149,11 +191,15 @@
 </template>
 
 <script setup>
+import {computed} from "vue";
 import {useRouter} from "vue-router";
 import {useAuthStore} from "@/stores/auth";
+import ImageDisplay from "@/components/common/ImageDisplay.vue";
 
 const router = useRouter();
 const authStore = useAuthStore();
+
+const currentUser = computed(() => authStore.user);
 
 const handleLogout = () => {
   if (confirm("Bạn có chắc muốn đăng xuất?")) {

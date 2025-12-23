@@ -55,4 +55,14 @@ export const menuApi = {
   getMenuTypes() {
     return apiClient.get("/menu-item-types");
   },
+
+  // Lấy menu sub categories
+  getMenuSubCategories() {
+    return apiClient.get("/menu-item-sub-categories");
+  },
+
+  // Lấy provinces
+  getProvinces() {
+    return apiClient.get("/provinces");
+  },
 };

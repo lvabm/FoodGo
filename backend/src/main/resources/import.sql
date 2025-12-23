@@ -1,6 +1,18 @@
 --========================================================
+-- FoodGo V2 - Sample Data Import (Fixed Structure)
+-- Converted from foodgo_import_sql.sql to match import.sql structure
+--
+-- NOTE: This is a DATA IMPORT file, not a schema definition file.
+-- Table definitions are created automatically by Hibernate/JPA from
+-- the entity classes (e.g., Country.java, Province.java, etc.).
+-- The IDE may show "Unable to resolve table" warnings, but these are
+-- harmless - the tables exist at runtime when this script executes.
+--========================================================
+
+--========================================================
 --1. COUNTRY
 --========================================================
+-- Using data from foodgo_import_sql.sql, removing duplicates
 INSERT INTO country (id, name, code) VALUES (1, 'Việt Nam', 'VN');
 INSERT INTO country (id, name, code) VALUES (2, 'Nhật Bản', 'JP');
 INSERT INTO country (id, name, code) VALUES (3, 'Hàn Quốc', 'KR');
@@ -77,20 +89,20 @@ INSERT INTO country (id, name, code) VALUES (73, 'Bolivia', 'BO');
 INSERT INTO country (id, name, code) VALUES (74, 'Paraguay', 'PY');
 INSERT INTO country (id, name, code) VALUES (75, 'Uruguay', 'UY');
 
-
 --========================================================
 --2. PROVINCE
 --========================================================
 INSERT INTO province (id, country_id, name) VALUES (1, (SELECT id FROM country WHERE code = 'VN'), 'Hồ Chí Minh');
 INSERT INTO province (id, country_id, name) VALUES (2, (SELECT id FROM country WHERE code = 'VN'), 'Hà Nội');
 INSERT INTO province (id, country_id, name) VALUES (3, (SELECT id FROM country WHERE code = 'VN'), 'Đà Nẵng');
-
+INSERT INTO province (id, country_id, name) VALUES (4, (SELECT id FROM country WHERE code = 'VN'), 'Long An');
+INSERT INTO province (id, country_id, name) VALUES (5, (SELECT id FROM country WHERE code = 'VN'), 'Thừa Thiên Huế');
 
 --========================================================
 --3. DISTRICT
 --========================================================
 
-    --* Hồ Chí Minh *--
+--* Hồ Chí Minh *--
 INSERT INTO district (id, province_id, name) VALUES (1, (SELECT id FROM province WHERE name = 'Hồ Chí Minh'), 'Quận 1');
 INSERT INTO district (id, province_id, name) VALUES (2, (SELECT id FROM province WHERE name = 'Hồ Chí Minh'), 'Quận 2');
 INSERT INTO district (id, province_id, name) VALUES (3, (SELECT id FROM province WHERE name = 'Hồ Chí Minh'), 'Quận 3');
@@ -115,19 +127,18 @@ INSERT INTO district (id, province_id, name) VALUES (21, (SELECT id FROM provinc
 INSERT INTO district (id, province_id, name) VALUES (22, (SELECT id FROM province WHERE name = 'Hồ Chí Minh'), 'Huyện Củ Chi');
 INSERT INTO district (id, province_id, name) VALUES (23, (SELECT id FROM province WHERE name = 'Hồ Chí Minh'), 'Huyện Cần Giờ');
 
-    --* Hà Nội *--
+--* Hà Nội *--
 INSERT INTO district (id, province_id, name) VALUES (24, (SELECT id FROM province WHERE name = 'Hà Nội'), 'Quận Hoàn Kiếm');
 INSERT INTO district (id, province_id, name) VALUES (25, (SELECT id FROM province WHERE name = 'Hà Nội'), 'Quận Ba Đình');
 INSERT INTO district (id, province_id, name) VALUES (26, (SELECT id FROM province WHERE name = 'Hà Nội'), 'Quận Đống Đa');
 INSERT INTO district (id, province_id, name) VALUES (27, (SELECT id FROM province WHERE name = 'Hà Nội'), 'Quận Cầu Giấy');
 INSERT INTO district (id, province_id, name) VALUES (28, (SELECT id FROM province WHERE name = 'Hà Nội'), 'Quận Nam Từ Liêm');
 
-    --* Đà Nẵng *--
+--* Đà Nẵng *--
 INSERT INTO district (id, province_id, name) VALUES (29, (SELECT id FROM province WHERE name = 'Đà Nẵng'), 'Quận Hải Châu');
 INSERT INTO district (id, province_id, name) VALUES (30, (SELECT id FROM province WHERE name = 'Đà Nẵng'), 'Quận Sơn Trà');
 INSERT INTO district (id, province_id, name) VALUES (31, (SELECT id FROM province WHERE name = 'Đà Nẵng'), 'Quận Ngũ Hành Sơn');
 INSERT INTO district (id, province_id, name) VALUES (32, (SELECT id FROM province WHERE name = 'Đà Nẵng'), 'Quận Thanh Khê');
-
 
 --========================================================
 --4. OUTLET_TYPE
@@ -147,7 +158,6 @@ INSERT INTO outlet_type (id, name, description) VALUES (12, 'Fine Dining', 'Nhà
 INSERT INTO outlet_type (id, name, description) VALUES (13, 'Tea House', 'Quán trà');
 INSERT INTO outlet_type (id, name, description) VALUES (14, 'Bakery Cafe', 'Cafe kết hợp tiệm bánh');
 INSERT INTO outlet_type (id, name, description) VALUES (15, 'Rooftop Bar', 'Bar trên tầng thượng');
-
 
 --========================================================
 --5. OUTLET_CATEGORY
@@ -198,16 +208,6 @@ INSERT INTO menu_item_sub_category (id, category_id, name, description) VALUES (
 INSERT INTO menu_item_sub_category (id, category_id, name, description) VALUES (7, (SELECT id FROM menu_item_category WHERE name = 'Nước Giải Khát'), 'Trà Sữa', 'Đồ uống trà sữa');
 INSERT INTO menu_item_sub_category (id, category_id, name, description) VALUES (8, (SELECT id FROM menu_item_category WHERE name = 'Bánh Ngọt Âu Á'), 'Bánh Kem Mousse', 'Bánh ngọt mềm, lạnh');
 INSERT INTO menu_item_sub_category (id, category_id, name, description) VALUES (9, (SELECT id FROM menu_item_category WHERE name = 'Cà Phê & Trà'), 'Trà Trái Cây', 'Các loại trà có hương vị trái cây');
-
---========================================================
---9. MENU_ITEM (Level 4): Biến thế của các món ăn hiện hữu
---========================================================
-INSERT INTO menu_item (id, sub_category_id, province_id, name, description, is_popular, is_deleted) VALUES ('60000000-0000-0000-0000-000000000001', (SELECT id FROM menu_item_sub_category WHERE name = 'Phở'), (SELECT id FROM province WHERE name = 'Hồ Chí Minh'), 'Phở Bò Tái Gân', 'Phở được nấu từ xương bò 8 tiếng, kèm gân bò giòn', false, false);
-INSERT INTO menu_item (id, sub_category_id, province_id, name, description, is_popular, is_deleted) VALUES ('60000000-0000-0000-0000-000000000002', (SELECT id FROM menu_item_sub_category WHERE name = 'Nước Ngọt Có Ga'), (SELECT id FROM province WHERE name = 'Hồ Chí Minh'), 'Coca Cola Lon', 'Nước ngọt có ga Coca Cola dạng lon 330ml',true, false);
-INSERT INTO menu_item (id, sub_category_id, province_id, name, description, is_popular, is_deleted) VALUES ('60000000-0000-0000-0000-000000000003', (SELECT id FROM menu_item_sub_category WHERE name = 'Cơm Chiên'), (SELECT id FROM province WHERE name = 'Hồ Chí Minh'), 'Cơm Chiên Dương Châu Đặc Biệt', 'Cơm chiên tơi xốp với trứng, tôm, lạp xưởng', true, false);
-INSERT INTO menu_item (id, sub_category_id, province_id, name, description, is_popular, is_deleted) VALUES ('60000000-0000-0000-0000-000000000004', (SELECT id FROM menu_item_sub_category WHERE name = 'Trà Sữa'), (SELECT id FROM province WHERE name = 'Hồ Chí Minh'), 'Trà Sữa Trân Châu Đường Đen', 'Trà sữa thơm béo, trân châu dai giòn', true, false);
-INSERT INTO menu_item (id, sub_category_id, province_id, name, description, is_popular, is_deleted) VALUES ('60000000-0000-0000-0000-000000000005', (SELECT id FROM menu_item_sub_category WHERE name = 'Bánh Kem Mousse'), (SELECT id FROM province WHERE name = 'Hồ Chí Minh'), 'Bánh Mousse Chanh Leo', 'Bánh Mousse vị chanh leo chua ngọt, mát lạnh', false, false);
-INSERT INTO menu_item (id, sub_category_id, province_id, name, description, is_popular, is_deleted) VALUES ('60000000-0000-0000-0000-000000000006', (SELECT id FROM menu_item_sub_category WHERE name = 'Phở'), (SELECT id FROM province WHERE name = 'Hồ Chí Minh'), 'Phở Bò Viên Nước Trong', 'Phở truyền thống với thịt bò viên dai ngon và nước dùng trong', false, false);
 
 --========================================================
 --10. ROLE
@@ -340,62 +340,74 @@ INSERT INTO role_permission (id, role_id, permission_id) VALUES (43, (SELECT id 
 INSERT INTO role_permission (id, role_id, permission_id) VALUES (44, (SELECT id FROM role WHERE name = 'ROLE_SYSTEM_ADMIN'), (SELECT id FROM permission WHERE name = 'ADMIN:MANAGE_MENU_MASTER'));
 
 --========================================================
---13. USER_ACCOUNT (Tạm dùng DevDataSeeder)
+--13. USER_ACCOUNT
 --========================================================
-INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active, role_id) VALUES ('10000000-0000-0000-0000-000000000000', 'salvabm', 'PLAINTEXT_123', 'salvabm@foodgo.com', '0911295205', true, (SELECT id FROM role WHERE name = 'ROLE_SYSTEM_ADMIN'));
-INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active, role_id) VALUES ('10000000-0000-0000-0000-000000000001', 'admin1', 'PLAINTEXT_123', 'admin1@example.com', '0901234568', true, (SELECT id FROM role WHERE name = 'ROLE_ADMIN'));
-INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active, role_id) VALUES ('10000000-0000-0000-0000-000000000002', 'owner1', 'PLAINTEXT_123', 'owner1@example.com', '0901234587', true, (SELECT id FROM role WHERE name = 'ROLE_OWNER'));
-INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active, role_id) VALUES ('10000000-0000-0000-0000-000000000003', 'user1', 'PLAINTEXT_123', 'user1@example.com', '0901234569', true, (SELECT id FROM role WHERE name = 'ROLE_USER'));
+-- Note: Converting from old structure (user_role table) to new structure (role_id in user_account)
+-- Mapping: role_id 1=ROLE_USER, 2=ROLE_OWNER, 3=ROLE_ADMIN, 4=ROLE_SYSTEM_ADMIN
+INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active, role_id) VALUES ('00000000-0000-0000-0000-000000000001', 'son.duong_88', 'PLAINTEXT_123', 'sonduong@gmail.vn', '0932952112', false, (SELECT id FROM role WHERE name = 'ROLE_OWNER'));
+INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active, role_id) VALUES ('00000000-0000-0000-0000-000000000002', 'thang.ngo_95', 'PLAINTEXT_123', 'thangngo@gmail.vn', '0926854815', true, (SELECT id FROM role WHERE name = 'ROLE_USER'));
+INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active, role_id) VALUES ('00000000-0000-0000-0000-000000000003', 'tam.duong_54', 'PLAINTEXT_123', 'tamduong@example.com', '0999442169', true, (SELECT id FROM role WHERE name = 'ROLE_OWNER'));
+INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active, role_id) VALUES ('00000000-0000-0000-0000-000000000004', 'gia.vo_19', 'PLAINTEXT_123', 'giavo@foodgo.vn', '0995695455', false, (SELECT id FROM role WHERE name = 'ROLE_OWNER'));
+INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active, role_id) VALUES ('00000000-0000-0000-0000-000000000005', 'ha.hoang_97', 'PLAINTEXT_123', 'hahoang@example.com', '0959173124', true, (SELECT id FROM role WHERE name = 'ROLE_USER'));
+INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active, role_id) VALUES ('00000000-0000-0000-0000-000000000006', 'ngoc.do_31', 'PLAINTEXT_123', 'ngocdo@gmail.vn', '0925184985', true, (SELECT id FROM role WHERE name = 'ROLE_USER'));
+INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active, role_id) VALUES ('00000000-0000-0000-0000-000000000007', 'phuc.duong_37', 'PLAINTEXT_123', 'phucduong@gmail.com', '0957220121', true, (SELECT id FROM role WHERE name = 'ROLE_USER'));
+INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active, role_id) VALUES ('00000000-0000-0000-0000-000000000008', 'lam.hoang_71', 'PLAINTEXT_123', 'lamhoang@gmail.vn', '0957220122', true, (SELECT id FROM role WHERE name = 'ROLE_USER'));
+INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active, role_id) VALUES ('00000000-0000-0000-0000-000000000009', 'tin.phan_30', 'PLAINTEXT_123', 'tinphan@foodgo.vn', '0987162456', false, (SELECT id FROM role WHERE name = 'ROLE_USER'));
+INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active, role_id) VALUES ('00000000-0000-0000-0000-000000000010', 'khoi.vo_78', 'PLAINTEXT_123', 'khoivo@gmail.com', '0911998676', true, (SELECT id FROM role WHERE name = 'ROLE_USER'));
+INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active, role_id) VALUES ('00000000-0000-0000-0000-000000000011', 'bao.duong_36', 'PLAINTEXT_123', 'baoduong@gmail.vn', '0916161461', false, (SELECT id FROM role WHERE name = 'ROLE_USER'));
+INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active, role_id) VALUES ('00000000-0000-0000-0000-000000000012', 'trung.ho_37', 'PLAINTEXT_123', 'trungho@gmail.com', '0974855968', true, (SELECT id FROM role WHERE name = 'ROLE_ADMIN'));
+INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active, role_id) VALUES ('00000000-0000-0000-0000-000000000013', 'thien.ho_39', 'PLAINTEXT_123', 'thienho@example.com', '0917892264', true, (SELECT id FROM role WHERE name = 'ROLE_OWNER'));
+INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active, role_id) VALUES ('00000000-0000-0000-0000-000000000014', 'phong.duong_65', 'PLAINTEXT_123', 'phongduong@gmail.com', '0967553511', true, (SELECT id FROM role WHERE name = 'ROLE_OWNER'));
+INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active, role_id) VALUES ('00000000-0000-0000-0000-000000000015', 'thinh.vu_11', 'PLAINTEXT_123', 'thinhvu@example.com', '0941086835', true, (SELECT id FROM role WHERE name = 'ROLE_ADMIN'));
+INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active, role_id) VALUES ('00000000-0000-0000-0000-000000000016', 'levan.an_14', '123', 'levanan@foodgo.vn', '0911295205', true, (SELECT id FROM role WHERE name = 'ROLE_ADMIN'));
+INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active, role_id) VALUES ('00000000-0000-0000-0000-000000000017', 'vy.do_79', 'PLAINTEXT_123', 'vydo@gmail.vn', '0961921807', true, (SELECT id FROM role WHERE name = 'ROLE_OWNER'));
+INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active, role_id) VALUES ('00000000-0000-0000-0000-000000000018', 'vi.le_71', 'PLAINTEXT_123', 'vile@example.com', '0911431238', true, (SELECT id FROM role WHERE name = 'ROLE_OWNER'));
+INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active, role_id) VALUES ('00000000-0000-0000-0000-000000000019', 'an.bui_20', 'PLAINTEXT_123', 'anbui@example.com', '0956409086', true, (SELECT id FROM role WHERE name = 'ROLE_OWNER'));
+INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active, role_id) VALUES ('00000000-0000-0000-0000-000000000020', 'kien.vu_99', 'PLAINTEXT_123', 'kienvu@example.com', '0920241922', true, (SELECT id FROM role WHERE name = 'ROLE_OWNER'));
+INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active, role_id) VALUES ('00000000-0000-0000-0000-000000000021', 'ngan.tran_44', 'PLAINTEXT_123', 'ngantran@gmail.com', '0942562313', true, (SELECT id FROM role WHERE name = 'ROLE_USER'));
+INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active, role_id) VALUES ('00000000-0000-0000-0000-000000000022', 'duy.dang_85', 'PLAINTEXT_123', 'duydang@example.com', '0963081509', true, (SELECT id FROM role WHERE name = 'ROLE_USER'));
+INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active, role_id) VALUES ('00000000-0000-0000-0000-000000000023', 'lam.ho_62', 'PLAINTEXT_123', 'lamho@example.com', '0967112343', true, (SELECT id FROM role WHERE name = 'ROLE_USER'));
+INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active, role_id) VALUES ('00000000-0000-0000-0000-000000000024', 'nhan.tran_47', 'PLAINTEXT_123', 'nhantran@gmail.com', '0921126743', true, (SELECT id FROM role WHERE name = 'ROLE_USER'));
+INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active, role_id) VALUES ('00000000-0000-0000-0000-000000000025', 'thien.vu_73', 'PLAINTEXT_123', 'thienvu@gmail.com', '0929178130', false, (SELECT id FROM role WHERE name = 'ROLE_ADMIN'));
+INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active, role_id) VALUES ('00000000-0000-0000-0000-000000000026', 'chau.pham_40', 'PLAINTEXT_123', 'chaupham@foodgo.vn', '0990193081', true, (SELECT id FROM role WHERE name = 'ROLE_OWNER'));
+INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active, role_id) VALUES ('00000000-0000-0000-0000-000000000027', 'lam.ly_50', 'PLAINTEXT_123', 'lamly@gmail.com', '0965648057', true, (SELECT id FROM role WHERE name = 'ROLE_OWNER'));
+INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active, role_id) VALUES ('00000000-0000-0000-0000-000000000028', 'tin.nguyen_22', 'PLAINTEXT_123', 'tinnguyen@gmail.vn', '0917428274', true, (SELECT id FROM role WHERE name = 'ROLE_ADMIN'));
+INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active, role_id) VALUES ('00000000-0000-0000-0000-000000000029', 'vi.ngo_27', 'PLAINTEXT_123', 'vingo@gmail.vn', '0968779694', true, (SELECT id FROM role WHERE name = 'ROLE_ADMIN'));
+INSERT INTO user_account (id, username, password_hash, email, phone_number, is_active, role_id) VALUES ('00000000-0000-0000-0000-000000000030', 'phong.phan_22', 'PLAINTEXT_123', 'phongphan@gmail.com', '0961332098', true, (SELECT id FROM role WHERE name = 'ROLE_USER'));
 
 --========================================================
 --14. PROFILE
 --========================================================
-INSERT INTO profile (id, user_id, full_name, date_of_birth, address, avatar_url, country_id) VALUES (1, (SELECT id FROM user_account WHERE username = 'salvabm'), 'Lê Văn An', '2005-03-22', 'Quận 8, TP. HCM', 'https://default-avatar.png', (SELECT id FROM country WHERE code = 'VN'));
-INSERT INTO profile (id, user_id, full_name, date_of_birth, address, avatar_url, country_id) VALUES (2, (SELECT id FROM user_account WHERE username = 'admin1'), 'Admin 1', '1995-05-08', 'Quận 1, TP. HCM', 'https://default-avatar.png', (SELECT id FROM country WHERE code = 'VN'));
-INSERT INTO profile (id, user_id, full_name, date_of_birth, address, avatar_url, country_id) VALUES (3, (SELECT id FROM user_account WHERE username = 'owner1'), 'Owner 1', '1995-05-10', 'Quận 3, TP. HCM', 'https://default-avatar.png', (SELECT id FROM country WHERE code = 'VN'));
-INSERT INTO profile (id, user_id, full_name, date_of_birth, address, avatar_url, country_id) VALUES (4, (SELECT id FROM user_account WHERE username = 'user1'), 'User 1', '1995-05-09', 'Quận 2, TP. HCM', 'https://default-avatar.png', (SELECT id FROM country WHERE code = 'VN'));
-
---========================================================
---15. REFRESH_TOKEN
---========================================================
-INSERT INTO refresh_token (id, user_id, token, device_info, ip_address, is_revoked, expires_at, created_at) VALUES (1, (SELECT id FROM user_account WHERE username = 'owner1'), 'refresh-token-sample-1', 'Chrome on Windows', '127.0.0.1', false, NOW() + INTERVAL '14 days', NOW());
-
---========================================================
---16. PASSWORD_RESET_TOKEN
---========================================================
-INSERT INTO password_reset_token (id, user_id, token, expires_at, is_used) VALUES (1, (SELECT id FROM user_account WHERE username = 'owner1'), 'pw-reset-token-1', NOW() + INTERVAL '30 minutes', false);
-
---========================================================
---17. MEMBERSHIP_PLAN
---========================================================
-INSERT INTO membership_plan (id, name, description, price, duration_months, dish_limit, features, type, is_deleted) VALUES (1, 'Free Owner', 'Gói miễn phí', 0.00, 0, 10, '["basic-listing"]', 'OWNER', false);
-INSERT INTO membership_plan (id, name, description, price, duration_months, dish_limit, features, type, is_deleted) VALUES (2, 'Basic Owner', 'Gói đăng ký cơ bản dành cho cá nhân.', 9.99, 12, 50, '["basic-listing", "priority-email"]', 'OWNER', false);
-INSERT INTO membership_plan (id, name, description, price, duration_months, dish_limit, features, type, is_deleted) VALUES (3, 'Standard Owner', 'Gói tiêu chuẩn, phù hợp cho các nhóm nhỏ.', 29.99, 12, 100, '["basic-listing", "priority-email", "analytics-dashboard"]', 'OWNER', false);
-INSERT INTO membership_plan (id, name, description, price, duration_months, dish_limit, features, type, is_deleted) VALUES (4, 'Premium Owner', 'Gói cao cấp với đầy đủ tính năng.', 49.99, 12, 300, '["all-standard-features", "dedicated-support", "early-access-features"]', 'OWNER', false);
-INSERT INTO membership_plan (id, name, description, price, duration_months, dish_limit, features, type, is_deleted) VALUES (5, 'Enterprise Owner', 'Gói tùy chỉnh dành cho các tổ chức lớn.', 99.99, 0, 0, '["all-premium-features", "custom-sla", "account-manager"]', 'OWNER', false);
-INSERT INTO membership_plan (id, name, description, price, duration_months, dish_limit, features, type, is_deleted) VALUES (6, 'Silver Member', 'Thành viên Bạc: Mở khóa tính năng Đặt bàn', 59000.00, 1, NULL, '["booking-access"]', 'USER', false);
-INSERT INTO membership_plan (id, name, description, price, duration_months, dish_limit, features, type, is_deleted) VALUES (7, 'Gold Member', 'Thành viên Vàng: Đặt bàn + Ưu đãi đặc quyền', 199000.00, 12, NULL, '["booking-access", "priority-support", "voucher"]', 'USER', false);
-
---========================================================
---18. USER_MEMBERSHIP
---========================================================
-INSERT INTO user_membership (id, user_id, plan_id, start_date, end_date, is_active, is_deleted) VALUES (1, (SELECT id FROM user_account WHERE username = 'user1'), (SELECT id FROM membership_plan WHERE name = 'Silver Member'), CURRENT_DATE, CURRENT_DATE + INTERVAL '30 days', true, false);
-
---========================================================
---19. SHARING_LIST
---========================================================
-INSERT INTO sharing_list (id, owner_id, name, description, is_public, is_collaborative) VALUES (1, (SELECT id FROM user_account WHERE username = 'user1'), 'My Favorites', 'Danh sách địa điểm yêu thích', false, false);
-
---========================================================
---20. SHARING_LIST_COLLABORATOR
---========================================================
-INSERT INTO sharing_list_collaborator (id, user_id, sharing_list_id) VALUES (1, (SELECT id FROM user_account WHERE username = 'user1'), (SELECT id FROM sharing_list WHERE name = 'My Favorites'));
-
---========================================================
---21. OUTLET
---========================================================
-INSERT INTO outlet (id, owner_id, type_id, name, description, address, email, phone_number, website, district_id, latitude, longitude, price_range, capacity, is_active, average_rating, total_reviews, is_deleted) VALUES ('20000000-0000-0000-0000-000000000001', (SELECT id FROM user_account WHERE username = 'owner1'), (SELECT id FROM outlet_type WHERE name = 'Restaurant'), 'Quán Phở Alice', 'Quán phở ngon, phục vụ nhanh', '123 Lê Lợi, Quận 1, TP.HCM', 'pho.owner1@example.com', '0909000002', 'https://example.com', (SELECT id FROM district WHERE name = 'Quận 1'), 10.775839, 106.700806, 'moderate', 80, true, 4.85, 120, false);
-INSERT INTO outlet (id, owner_id, type_id, name, description, address, email, phone_number, website, district_id, latitude, longitude, price_range, capacity, is_active, average_rating, total_reviews, is_deleted) VALUES ('20000000-0000-0000-0000-000000000002', (SELECT id FROM user_account WHERE username = 'owner1'), (SELECT id FROM outlet_type WHERE name = 'Restaurant'), 'Quán Phở Isa', 'Quán phở ngon, phục vụ tốt', '22 Lê Lợi, Quận 1, TP.HCM', 'pho.owner1@example.com', '0909000002', 'https://example.com', (SELECT id FROM district WHERE name = 'Quận 1'), 10.775839, 106.700806, 'moderate', 80, true, 4.85, 120, false);
+INSERT INTO profile (id, user_id, full_name, date_of_birth, address, avatar_url, country_id) VALUES (1, (SELECT id FROM user_account WHERE username = 'son.duong_88'), 'Dương Sơn', NULL, NULL, 'https://default-avatar.png', (SELECT id FROM country WHERE code = 'VN'));
+INSERT INTO profile (id, user_id, full_name, date_of_birth, address, avatar_url, country_id) VALUES (2, (SELECT id FROM user_account WHERE username = 'thang.ngo_95'), 'Ngô Thắng', NULL, NULL, 'https://default-avatar.png', (SELECT id FROM country WHERE code = 'VN'));
+INSERT INTO profile (id, user_id, full_name, date_of_birth, address, avatar_url, country_id) VALUES (3, (SELECT id FROM user_account WHERE username = 'tam.duong_54'), 'Dương Tâm', NULL, NULL, 'https://default-avatar.png', (SELECT id FROM country WHERE code = 'VN'));
+INSERT INTO profile (id, user_id, full_name, date_of_birth, address, avatar_url, country_id) VALUES (4, (SELECT id FROM user_account WHERE username = 'gia.vo_19'), 'Võ Gia', NULL, NULL, 'https://default-avatar.png', (SELECT id FROM country WHERE code = 'VN'));
+INSERT INTO profile (id, user_id, full_name, date_of_birth, address, avatar_url, country_id) VALUES (5, (SELECT id FROM user_account WHERE username = 'ha.hoang_97'), 'Hoàng Hà', NULL, NULL, 'https://default-avatar.png', (SELECT id FROM country WHERE code = 'VN'));
+INSERT INTO profile (id, user_id, full_name, date_of_birth, address, avatar_url, country_id) VALUES (6, (SELECT id FROM user_account WHERE username = 'ngoc.do_31'), 'Đỗ Ngọc', NULL, NULL, 'https://default-avatar.png', (SELECT id FROM country WHERE code = 'VN'));
+INSERT INTO profile (id, user_id, full_name, date_of_birth, address, avatar_url, country_id) VALUES (7, (SELECT id FROM user_account WHERE username = 'phuc.duong_37'), 'Dương Phúc', NULL, NULL, 'https://default-avatar.png', (SELECT id FROM country WHERE code = 'VN'));
+INSERT INTO profile (id, user_id, full_name, date_of_birth, address, avatar_url, country_id) VALUES (8, (SELECT id FROM user_account WHERE username = 'lam.hoang_71'), 'Hoàng Lâm', NULL, NULL, 'https://default-avatar.png', (SELECT id FROM country WHERE code = 'VN'));
+INSERT INTO profile (id, user_id, full_name, date_of_birth, address, avatar_url, country_id) VALUES (9, (SELECT id FROM user_account WHERE username = 'tin.phan_30'), 'Phan Tín', NULL, NULL, 'https://default-avatar.png', (SELECT id FROM country WHERE code = 'VN'));
+INSERT INTO profile (id, user_id, full_name, date_of_birth, address, avatar_url, country_id) VALUES (10, (SELECT id FROM user_account WHERE username = 'khoi.vo_78'), 'Võ Khôi', NULL, NULL, 'https://default-avatar.png', (SELECT id FROM country WHERE code = 'VN'));
+INSERT INTO profile (id, user_id, full_name, date_of_birth, address, avatar_url, country_id) VALUES (11, (SELECT id FROM user_account WHERE username = 'bao.duong_36'), 'Dương Bảo', NULL, NULL, 'https://default-avatar.png', (SELECT id FROM country WHERE code = 'VN'));
+INSERT INTO profile (id, user_id, full_name, date_of_birth, address, avatar_url, country_id) VALUES (12, (SELECT id FROM user_account WHERE username = 'trung.ho_37'), 'Hồ Trung', NULL, NULL, 'https://default-avatar.png', (SELECT id FROM country WHERE code = 'VN'));
+INSERT INTO profile (id, user_id, full_name, date_of_birth, address, avatar_url, country_id) VALUES (13, (SELECT id FROM user_account WHERE username = 'thien.ho_39'), 'Hồ Thiện', NULL, NULL, 'https://default-avatar.png', (SELECT id FROM country WHERE code = 'VN'));
+INSERT INTO profile (id, user_id, full_name, date_of_birth, address, avatar_url, country_id) VALUES (14, (SELECT id FROM user_account WHERE username = 'phong.duong_65'), 'Dương Phong', NULL, NULL, 'https://default-avatar.png', (SELECT id FROM country WHERE code = 'VN'));
+INSERT INTO profile (id, user_id, full_name, date_of_birth, address, avatar_url, country_id) VALUES (15, (SELECT id FROM user_account WHERE username = 'thinh.vu_11'), 'Vũ Thịnh', NULL, NULL, 'https://default-avatar.png', (SELECT id FROM country WHERE code = 'VN'));
+INSERT INTO profile (id, user_id, full_name, date_of_birth, address, avatar_url, country_id) VALUES (16, (SELECT id FROM user_account WHERE username = 'nam.vo_14'), 'Võ Nam', NULL, NULL, 'https://default-avatar.png', (SELECT id FROM country WHERE code = 'VN'));
+INSERT INTO profile (id, user_id, full_name, date_of_birth, address, avatar_url, country_id) VALUES (17, (SELECT id FROM user_account WHERE username = 'vy.do_79'), 'Đỗ Vy', NULL, NULL, 'https://default-avatar.png', (SELECT id FROM country WHERE code = 'VN'));
+INSERT INTO profile (id, user_id, full_name, date_of_birth, address, avatar_url, country_id) VALUES (18, (SELECT id FROM user_account WHERE username = 'vi.le_71'), 'Lê Vi', NULL, NULL, 'https://default-avatar.png', (SELECT id FROM country WHERE code = 'VN'));
+INSERT INTO profile (id, user_id, full_name, date_of_birth, address, avatar_url, country_id) VALUES (19, (SELECT id FROM user_account WHERE username = 'an.bui_20'), 'Bùi An', NULL, NULL, 'https://default-avatar.png', (SELECT id FROM country WHERE code = 'VN'));
+INSERT INTO profile (id, user_id, full_name, date_of_birth, address, avatar_url, country_id) VALUES (20, (SELECT id FROM user_account WHERE username = 'kien.vu_99'), 'Vũ Kiên', NULL, NULL, 'https://default-avatar.png', (SELECT id FROM country WHERE code = 'VN'));
+INSERT INTO profile (id, user_id, full_name, date_of_birth, address, avatar_url, country_id) VALUES (21, (SELECT id FROM user_account WHERE username = 'ngan.tran_44'), 'Trần Ngân', NULL, NULL, 'https://default-avatar.png', (SELECT id FROM country WHERE code = 'VN'));
+INSERT INTO profile (id, user_id, full_name, date_of_birth, address, avatar_url, country_id) VALUES (22, (SELECT id FROM user_account WHERE username = 'duy.dang_85'), 'Đặng Duy', NULL, NULL, 'https://default-avatar.png', (SELECT id FROM country WHERE code = 'VN'));
+INSERT INTO profile (id, user_id, full_name, date_of_birth, address, avatar_url, country_id) VALUES (23, (SELECT id FROM user_account WHERE username = 'lam.ho_62'), 'Hồ Lâm', NULL, NULL, 'https://default-avatar.png', (SELECT id FROM country WHERE code = 'VN'));
+INSERT INTO profile (id, user_id, full_name, date_of_birth, address, avatar_url, country_id) VALUES (24, (SELECT id FROM user_account WHERE username = 'nhan.tran_47'), 'Trần Nhân', NULL, NULL, 'https://default-avatar.png', (SELECT id FROM country WHERE code = 'VN'));
+INSERT INTO profile (id, user_id, full_name, date_of_birth, address, avatar_url, country_id) VALUES (25, (SELECT id FROM user_account WHERE username = 'thien.vu_73'), 'Vũ Thiện', NULL, NULL, 'https://default-avatar.png', (SELECT id FROM country WHERE code = 'VN'));
+INSERT INTO profile (id, user_id, full_name, date_of_birth, address, avatar_url, country_id) VALUES (26, (SELECT id FROM user_account WHERE username = 'chau.pham_40'), 'Phạm Châu', NULL, NULL, 'https://default-avatar.png', (SELECT id FROM country WHERE code = 'VN'));
+INSERT INTO profile (id, user_id, full_name, date_of_birth, address, avatar_url, country_id) VALUES (27, (SELECT id FROM user_account WHERE username = 'lam.ly_50'), 'Lý Lam', NULL, NULL, 'https://default-avatar.png', (SELECT id FROM country WHERE code = 'VN'));
+INSERT INTO profile (id, user_id, full_name, date_of_birth, address, avatar_url, country_id) VALUES (28, (SELECT id FROM user_account WHERE username = 'tin.nguyen_22'), 'Nguyễn Tín', NULL, NULL, 'https://default-avatar.png', (SELECT id FROM country WHERE code = 'VN'));
+INSERT INTO profile (id, user_id, full_name, date_of_birth, address, avatar_url, country_id) VALUES (29, (SELECT id FROM user_account WHERE username = 'vi.ngo_27'), 'Ngô Vi', NULL, NULL, 'https://default-avatar.png', (SELECT id FROM country WHERE code = 'VN'));
+INSERT INTO profile (id, user_id, full_name, date_of_birth, address, avatar_url, country_id) VALUES (30, (SELECT id FROM user_account WHERE username = 'phong.phan_22'), 'Phan Phong', NULL, NULL, 'https://default-avatar.png', (SELECT id FROM country WHERE code = 'VN'));
 
 --========================================================
 --22. OUTLET_FEATURE
@@ -412,27 +424,106 @@ INSERT INTO outlet_feature (id, name, description) VALUES (9, 'Nhạc Sống (Li
 INSERT INTO outlet_feature (id, name, description) VALUES (10, 'Phòng Riêng', 'Có phòng riêng biệt để dùng bữa');
 
 --========================================================
+--21. OUTLET
+--========================================================
+-- Note: Converting owner_id from string ('1', '2', etc.) to UUID from user_account
+-- Mapping: '1' -> first owner user, '2' -> second owner user, etc.
+INSERT INTO outlet (id, owner_id, type_id, name, description, address, email, phone_number, website, district_id, latitude, longitude, price_range, capacity, is_active, average_rating, total_reviews, is_deleted) VALUES ('20000000-0000-0000-0000-000000000001', (SELECT id FROM user_account WHERE username = 'son.duong_88'), (SELECT id FROM outlet_type WHERE name = 'Cafe'), 'The Workshop Coffee', 'Specialty coffee roastery', '27 Ngô Đức Kế, Bến Nghé, Quận 1', 'workshop@example.com', '02838246801', 'https://www.facebook.com/the.workshop.coffee', (SELECT id FROM district WHERE name = 'Quận 1'), 10.77347640, 106.70560370, 'moderate', 70, true, 4.5, 1250, false);
+INSERT INTO outlet (id, owner_id, type_id, name, description, address, email, phone_number, website, district_id, latitude, longitude, price_range, capacity, is_active, average_rating, total_reviews, is_deleted) VALUES ('20000000-0000-0000-0000-000000000002', (SELECT id FROM user_account WHERE username = 'thang.ngo_95'), (SELECT id FROM outlet_type WHERE name = 'Cafe'), 'Highlands Coffee Lý Tự Trọng', 'Popular Vietnamese coffee chain', '71 Lý Tự Trọng, Bến Thành, Quận 1', 'highlands@example.com', '02871080071', 'https://highlandscoffee.com.vn', (SELECT id FROM district WHERE name = 'Quận 1'), 10.77515200, 106.70180300, 'cheap', 60, true, 4.0, 980, false);
+INSERT INTO outlet (id, owner_id, type_id, name, description, address, email, phone_number, website, district_id, latitude, longitude, price_range, capacity, is_active, average_rating, total_reviews, is_deleted) VALUES ('20000000-0000-0000-0000-000000000003', (SELECT id FROM user_account WHERE username = 'tam.duong_54'), (SELECT id FROM outlet_type WHERE name = 'Cafe'), 'Starbucks Nguyễn Huệ', 'International coffee chain', '99 Nguyễn Huệ, Bến Nghé, Quận 1', 'starbucks@example.com', '02838210105', 'https://starbucks.vn', (SELECT id FROM district WHERE name = 'Quận 1'), 10.77412100, 106.70196700, 'moderate', 80, true, 4.1, 1560, false);
+INSERT INTO outlet (id, owner_id, type_id, name, description, address, email, phone_number, website, district_id, latitude, longitude, price_range, capacity, is_active, average_rating, total_reviews, is_deleted) VALUES ('20000000-0000-0000-0000-000000000004', (SELECT id FROM user_account WHERE username = 'tam.duong_54'), (SELECT id FROM outlet_type WHERE name = 'Cafe'), 'Vintage Emporium Coffee', 'Vintage-style coffee shop', '95B Nguyễn Văn Thủ, Đa Kao, Quận 1', 'vintage@example.com', '0904413148', NULL, (SELECT id FROM district WHERE name = 'Quận 1'), 10.77112300, 106.69865400, 'moderate', 50, true, 4.6, 1123, false);
+INSERT INTO outlet (id, owner_id, type_id, name, description, address, email, phone_number, website, district_id, latitude, longitude, price_range, capacity, is_active, average_rating, total_reviews, is_deleted) VALUES ('20000000-0000-0000-0000-000000000005', (SELECT id FROM user_account WHERE username = 'tam.duong_54'), (SELECT id FROM outlet_type WHERE name = 'Tea House'), 'Bosgaurus Coffee Roasters', 'Specialty coffee roastery', 'Villa 1, Saigon Pearl, 92 Nguyễn Hữu Cảnh, Phường 22, Quận Bình Thạnh', 'bosgaurus@example.com', '0901426877', 'https://www.facebook.com/bosgaurus', (SELECT id FROM district WHERE name = 'Quận Bình Thạnh'), 10.78856700, 106.71965400, 'moderate', 60, true, 4.8, 987, false);
+INSERT INTO outlet (id, owner_id, type_id, name, description, address, email, phone_number, website, district_id, latitude, longitude, price_range, capacity, is_active, average_rating, total_reviews, is_deleted) VALUES ('20000000-0000-0000-0000-000000000006', (SELECT id FROM user_account WHERE username = 'thang.ngo_95'), (SELECT id FROM outlet_type WHERE name = 'Cafe'), 'LUsine Cafe', 'Trendy industrial-style cafe', '19 Lê Thánh Tôn, Bến Nghé, Quận 1', 'lusine@example.com', '02838227188', 'https://lusinespace.com', (SELECT id FROM district WHERE name = 'Quận 1'), 10.77879400, 106.70192800, 'moderate', 80, true, 4.3, 2100, false);
+INSERT INTO outlet (id, owner_id, type_id, name, description, address, email, phone_number, website, district_id, latitude, longitude, price_range, capacity, is_active, average_rating, total_reviews, is_deleted) VALUES ('20000000-0000-0000-0000-000000000007', (SELECT id FROM user_account WHERE username = 'son.duong_88'), (SELECT id FROM outlet_type WHERE name = 'Cafe Take Away'), 'Phúc Long Coffee & Tea', 'Vietnamese coffee and tea chain', '43 Phạm Ngọc Thạch, Phường Võ Thị Sáu, Quận 3', 'phuclong@example.com', '19006779', 'https://phuclong.com.vn', (SELECT id FROM district WHERE name = 'Quận 3'), 10.78125600, 106.68456200, 'cheap', 40, true, 4.2, 1890, false);
+INSERT INTO outlet (id, owner_id, type_id, name, description, address, email, phone_number, website, district_id, latitude, longitude, price_range, capacity, is_active, average_rating, total_reviews, is_deleted) VALUES ('20000000-0000-0000-0000-000000000008', (SELECT id FROM user_account WHERE username = 'son.duong_88'), (SELECT id FROM outlet_type WHERE name = 'Cafe'), 'Trung Nguyên Legend Cafe', 'Vietnamese coffee brand', '12 Alexandre de Rhodes, Bến Nghé, Quận 1', 'trungnguyen@example.com', '19006616', 'https://trungnguyenlegend.com', (SELECT id FROM district WHERE name = 'Quận 1'), 10.77678900, 106.70341200, 'cheap', 50, true, 4.2, 756, false);
+INSERT INTO outlet (id, owner_id, type_id, name, description, address, email, phone_number, website, district_id, latitude, longitude, price_range, capacity, is_active, average_rating, total_reviews, is_deleted) VALUES ('20000000-0000-0000-0000-000000000009', (SELECT id FROM user_account WHERE username = 'son.duong_88'), (SELECT id FROM outlet_type WHERE name = 'Cafe'), 'Soo Kafe', 'Modern coffee shop', '10 Phan Kế Bính, Đa Kao, Quận 1', 'sookafe@example.com', '0985939258', 'https://www.facebook.com/sookafe', (SELECT id FROM district WHERE name = 'Quận 1'), 10.78156700, 106.69998900, 'moderate', 60, true, 4.6, 2250, false);
+INSERT INTO outlet (id, owner_id, type_id, name, description, address, email, phone_number, website, district_id, latitude, longitude, price_range, capacity, is_active, average_rating, total_reviews, is_deleted) VALUES ('20000000-0000-0000-0000-000000000010', (SELECT id FROM user_account WHERE username = 'gia.vo_19'), (SELECT id FROM outlet_type WHERE name = 'Cafe'), 'Okkio Caffe', 'Italian-style cafe', '8 Nguyễn Siêu, Bến Nghé, Quận 1', 'okkio@example.com', '0848693711', 'https://okkiocaffe.com', (SELECT id FROM district WHERE name = 'Quận 1'), 10.77523400, 106.70254300, 'moderate', 50, true, 4.7, 3100, false);
+INSERT INTO outlet (id, owner_id, type_id, name, description, address, email, phone_number, website, district_id, latitude, longitude, price_range, capacity, is_active, average_rating, total_reviews, is_deleted) VALUES ('20000000-0000-0000-0000-000000000011', (SELECT id FROM user_account WHERE username = 'gia.vo_19'), (SELECT id FROM outlet_type WHERE name = 'Bar'), 'Broma Not A Bar', 'Trendy cocktail bar', '41 Nguyễn Huệ, Quận 1', 'broma@example.com', '0902158080', NULL, (SELECT id FROM district WHERE name = 'Quận 1'), 10.77412300, 106.70196400, 'expensive', 100, true, 4.6, 2341, false);
+INSERT INTO outlet (id, owner_id, type_id, name, description, address, email, phone_number, website, district_id, latitude, longitude, price_range, capacity, is_active, average_rating, total_reviews, is_deleted) VALUES ('20000000-0000-0000-0000-000000000012', (SELECT id FROM user_account WHERE username = 'gia.vo_19'), (SELECT id FROM outlet_type WHERE name = 'Rooftop Bar'), 'Chill Skybar', 'Rooftop bar with city view', 'Tầng 26, AB Tower, 76 Lê Lai, Quận 1', 'chill@example.com', '0283827838', NULL, (SELECT id FROM district WHERE name = 'Quận 1'), 10.76912300, 106.69865400, 'expensive', 120, true, 4.7, 3456, false);
+INSERT INTO outlet (id, owner_id, type_id, name, description, address, email, phone_number, website, district_id, latitude, longitude, price_range, capacity, is_active, average_rating, total_reviews, is_deleted) VALUES ('20000000-0000-0000-0000-000000000013', (SELECT id FROM user_account WHERE username = 'gia.vo_19'), (SELECT id FROM outlet_type WHERE name = 'Bar'), 'Apocalypse Now', 'Popular nightlife bar', '2C Thi Sách, Quận 1', 'apocalypse@example.com', '0838252966', NULL, (SELECT id FROM district WHERE name = 'Quận 1'), 10.77812300, 106.70365400, 'moderate', 150, true, 4.3, 1678, false);
+INSERT INTO outlet (id, owner_id, type_id, name, description, address, email, phone_number, website, district_id, latitude, longitude, price_range, capacity, is_active, average_rating, total_reviews, is_deleted) VALUES ('20000000-0000-0000-0000-000000000014', (SELECT id FROM user_account WHERE username = 'gia.vo_19'), (SELECT id FROM outlet_type WHERE name = 'Lounge Bar'), 'The Gin House', 'Gin-focused bar', '169 Bùi Viện, Quận 1', 'ginhouse@example.com', '0938123789', NULL, (SELECT id FROM district WHERE name = 'Quận 1'), 10.76712300, 106.69265400, 'expensive', 80, true, 4.5, 2123, false);
+INSERT INTO outlet (id, owner_id, type_id, name, description, address, email, phone_number, website, district_id, latitude, longitude, price_range, capacity, is_active, average_rating, total_reviews, is_deleted) VALUES ('20000000-0000-0000-0000-000000000015', (SELECT id FROM user_account WHERE username = 'son.duong_88'), (SELECT id FROM outlet_type WHERE name = 'Pub'), 'The Shamrock Irish Pub', 'Irish pub atmosphere', '33 Lê Duẩn, Quận 1', 'shamrock@example.com', '0838234074', NULL, (SELECT id FROM district WHERE name = 'Quận 1'), 10.78012300, 106.69965400, 'moderate', 100, true, 4.4, 1890, false);
+INSERT INTO outlet (id, owner_id, type_id, name, description, address, email, phone_number, website, district_id, latitude, longitude, price_range, capacity, is_active, average_rating, total_reviews, is_deleted) VALUES ('20000000-0000-0000-0000-000000000016', (SELECT id FROM user_account WHERE username = 'son.duong_88'), (SELECT id FROM outlet_type WHERE name = 'Street Food'), 'Bánh Xèo 46A', 'Famous crispy pancakes', '46A Đinh Công Tráng, Quận 1', NULL, '0838242810', NULL, (SELECT id FROM district WHERE name = 'Quận 1'), 10.77112300, 106.69165400, 'cheap', 30, true, 4.0, 1234, false);
+INSERT INTO outlet (id, owner_id, type_id, name, description, address, email, phone_number, website, district_id, latitude, longitude, price_range, capacity, is_active, average_rating, total_reviews, is_deleted) VALUES ('20000000-0000-0000-0000-000000000017', (SELECT id FROM user_account WHERE username = 'son.duong_88'), (SELECT id FROM outlet_type WHERE name = 'Street Food'), 'Bánh Mì Huỳnh Hoa', 'Legendary banh mi stall', '26 Lê Thị Riêng, Quận 1', NULL, '0909678234', NULL, (SELECT id FROM district WHERE name = 'Quận 1'), 10.76312300, 106.68965400, 'cheap', 15, true, 4.2, 3456, false);
+INSERT INTO outlet (id, owner_id, type_id, name, description, address, email, phone_number, website, district_id, latitude, longitude, price_range, capacity, is_active, average_rating, total_reviews, is_deleted) VALUES ('20000000-0000-0000-0000-000000000018', (SELECT id FROM user_account WHERE username = 'tam.duong_54'), (SELECT id FROM outlet_type WHERE name = 'Restaurant'), 'Lẩu Bò Tơ Hòn Sơn', 'Hot pot restaurant', '25 Cao Thắng, Quận 3', 'lau@example.com', '0838327729', NULL, (SELECT id FROM district WHERE name = 'Quận 3'), 10.78212300, 106.68665400, 'moderate', 60, true, 4.3, 1567, false);
+INSERT INTO outlet (id, owner_id, type_id, name, description, address, email, phone_number, website, district_id, latitude, longitude, price_range, capacity, is_active, average_rating, total_reviews, is_deleted) VALUES ('20000000-0000-0000-0000-000000000019', (SELECT id FROM user_account WHERE username = 'tam.duong_54'), (SELECT id FROM outlet_type WHERE name = 'Bistro'), 'Cơm Niêu Singapore', 'Singapore-style rice pot', '6-8 Công Trường Quốc Tế, Quận 3', 'comnieu@example.com', '0838231281', NULL, (SELECT id FROM district WHERE name = 'Quận 3'), 10.78512300, 106.68865400, 'moderate', 50, true, 4.1, 1123, false);
+INSERT INTO outlet (id, owner_id, type_id, name, description, address, email, phone_number, website, district_id, latitude, longitude, price_range, capacity, is_active, average_rating, total_reviews, is_deleted) VALUES ('20000000-0000-0000-0000-000000000020', (SELECT id FROM user_account WHERE username = 'thang.ngo_95'), (SELECT id FROM outlet_type WHERE name = 'Cafe Bar'), 'The Coffee House Signature', 'Modern coffee house chain', '26 Lý Tự Trọng, Quận 1', 'coffeehouse@example.com', '18006936', 'https://thecoffeehouse.com', (SELECT id FROM district WHERE name = 'Quận 1'), 10.77615200, 106.70080300, 'moderate', 70, true, 4.4, 2890, false);
+
+--========================================================
 --23. OUTLET_FEATURE_MAPPING
 --========================================================
-INSERT INTO outlet_feature_mapping (id, outlet_id, feature_id) VALUES (1, (SELECT id FROM outlet WHERE name = 'Quán Phở Alice'), (SELECT id FROM outlet_feature WHERE name = 'Wifi Miễn Phí'));
-INSERT INTO outlet_feature_mapping (id, outlet_id, feature_id) VALUES (2, (SELECT id FROM outlet WHERE name = 'Quán Phở Alice'), (SELECT id FROM outlet_feature WHERE name = 'Khu Vực Ngoài Trời'));
-INSERT INTO outlet_feature_mapping (id, outlet_id, feature_id) VALUES (3, (SELECT id FROM outlet WHERE name = 'Quán Phở Alice'), (SELECT id FROM outlet_feature WHERE name = 'Máy Lạnh'));
-INSERT INTO outlet_feature_mapping (id, outlet_id, feature_id) VALUES (4, (SELECT id FROM outlet WHERE name = 'Quán Phở Alice'), (SELECT id FROM outlet_feature WHERE name = 'Chỗ Đậu Xe'));
+INSERT INTO outlet_feature_mapping (id, outlet_id, feature_id) VALUES (1, (SELECT id FROM outlet WHERE name = 'The Workshop Coffee'), (SELECT id FROM outlet_feature WHERE name = 'Wifi Miễn Phí'));
+INSERT INTO outlet_feature_mapping (id, outlet_id, feature_id) VALUES (2, (SELECT id FROM outlet WHERE name = 'The Workshop Coffee'), (SELECT id FROM outlet_feature WHERE name = 'Máy Lạnh'));
+INSERT INTO outlet_feature_mapping (id, outlet_id, feature_id) VALUES (3, (SELECT id FROM outlet WHERE name = 'The Workshop Coffee'), (SELECT id FROM outlet_feature WHERE name = 'Thanh Toán Thẻ'));
+INSERT INTO outlet_feature_mapping (id, outlet_id, feature_id) VALUES (4, (SELECT id FROM outlet WHERE name = 'Highlands Coffee Lý Tự Trọng'), (SELECT id FROM outlet_feature WHERE name = 'Wifi Miễn Phí'));
+INSERT INTO outlet_feature_mapping (id, outlet_id, feature_id) VALUES (5, (SELECT id FROM outlet WHERE name = 'Highlands Coffee Lý Tự Trọng'), (SELECT id FROM outlet_feature WHERE name = 'Máy Lạnh'));
+INSERT INTO outlet_feature_mapping (id, outlet_id, feature_id) VALUES (6, (SELECT id FROM outlet WHERE name = 'Highlands Coffee Lý Tự Trọng'), (SELECT id FROM outlet_feature WHERE name = 'Dịch Vụ Mang Đi'));
+INSERT INTO outlet_feature_mapping (id, outlet_id, feature_id) VALUES (7, (SELECT id FROM outlet WHERE name = 'Starbucks Nguyễn Huệ'), (SELECT id FROM outlet_feature WHERE name = 'Wifi Miễn Phí'));
+INSERT INTO outlet_feature_mapping (id, outlet_id, feature_id) VALUES (8, (SELECT id FROM outlet WHERE name = 'Starbucks Nguyễn Huệ'), (SELECT id FROM outlet_feature WHERE name = 'Máy Lạnh'));
+INSERT INTO outlet_feature_mapping (id, outlet_id, feature_id) VALUES (9, (SELECT id FROM outlet WHERE name = 'Starbucks Nguyễn Huệ'), (SELECT id FROM outlet_feature WHERE name = 'Dịch Vụ Mang Đi'));
+INSERT INTO outlet_feature_mapping (id, outlet_id, feature_id) VALUES (10, (SELECT id FROM outlet WHERE name = 'LUsine Cafe'), (SELECT id FROM outlet_feature WHERE name = 'Wifi Miễn Phí'));
+INSERT INTO outlet_feature_mapping (id, outlet_id, feature_id) VALUES (11, (SELECT id FROM outlet WHERE name = 'LUsine Cafe'), (SELECT id FROM outlet_feature WHERE name = 'Khu Vực Ngoài Trời'));
+INSERT INTO outlet_feature_mapping (id, outlet_id, feature_id) VALUES (12, (SELECT id FROM outlet WHERE name = 'LUsine Cafe'), (SELECT id FROM outlet_feature WHERE name = 'Thanh Toán Thẻ'));
+INSERT INTO outlet_feature_mapping (id, outlet_id, feature_id) VALUES (13, (SELECT id FROM outlet WHERE name = 'Chill Skybar'), (SELECT id FROM outlet_feature WHERE name = 'Khu Vực Ngoài Trời'));
+INSERT INTO outlet_feature_mapping (id, outlet_id, feature_id) VALUES (14, (SELECT id FROM outlet WHERE name = 'Chill Skybar'), (SELECT id FROM outlet_feature WHERE name = 'Thanh Toán Thẻ'));
+INSERT INTO outlet_feature_mapping (id, outlet_id, feature_id) VALUES (15, (SELECT id FROM outlet WHERE name = 'Chill Skybar'), (SELECT id FROM outlet_feature WHERE name = 'Nhạc Sống (Live Music)'));
 
 --========================================================
 --24. OUTLET_IMAGE
 --========================================================
-INSERT INTO outlet_image (id, outlet_id, image_url, display_order, is_primary, is_deleted) VALUES (1, (SELECT id FROM outlet WHERE name = 'Quán Phở Alice'), 'https://cdn.example.com/outlet/pho-owner1-1.jpg', 1, true, false);
+INSERT INTO outlet_image (id, outlet_id, image_url, display_order, is_primary, is_deleted) VALUES (1, (SELECT id FROM outlet WHERE name = 'The Workshop Coffee'), 'https://cdn.example.com/outlet/workshop-1.jpg', 1, true, false);
+INSERT INTO outlet_image (id, outlet_id, image_url, display_order, is_primary, is_deleted) VALUES (2, (SELECT id FROM outlet WHERE name = 'Highlands Coffee Lý Tự Trọng'), 'https://cdn.example.com/outlet/highlands-1.jpg', 1, true, false);
+INSERT INTO outlet_image (id, outlet_id, image_url, display_order, is_primary, is_deleted) VALUES (3, (SELECT id FROM outlet WHERE name = 'Starbucks Nguyễn Huệ'), 'https://cdn.example.com/outlet/starbucks-1.jpg', 1, true, false);
 
 --========================================================
 --25. OPERATING_HOURS
 --========================================================
-INSERT INTO operating_hours (id, outlet_id, day_of_week, open_time, close_time, is_closed, is_deleted) VALUES (1, (SELECT id FROM outlet WHERE name = 'Quán Phở Alice'), 1, '07:00', '21:00', false, false);
+INSERT INTO operating_hours (id, outlet_id, day_of_week, open_time, close_time, is_closed, is_deleted) VALUES (1, (SELECT id FROM outlet WHERE name = 'The Workshop Coffee'), 1, '07:00', '22:00', false, false);
+INSERT INTO operating_hours (id, outlet_id, day_of_week, open_time, close_time, is_closed, is_deleted) VALUES (2, (SELECT id FROM outlet WHERE name = 'The Workshop Coffee'), 2, '07:00', '22:00', false, false);
+INSERT INTO operating_hours (id, outlet_id, day_of_week, open_time, close_time, is_closed, is_deleted) VALUES (3, (SELECT id FROM outlet WHERE name = 'The Workshop Coffee'), 3, '07:00', '22:00', false, false);
+INSERT INTO operating_hours (id, outlet_id, day_of_week, open_time, close_time, is_closed, is_deleted) VALUES (4, (SELECT id FROM outlet WHERE name = 'The Workshop Coffee'), 4, '07:00', '22:00', false, false);
+INSERT INTO operating_hours (id, outlet_id, day_of_week, open_time, close_time, is_closed, is_deleted) VALUES (5, (SELECT id FROM outlet WHERE name = 'The Workshop Coffee'), 5, '07:00', '22:00', false, false);
+INSERT INTO operating_hours (id, outlet_id, day_of_week, open_time, close_time, is_closed, is_deleted) VALUES (6, (SELECT id FROM outlet WHERE name = 'The Workshop Coffee'), 6, '07:00', '22:00', false, false);
+INSERT INTO operating_hours (id, outlet_id, day_of_week, open_time, close_time, is_closed, is_deleted) VALUES (7, (SELECT id FROM outlet WHERE name = 'The Workshop Coffee'), 0, '07:00', '22:00', false, false);
+INSERT INTO operating_hours (id, outlet_id, day_of_week, open_time, close_time, is_closed, is_deleted) VALUES (8, (SELECT id FROM outlet WHERE name = 'Highlands Coffee Lý Tự Trọng'), 1, '07:00', '22:00', false, false);
+INSERT INTO operating_hours (id, outlet_id, day_of_week, open_time, close_time, is_closed, is_deleted) VALUES (9, (SELECT id FROM outlet WHERE name = 'Highlands Coffee Lý Tự Trọng'), 2, '07:00', '22:00', false, false);
+INSERT INTO operating_hours (id, outlet_id, day_of_week, open_time, close_time, is_closed, is_deleted) VALUES (10, (SELECT id FROM outlet WHERE name = 'Highlands Coffee Lý Tự Trọng'), 3, '07:00', '22:00', false, false);
+INSERT INTO operating_hours (id, outlet_id, day_of_week, open_time, close_time, is_closed, is_deleted) VALUES (11, (SELECT id FROM outlet WHERE name = 'Highlands Coffee Lý Tự Trọng'), 4, '07:00', '22:00', false, false);
+INSERT INTO operating_hours (id, outlet_id, day_of_week, open_time, close_time, is_closed, is_deleted) VALUES (12, (SELECT id FROM outlet WHERE name = 'Highlands Coffee Lý Tự Trọng'), 5, '07:00', '22:00', false, false);
+INSERT INTO operating_hours (id, outlet_id, day_of_week, open_time, close_time, is_closed, is_deleted) VALUES (13, (SELECT id FROM outlet WHERE name = 'Highlands Coffee Lý Tự Trọng'), 6, '07:00', '22:00', false, false);
+INSERT INTO operating_hours (id, outlet_id, day_of_week, open_time, close_time, is_closed, is_deleted) VALUES (14, (SELECT id FROM outlet WHERE name = 'Highlands Coffee Lý Tự Trọng'), 0, '07:00', '22:00', false, false);
+
+--========================================================
+--9. MENU_ITEM (Level 4): Biến thế của các món ăn hiện hữu
+--========================================================
+-- Note: Converting from fnb to menu_item, mapping sub_category_id appropriately
+INSERT INTO menu_item (id, sub_category_id, province_id, name, description, is_popular, is_deleted) VALUES ('60000000-0000-0000-0000-000000000001', (SELECT id FROM menu_item_sub_category WHERE name = 'Phở'), (SELECT id FROM province WHERE name = 'Hồ Chí Minh'), 'Phở Bò Tái', 'Phở bò tái chín, tái nạm', true, false);
+INSERT INTO menu_item (id, sub_category_id, province_id, name, description, is_popular, is_deleted) VALUES ('60000000-0000-0000-0000-000000000002', (SELECT id FROM menu_item_sub_category WHERE name = 'Phở'), (SELECT id FROM province WHERE name = 'Hồ Chí Minh'), 'Phở Bò Đặc Biệt', 'Phở bò đủ các loại', true, false);
+INSERT INTO menu_item (id, sub_category_id, province_id, name, description, is_popular, is_deleted) VALUES ('60000000-0000-0000-0000-000000000003', (SELECT id FROM menu_item_sub_category WHERE name = 'Phở'), (SELECT id FROM province WHERE name = 'Hồ Chí Minh'), 'Phở Gà', 'Phở gà thơm ngon', false, false);
+INSERT INTO menu_item (id, sub_category_id, province_id, name, description, is_popular, is_deleted) VALUES ('60000000-0000-0000-0000-000000000004', (SELECT id FROM menu_item_sub_category WHERE name = 'Mì/Hủ Tiếu'), (SELECT id FROM province WHERE name = 'Hồ Chí Minh'), 'Bún Bò Huế', 'Bún bò Huế cay đậm đà', true, false);
+INSERT INTO menu_item (id, sub_category_id, province_id, name, description, is_popular, is_deleted) VALUES ('60000000-0000-0000-0000-000000000005', (SELECT id FROM menu_item_sub_category WHERE name = 'Mì/Hủ Tiếu'), (SELECT id FROM province WHERE name = 'Hồ Chí Minh'), 'Bún Chả Hà Nội', 'Bún chả nướng kiểu Hà Nội', true, false);
+INSERT INTO menu_item (id, sub_category_id, province_id, name, description, is_popular, is_deleted) VALUES ('60000000-0000-0000-0000-000000000006', (SELECT id FROM menu_item_sub_category WHERE name = 'Cơm Chiên'), (SELECT id FROM province WHERE name = 'Hồ Chí Minh'), 'Cơm Tấm Sườn Nướng', 'Cơm tấm sườn nướng đặc biệt', true, false);
+INSERT INTO menu_item (id, sub_category_id, province_id, name, description, is_popular, is_deleted) VALUES ('60000000-0000-0000-0000-000000000007', (SELECT id FROM menu_item_sub_category WHERE name = 'Cơm Chiên'), (SELECT id FROM province WHERE name = 'Hồ Chí Minh'), 'Cơm Tấm Sườn Bì Chả', 'Cơm tấm sườn bì chả trứng', true, false);
+INSERT INTO menu_item (id, sub_category_id, province_id, name, description, is_popular, is_deleted) VALUES ('60000000-0000-0000-0000-000000000008', (SELECT id FROM menu_item_sub_category WHERE name = 'Cà Phê Truyền Thống'), (SELECT id FROM province WHERE name = 'Hồ Chí Minh'), 'Cà Phê Sữa Đá', 'Cà phê phin truyền thống Việt Nam với sữa đặc', true, false);
+INSERT INTO menu_item (id, sub_category_id, province_id, name, description, is_popular, is_deleted) VALUES ('60000000-0000-0000-0000-000000000009', (SELECT id FROM menu_item_sub_category WHERE name = 'Cà Phê Truyền Thống'), (SELECT id FROM province WHERE name = 'Hồ Chí Minh'), 'Espresso', 'Cà phê Espresso nguyên chất, đậm đà', false, false);
+INSERT INTO menu_item (id, sub_category_id, province_id, name, description, is_popular, is_deleted) VALUES ('60000000-0000-0000-0000-000000000010', (SELECT id FROM menu_item_sub_category WHERE name = 'Cà Phê Truyền Thống'), (SELECT id FROM province WHERE name = 'Hồ Chí Minh'), 'Cafe Latte', 'Cà phê latte sữa tươi mịn màng', false, false);
+INSERT INTO menu_item (id, sub_category_id, province_id, name, description, is_popular, is_deleted) VALUES ('60000000-0000-0000-0000-000000000011', (SELECT id FROM menu_item_sub_category WHERE name = 'Trà Sữa'), (SELECT id FROM province WHERE name = 'Hồ Chí Minh'), 'Trà Sữa Trân Châu Đường Đen', 'Trà sữa đường đen ngọt thơm với trân châu dai', true, false);
+INSERT INTO menu_item (id, sub_category_id, province_id, name, description, is_popular, is_deleted) VALUES ('60000000-0000-0000-0000-000000000012', (SELECT id FROM menu_item_sub_category WHERE name = 'Trà Sữa'), (SELECT id FROM province WHERE name = 'Hồ Chí Minh'), 'Trà Sữa Trân Châu', 'Trà sữa truyền thống với trân châu đen', true, false);
+INSERT INTO menu_item (id, sub_category_id, province_id, name, description, is_popular, is_deleted) VALUES ('60000000-0000-0000-0000-000000000013', (SELECT id FROM menu_item_sub_category WHERE name = 'Trà Trái Cây'), (SELECT id FROM province WHERE name = 'Hồ Chí Minh'), 'Trà Đào Cam Sả', 'Trà trái cây tươi mát', false, false);
+INSERT INTO menu_item (id, sub_category_id, province_id, name, description, is_popular, is_deleted) VALUES ('60000000-0000-0000-0000-000000000014', (SELECT id FROM menu_item_sub_category WHERE name = 'Nước Ngọt Có Ga'), (SELECT id FROM province WHERE name = 'Hồ Chí Minh'), 'Coca Cola Lon', 'Nước ngọt có ga Coca Cola dạng lon 330ml', true, false);
+INSERT INTO menu_item (id, sub_category_id, province_id, name, description, is_popular, is_deleted) VALUES ('60000000-0000-0000-0000-000000000015', (SELECT id FROM menu_item_sub_category WHERE name = 'Bánh Kem Mousse'), (SELECT id FROM province WHERE name = 'Hồ Chí Minh'), 'Cheesecake', 'Bánh phô mai New York', false, false);
+INSERT INTO menu_item (id, sub_category_id, province_id, name, description, is_popular, is_deleted) VALUES ('60000000-0000-0000-0000-000000000016', (SELECT id FROM menu_item_sub_category WHERE name = 'Bánh Kem Mousse'), (SELECT id FROM province WHERE name = 'Hồ Chí Minh'), 'Chocolate Lava Cake', 'Bánh sô-cô-la nóng chảy', false, false);
 
 --========================================================
 --26. OUTLET_MENU_ITEM
 --========================================================
-INSERT INTO outlet_menu_item (id, outlet_id, menu_item_id, name, description, price, image_url, is_available) VALUES (1, (SELECT id FROM outlet WHERE name = 'Quán Phở Alice'),  (SELECT id FROM menu_item WHERE name = 'Phở Bò Tái Gân'), 'Phở Bò Tái Alice', 'Phở bò tái ngon', 75000.00, 'https://cdn.example.com/menu/pho-bo-1.jpg', true);
+-- Note: Converting from outlet_has_fnb to outlet_menu_item
+INSERT INTO outlet_menu_item (id, outlet_id, menu_item_id, name, description, price, image_url, is_available) VALUES (1, (SELECT id FROM outlet WHERE name = 'The Workshop Coffee'), (SELECT id FROM menu_item WHERE name = 'Espresso'), 'Espresso Single Origin', 'Cà phê espresso hạt Arabica Đà Lạt', 45000.00, NULL, true);
+INSERT INTO outlet_menu_item (id, outlet_id, menu_item_id, name, description, price, image_url, is_available) VALUES (2, (SELECT id FROM outlet WHERE name = 'The Workshop Coffee'), (SELECT id FROM menu_item WHERE name = 'Cafe Latte'), 'Signature Latte', 'Cà phê latte nghệ thuật', 55000.00, NULL, true);
+INSERT INTO outlet_menu_item (id, outlet_id, menu_item_id, name, description, price, image_url, is_available) VALUES (3, (SELECT id FROM outlet WHERE name = 'Highlands Coffee Lý Tự Trọng'), (SELECT id FROM menu_item WHERE name = 'Cà Phê Sữa Đá'), 'Freeze Trà Xanh', 'Freeze trà xanh đặc biệt', 49000.00, NULL, true);
+INSERT INTO outlet_menu_item (id, outlet_id, menu_item_id, name, description, price, image_url, is_available) VALUES (4, (SELECT id FROM outlet WHERE name = 'LUsine Cafe'), (SELECT id FROM menu_item WHERE name = 'Cà Phê Sữa Đá'), 'Cà Phê Sữa Đá LUsine', 'Cà phê sữa đá kiểu LUsine', 45000.00, NULL, true);
+INSERT INTO outlet_menu_item (id, outlet_id, menu_item_id, name, description, price, image_url, is_available) VALUES (5, (SELECT id FROM outlet WHERE name = 'Phúc Long Coffee & Tea'), (SELECT id FROM menu_item WHERE name = 'Trà Sữa Trân Châu Đường Đen'), 'Trà Sữa Ô Long Đường Đen', 'Trà sữa ô long đường đen đặc biệt', 45000.00, NULL, true);
+INSERT INTO outlet_menu_item (id, outlet_id, menu_item_id, name, description, price, image_url, is_available) VALUES (6, (SELECT id FROM outlet WHERE name = 'Phúc Long Coffee & Tea'), (SELECT id FROM menu_item WHERE name = 'Trà Đào Cam Sả'), 'Trà Đào Cam Sả Phúc Long', 'Trà trái cây tươi mát', 42000.00, NULL, true);
 
 --========================================================
 --27. MENU_ITEM_FEATURE
@@ -468,54 +559,109 @@ INSERT INTO menu_item_feature (id, name, feature_type, value_type, possible_valu
 --28. OUTLET_MENU_ITEM_FEATURE
 --========================================================
 INSERT INTO outlet_menu_item_feature (id, outlet_menu_item_id, feature_id, value) VALUES (1, (SELECT id FROM outlet_menu_item WHERE id = 1), (SELECT id FROM menu_item_feature WHERE name = 'Độ Cay'), '0');
+INSERT INTO outlet_menu_item_feature (id, outlet_menu_item_id, feature_id, value) VALUES (2, (SELECT id FROM outlet_menu_item WHERE id = 1), (SELECT id FROM menu_item_feature WHERE name = 'Kích Thước Phần Ăn'), 'medium');
+INSERT INTO outlet_menu_item_feature (id, outlet_menu_item_id, feature_id, value) VALUES (3, (SELECT id FROM outlet_menu_item WHERE id = 1), (SELECT id FROM menu_item_feature WHERE name = 'Nhiệt Độ Phục Vụ'), 'hot');
+INSERT INTO outlet_menu_item_feature (id, outlet_menu_item_id, feature_id, value) VALUES (4, (SELECT id FROM outlet_menu_item WHERE id = 1), (SELECT id FROM menu_item_feature WHERE name = 'Loại Bữa Ăn'), 'beverage');
+INSERT INTO outlet_menu_item_feature (id, outlet_menu_item_id, feature_id, value) VALUES (5, (SELECT id FROM outlet_menu_item WHERE id = 2), (SELECT id FROM menu_item_feature WHERE name = 'Độ Ngọt'), '2');
+INSERT INTO outlet_menu_item_feature (id, outlet_menu_item_id, feature_id, value) VALUES (6, (SELECT id FROM outlet_menu_item WHERE id = 2), (SELECT id FROM menu_item_feature WHERE name = 'Nhiệt Độ Phục Vụ'), 'hot');
+INSERT INTO outlet_menu_item_feature (id, outlet_menu_item_id, feature_id, value) VALUES (7, (SELECT id FROM outlet_menu_item WHERE id = 2), (SELECT id FROM menu_item_feature WHERE name = 'Loại Bữa Ăn'), 'beverage');
+INSERT INTO outlet_menu_item_feature (id, outlet_menu_item_id, feature_id, value) VALUES (8, (SELECT id FROM outlet_menu_item WHERE id = 5), (SELECT id FROM menu_item_feature WHERE name = 'Độ Ngọt'), '4');
+INSERT INTO outlet_menu_item_feature (id, outlet_menu_item_id, feature_id, value) VALUES (9, (SELECT id FROM outlet_menu_item WHERE id = 5), (SELECT id FROM menu_item_feature WHERE name = 'Nhiệt Độ Phục Vụ'), 'cold');
+INSERT INTO outlet_menu_item_feature (id, outlet_menu_item_id, feature_id, value) VALUES (10, (SELECT id FROM outlet_menu_item WHERE id = 5), (SELECT id FROM menu_item_feature WHERE name = 'Loại Bữa Ăn'), 'beverage');
+
+--========================================================
+--17. MEMBERSHIP_PLAN
+--========================================================
+INSERT INTO membership_plan (id, name, description, price, duration_months, dish_limit, features, type, is_deleted) VALUES (1, 'Free Owner', 'Gói miễn phí', 0.00, 0, 10, '["basic-listing"]', 'OWNER', false);
+INSERT INTO membership_plan (id, name, description, price, duration_months, dish_limit, features, type, is_deleted) VALUES (2, 'Basic Owner', 'Gói đăng ký cơ bản dành cho cá nhân.', 9.99, 12, 50, '["basic-listing", "priority-email"]', 'OWNER', false);
+INSERT INTO membership_plan (id, name, description, price, duration_months, dish_limit, features, type, is_deleted) VALUES (3, 'Standard Owner', 'Gói tiêu chuẩn, phù hợp cho các nhóm nhỏ.', 29.99, 12, 100, '["basic-listing", "priority-email", "analytics-dashboard"]', 'OWNER', false);
+INSERT INTO membership_plan (id, name, description, price, duration_months, dish_limit, features, type, is_deleted) VALUES (4, 'Premium Owner', 'Gói cao cấp với đầy đủ tính năng.', 49.99, 12, 300, '["all-standard-features", "dedicated-support", "early-access-features"]', 'OWNER', false);
+INSERT INTO membership_plan (id, name, description, price, duration_months, dish_limit, features, type, is_deleted) VALUES (5, 'Enterprise Owner', 'Gói tùy chỉnh dành cho các tổ chức lớn.', 99.99, 0, 0, '["all-premium-features", "custom-sla", "account-manager"]', 'OWNER', false);
+INSERT INTO membership_plan (id, name, description, price, duration_months, dish_limit, features, type, is_deleted) VALUES (6, 'Silver Member', 'Thành viên Bạc: Mở khóa tính năng Đặt bàn', 59000.00, 1, NULL, '["booking-access"]', 'USER', false);
+INSERT INTO membership_plan (id, name, description, price, duration_months, dish_limit, features, type, is_deleted) VALUES (7, 'Gold Member', 'Thành viên Vàng: Đặt bàn + Ưu đãi đặc quyền', 199000.00, 12, NULL, '["booking-access", "priority-support", "voucher"]', 'USER', false);
+
+--========================================================
+--18. USER_MEMBERSHIP
+--========================================================
+INSERT INTO user_membership (id, user_id, plan_id, start_date, end_date, is_active, is_deleted) VALUES (1, (SELECT id FROM user_account WHERE username = 'ha.hoang_97'), (SELECT id FROM membership_plan WHERE name = 'Silver Member'), CURRENT_DATE, CURRENT_DATE + INTERVAL '30 days', true, false);
+INSERT INTO user_membership (id, user_id, plan_id, start_date, end_date, is_active, is_deleted) VALUES (2, (SELECT id FROM user_account WHERE username = 'ngoc.do_31'), (SELECT id FROM membership_plan WHERE name = 'Gold Member'), CURRENT_DATE, CURRENT_DATE + INTERVAL '365 days', true, false);
+
+--========================================================
+--19. SHARING_LIST
+--========================================================
+INSERT INTO sharing_list (id, owner_id, name, description, is_public, is_collaborative) VALUES (1, (SELECT id FROM user_account WHERE username = 'ha.hoang_97'), 'My Favorites', 'Danh sách địa điểm yêu thích', false, false);
+INSERT INTO sharing_list (id, owner_id, name, description, is_public, is_collaborative) VALUES (2, (SELECT id FROM user_account WHERE username = 'ngoc.do_31'), 'Best Coffee Shops', 'Những quán cà phê tốt nhất', true, false);
+
+--========================================================
+--20. SHARING_LIST_COLLABORATOR
+--========================================================
+INSERT INTO sharing_list_collaborator (id, user_id, sharing_list_id) VALUES (1, (SELECT id FROM user_account WHERE username = 'ha.hoang_97'), (SELECT id FROM sharing_list WHERE name = 'My Favorites'));
+INSERT INTO sharing_list_collaborator (id, user_id, sharing_list_id) VALUES (2, (SELECT id FROM user_account WHERE username = 'ngoc.do_31'), (SELECT id FROM sharing_list WHERE name = 'Best Coffee Shops'));
 
 --========================================================
 --29. BOOKING
 --========================================================
-INSERT INTO booking (id, outlet_id, user_id, booking_date, booking_time, number_of_guests, status, deposit_amount, user_notes, owner_notes) VALUES ('30000000-0000-0000-0000-000000000001', (SELECT id FROM outlet WHERE name = 'Quán Phở Alice'), (SELECT id FROM user_account WHERE username = 'user1'), CURRENT_DATE + INTERVAL '3 days', '19:00', 4, 'COMPLETED', 100000.00, 'Ngồi tầng 1, gần cửa sổ', NULL);
-INSERT INTO booking (id, outlet_id, user_id, booking_date, booking_time, number_of_guests, status, deposit_amount, user_notes, owner_notes) VALUES ('30000000-0000-0000-0000-000000000002', (SELECT id FROM outlet WHERE name = 'Quán Phở Alice'), (SELECT id FROM user_account WHERE username = 'user1'), CURRENT_DATE + INTERVAL '6 days', '21:00', 4, 'COMPLETED', 100000.00, 'Ngồi tầng 1, gần cửa sổ', NULL);
+-- Note: Converting booking_id from integer to UUID, status from string to enum
+INSERT INTO booking (id, outlet_id, user_id, booking_date, booking_time, number_of_guests, status, deposit_amount, user_notes, owner_notes) VALUES ('30000000-0000-0000-0000-000000000001', (SELECT id FROM outlet WHERE name = 'The Workshop Coffee'), (SELECT id FROM user_account WHERE username = 'ha.hoang_97'), CURRENT_DATE + INTERVAL '3 days', '19:00', 4, 'CONFIRMED', 100000.00, 'Ngồi tầng 1, gần cửa sổ', NULL);
+INSERT INTO booking (id, outlet_id, user_id, booking_date, booking_time, number_of_guests, status, deposit_amount, user_notes, owner_notes) VALUES ('30000000-0000-0000-0000-000000000002', (SELECT id FROM outlet WHERE name = 'Highlands Coffee Lý Tự Trọng'), (SELECT id FROM user_account WHERE username = 'ngoc.do_31'), CURRENT_DATE + INTERVAL '6 days', '21:00', 2, 'CONFIRMED', 50000.00, 'Bàn ngoài trời', NULL);
+INSERT INTO booking (id, outlet_id, user_id, booking_date, booking_time, number_of_guests, status, deposit_amount, user_notes, owner_notes) VALUES ('30000000-0000-0000-0000-000000000003', (SELECT id FROM outlet WHERE name = 'Starbucks Nguyễn Huệ'), (SELECT id FROM user_account WHERE username = 'phuc.duong_37'), CURRENT_DATE + INTERVAL '1 day', '18:30', 3, 'PENDING', 75000.00, NULL, NULL);
+INSERT INTO booking (id, outlet_id, user_id, booking_date, booking_time, number_of_guests, status, deposit_amount, user_notes, owner_notes) VALUES ('30000000-0000-0000-0000-000000000004', (SELECT id FROM outlet WHERE name = 'LUsine Cafe'), (SELECT id FROM user_account WHERE username = 'lam.hoang_71'), CURRENT_DATE - INTERVAL '2 days', '20:00', 4, 'COMPLETED', 100000.00, 'Kỷ niệm sinh nhật', NULL);
+INSERT INTO booking (id, outlet_id, user_id, booking_date, booking_time, number_of_guests, status, deposit_amount, user_notes, owner_notes) VALUES ('30000000-0000-0000-0000-000000000005', (SELECT id FROM outlet WHERE name = 'Chill Skybar'), (SELECT id FROM user_account WHERE username = 'khoi.vo_78'), CURRENT_DATE + INTERVAL '5 days', '21:30', 6, 'CONFIRMED', 200000.00, 'Bàn view đẹp', NULL);
 
 --========================================================
 --30. PAYMENT
 --========================================================
-INSERT INTO payment (id, related_id, amount, payment_method, payment_status, transaction_id, type, is_deleted) VALUES ('40000000-0000-0000-0000-000000000001', '30000000-0000-0000-0000-000000000001', 100000.00, 'BANK_TRANSFER', 'PENDING', 'TXN123456789', 'BOOKING', false);
+-- Note: Converting payment_id from integer to UUID, method from string to enum, status from string to enum
+INSERT INTO payment (id, related_id, amount, payment_method, payment_status, transaction_id, type, is_deleted) VALUES ('40000000-0000-0000-0000-000000000001', '30000000-0000-0000-0000-000000000001', 100000.00, 'BANK_TRANSFER', 'COMPLETED', 'TXN123456789', 'BOOKING', false);
+INSERT INTO payment (id, related_id, amount, payment_method, payment_status, transaction_id, type, is_deleted) VALUES ('40000000-0000-0000-0000-000000000002', '30000000-0000-0000-0000-000000000002', 50000.00, 'E_WALLET', 'COMPLETED', 'TXN123456790', 'BOOKING', false);
+INSERT INTO payment (id, related_id, amount, payment_method, payment_status, transaction_id, type, is_deleted) VALUES ('40000000-0000-0000-0000-000000000003', '30000000-0000-0000-0000-000000000003', 75000.00, 'CREDIT_CARD', 'PENDING', 'TXN123456791', 'BOOKING', false);
+INSERT INTO payment (id, related_id, amount, payment_method, payment_status, transaction_id, type, is_deleted) VALUES ('40000000-0000-0000-0000-000000000004', '30000000-0000-0000-0000-000000000004', 100000.00, 'BANK_TRANSFER', 'COMPLETED', 'TXN123456792', 'BOOKING', false);
+INSERT INTO payment (id, related_id, amount, payment_method, payment_status, transaction_id, type, is_deleted) VALUES ('40000000-0000-0000-0000-000000000005', '30000000-0000-0000-0000-000000000005', 200000.00, 'E_WALLET', 'COMPLETED', 'TXN123456793', 'BOOKING', false);
 
 --========================================================
 --31. REVIEW
 --========================================================
-INSERT INTO review (id, outlet_id, user_id, booking_id, food_rating, service_rating, ambiance_rating, price_rating, overall_rating, comment, likes_count, dislikes_count) VALUES ('50000000-0000-0000-0000-000000000001', (SELECT id FROM outlet WHERE name = 'Quán Phở Alice'), (SELECT id FROM user_account WHERE username = 'user1'), (SELECT id FROM booking WHERE id = '30000000-0000-0000-0000-000000000001'), 5, 5, 4, 4, 5, 'Nước dùng đậm đà, thịt mềm', 3, 0);
+-- Note: Converting review_id from integer to UUID, adding food_rating, service_rating, ambiance_rating, price_rating, overall_rating
+INSERT INTO review (id, outlet_id, user_id, booking_id, food_rating, service_rating, ambiance_rating, price_rating, overall_rating, comment, likes_count, dislikes_count) VALUES ('50000000-0000-0000-0000-000000000001', (SELECT id FROM outlet WHERE name = 'The Workshop Coffee'), (SELECT id FROM user_account WHERE username = 'ha.hoang_97'), (SELECT id FROM booking WHERE id = '30000000-0000-0000-0000-000000000001'), 5, 5, 4, 4, 5, 'Cà phê ngon, không gian đẹp, phục vụ tốt', 3, 0);
+INSERT INTO review (id, outlet_id, user_id, booking_id, food_rating, service_rating, ambiance_rating, price_rating, overall_rating, comment, likes_count, dislikes_count) VALUES ('50000000-0000-0000-0000-000000000002', (SELECT id FROM outlet WHERE name = 'Highlands Coffee Lý Tự Trọng'), (SELECT id FROM user_account WHERE username = 'ngoc.do_31'), (SELECT id FROM booking WHERE id = '30000000-0000-0000-0000-000000000002'), 4, 4, 3, 4, 4, 'Cà phê ổn, giá hợp lý', 1, 0);
+INSERT INTO review (id, outlet_id, user_id, booking_id, food_rating, service_rating, ambiance_rating, price_rating, overall_rating, comment, likes_count, dislikes_count) VALUES ('50000000-0000-0000-0000-000000000003', (SELECT id FROM outlet WHERE name = 'LUsine Cafe'), (SELECT id FROM user_account WHERE username = 'lam.hoang_71'), (SELECT id FROM booking WHERE id = '30000000-0000-0000-0000-000000000004'), 5, 5, 5, 4, 5, 'Không gian đẹp, đồ uống ngon, phục vụ chuyên nghiệp', 5, 0);
 
 --========================================================
 --32. REVIEW_IMAGE
 --========================================================
-INSERT INTO review_image (id, review_id, image_url) VALUES (1, (SELECT id FROM review WHERE comment = 'Nước dùng đậm đà, thịt mềm'), 'https://cdn.example.com/review/5001.jpg');
+INSERT INTO review_image (id, review_id, image_url) VALUES (1, (SELECT id FROM review WHERE comment = 'Cà phê ngon, không gian đẹp, phục vụ tốt'), 'https://cdn.example.com/review/5001.jpg');
+INSERT INTO review_image (id, review_id, image_url) VALUES (2, (SELECT id FROM review WHERE comment = 'Cà phê ngon, không gian đẹp, phục vụ tốt'), 'https://cdn.example.com/review/5002.jpg');
+INSERT INTO review_image (id, review_id, image_url) VALUES (3, (SELECT id FROM review WHERE comment = 'Không gian đẹp, đồ uống ngon, phục vụ chuyên nghiệp'), 'https://cdn.example.com/review/5003.jpg');
 
 --========================================================
 --33. REVIEW_REPLY
 --========================================================
-INSERT INTO review_reply (id, review_id, owner_id, reply_text) VALUES (1, (SELECT id FROM review WHERE comment = 'Nước dùng đậm đà, thịt mềm'), (SELECT owner_id FROM outlet WHERE name = 'Quán Phở Alice'), 'Cảm ơn bạn đã ủng hộ! ❤️');
+INSERT INTO review_reply (id, review_id, owner_id, reply_text) VALUES (1, (SELECT id FROM review WHERE comment = 'Cà phê ngon, không gian đẹp, phục vụ tốt'), (SELECT owner_id FROM outlet WHERE name = 'The Workshop Coffee'), 'Cảm ơn bạn đã ủng hộ! ❤️');
+INSERT INTO review_reply (id, review_id, owner_id, reply_text) VALUES (2, (SELECT id FROM review WHERE comment = 'Không gian đẹp, đồ uống ngon, phục vụ chuyên nghiệp'), (SELECT owner_id FROM outlet WHERE name = 'LUsine Cafe'), 'Rất vui được phục vụ bạn!');
 
 --========================================================
 --34. REVIEW_REACTION
 --========================================================
-INSERT INTO review_reaction (id, review_id, user_id, reaction_type) VALUES (1, (SELECT id FROM review WHERE comment = 'Nước dùng đậm đà, thịt mềm'), (SELECT id FROM user_account WHERE username = 'user1'), 'LIKE');
+INSERT INTO review_reaction (id, review_id, user_id, reaction_type) VALUES (1, (SELECT id FROM review WHERE comment = 'Cà phê ngon, không gian đẹp, phục vụ tốt'), (SELECT id FROM user_account WHERE username = 'ngoc.do_31'), 'LIKE');
+INSERT INTO review_reaction (id, review_id, user_id, reaction_type) VALUES (2, (SELECT id FROM review WHERE comment = 'Cà phê ngon, không gian đẹp, phục vụ tốt'), (SELECT id FROM user_account WHERE username = 'phuc.duong_37'), 'LIKE');
+INSERT INTO review_reaction (id, review_id, user_id, reaction_type) VALUES (3, (SELECT id FROM review WHERE comment = 'Cà phê ổn, giá hợp lý'), (SELECT id FROM user_account WHERE username = 'ha.hoang_97'), 'LIKE');
 
 --========================================================
 --35. REVIEW_REPORT
 --========================================================
-INSERT INTO review_report (id, review_id, reporter_id, reason, status) VALUES (1, (SELECT id FROM review WHERE comment = 'Nước dùng đậm đà, thịt mềm'), (SELECT id FROM user_account WHERE username = 'user1'), 'SPAM', 'PENDING');
+INSERT INTO review_report (id, review_id, reporter_id, reason, status) VALUES (1, (SELECT id FROM review WHERE comment = 'Cà phê ổn, giá hợp lý'), (SELECT id FROM user_account WHERE username = 'ha.hoang_97'), 'SPAM', 'PENDING');
 
 --========================================================
 --36. NOTIFICATION
 --========================================================
-INSERT INTO notification (id, user_id, type, title, content, related_id, is_read) VALUES (1, (SELECT id FROM user_account WHERE username = 'user1'), 'review', 'Bạn có phản hồi mới!', 'Chủ quán đã trả lời review của bạn.', '50000000-0000-0000-0000-000000000001', false);
+INSERT INTO notification (id, user_id, type, title, content, related_id, is_read) VALUES (1, (SELECT id FROM user_account WHERE username = 'ha.hoang_97'), 'review', 'Bạn có phản hồi mới!', 'Chủ quán đã trả lời review của bạn.', '50000000-0000-0000-0000-000000000001', false);
+INSERT INTO notification (id, user_id, type, title, content, related_id, is_read) VALUES (2, (SELECT id FROM user_account WHERE username = 'ngoc.do_31'), 'booking', 'Đặt bàn thành công', 'Đặt bàn của bạn đã được xác nhận.', '30000000-0000-0000-0000-000000000002', false);
 
 --========================================================
 --37. ADVERTISEMENT
 --========================================================
-INSERT INTO advertisement (id, outlet_id, position, start_date, end_date, is_active) VALUES (1, (SELECT id FROM outlet WHERE name = 'Quán Phở Alice'), 'featured', CURRENT_DATE, CURRENT_DATE + INTERVAL '7 days', true);
-
-
+INSERT INTO advertisement (id, outlet_id, position, start_date, end_date, is_active) VALUES (1, (SELECT id FROM outlet WHERE name = 'The Workshop Coffee'), 'featured', CURRENT_DATE, CURRENT_DATE + INTERVAL '7 days', true);
+INSERT INTO advertisement (id, outlet_id, position, start_date, end_date, is_active) VALUES (2, (SELECT id FROM outlet WHERE name = 'Chill Skybar'), 'featured', CURRENT_DATE, CURRENT_DATE + INTERVAL '14 days', true);
 
 --================================================================================================================
 --================================================================================================================
@@ -616,16 +762,11 @@ SELECT setval(pg_get_serial_sequence('province', 'id'), (SELECT COALESCE(MAX(id)
 -- 🔑 31. District (INTEGER ID)
 SELECT setval(pg_get_serial_sequence('district', 'id'), (SELECT COALESCE(MAX(id), 0) FROM district) + 1, false);
 
-
-
-
-
 --================================================================================================================
 --================================================================================================================
 -- Các lệnh này đảm bảo is_deleted trong DB được đồng bộ là false
 --================================================================================================================
 --================================================================================================================
-
 
 -- 1. user_account
 UPDATE user_account SET is_deleted = FALSE WHERE is_deleted IS NULL;
@@ -737,3 +878,4 @@ UPDATE province SET is_deleted = FALSE WHERE is_deleted IS NULL;
 
 -- 37. district
 UPDATE district SET is_deleted = FALSE WHERE is_deleted IS NULL;
+

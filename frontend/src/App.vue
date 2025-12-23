@@ -1,9 +1,12 @@
 <template>
   <router-view />
+  <ToastContainer />
+  <ConfirmDialog />
 </template>
 
 <script setup>
-// App root component
+import ToastContainer from "@/components/common/ToastContainer.vue";
+import ConfirmDialog from "@/components/common/ConfirmDialog.vue";
 </script>
 
 <style scoped>

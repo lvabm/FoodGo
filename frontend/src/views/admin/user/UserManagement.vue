@@ -2,6 +2,13 @@
   <div class="px-10 py-8">
     <div class="flex items-center justify-between mb-6">
       <h1 class="text-2xl font-bold">Quản lý người dùng</h1>
+      <button
+        @click="showCreateModal = true"
+        class="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-opacity-90"
+      >
+        <span class="material-symbols-outlined">add</span>
+        Thêm người dùng
+      </button>
     </div>
 
     <!-- Filters -->
@@ -65,11 +72,27 @@
     </div>
 
     <!-- Error State -->
-    <ErrorMessage v-if="error" :message="error" />
+    <div v-if="error" class="mb-6">
+      <ErrorMessage :message="error" />
+      <div class="mt-2 text-sm text-red-600 dark:text-red-400">
+        <p class="font-medium mb-2">Vui lòng kiểm tra:</p>
+        <ul class="list-disc list-inside space-y-1">
+          <li>Backend đang chạy và kết nối database thành công</li>
+          <li>Token JWT còn hợp lệ</li>
+          <li>Bạn có quyền ADMIN</li>
+        </ul>
+        <button
+          @click="fetchUsers"
+          class="mt-3 px-4 py-2 bg-primary text-white rounded-lg hover:bg-opacity-90 text-sm"
+        >
+          Thử lại
+        </button>
+      </div>
+    </div>
 
     <!-- Users Table -->
     <div
-      v-if="!isLoading && !error"
+      v-if="!isLoading && !error && users.length > 0"
       class="bg-white dark:bg-surface-dark rounded-xl border border-border-light dark:border-border-dark overflow-hidden"
     >
       <table class="w-full">
@@ -186,6 +209,7 @@
                   Chi tiết
                 </router-link>
                 <button
+                  v-if="!isCurrentUser(user)"
                   @click="toggleUserStatus(user)"
                   :class="
                     user.isActive !== false
@@ -195,6 +219,13 @@
                 >
                   {{ user.isActive !== false ? "Khóa" : "Mở khóa" }}
                 </button>
+                <span
+                  v-else
+                  class="text-gray-400 text-sm"
+                  title="Bạn không thể khóa chính mình"
+                >
+                  Không thể khóa
+                </span>
                 <button
                   @click="handleDeleteUser(user)"
                   class="text-red-600 hover:text-red-500"
@@ -204,13 +235,22 @@
               </div>
             </td>
           </tr>
-          <tr v-if="users.length === 0">
-            <td colspan="6" class="px-6 py-8 text-center text-subtext-light">
-              Không có dữ liệu
-            </td>
-          </tr>
         </tbody>
       </table>
+    </div>
+
+    <!-- Empty State -->
+    <div
+      v-if="!isLoading && !error && users.length === 0"
+      class="bg-white dark:bg-surface-dark rounded-xl border border-border-light dark:border-border-dark text-center py-12"
+    >
+      <span class="material-symbols-outlined text-6xl text-gray-400 mb-4">group</span>
+      <p class="text-lg font-medium text-subtext-light dark:text-subtext-dark mb-2">
+        Không có người dùng nào
+      </p>
+      <p class="text-sm text-subtext-light dark:text-subtext-dark">
+        {{ filters.search || filters.role || filters.status ? "Thử thay đổi bộ lọc" : "Hãy thêm người dùng đầu tiên" }}
+      </p>
     </div>
 
     <!-- Pagination -->
@@ -251,26 +291,127 @@
         </button>
       </div>
     </div>
+
+    <!-- Create User Modal -->
+    <div
+      v-if="showCreateModal"
+      class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+      @click.self="closeCreateModal"
+    >
+      <div
+        class="bg-white dark:bg-surface-dark rounded-xl p-6 w-full max-w-md border border-border-light dark:border-border-dark"
+      >
+        <h2 class="text-xl font-bold mb-4">Thêm người dùng mới</h2>
+        <form @submit.prevent="createUser" class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium mb-2">Họ và tên *</label>
+            <input
+              v-model="createForm.fullName"
+              type="text"
+              required
+              class="w-full px-4 py-2 border border-border-light dark:border-border-dark rounded-lg"
+              placeholder="Nhập họ và tên"
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-2">Email *</label>
+            <input
+              v-model="createForm.email"
+              type="email"
+              required
+              class="w-full px-4 py-2 border border-border-light dark:border-border-dark rounded-lg"
+              placeholder="email@example.com"
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-2">Mật khẩu *</label>
+            <input
+              v-model="createForm.password"
+              type="password"
+              required
+              minlength="6"
+              class="w-full px-4 py-2 border border-border-light dark:border-border-dark rounded-lg"
+              placeholder="Tối thiểu 6 ký tự"
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-2">Xác nhận mật khẩu *</label>
+            <input
+              v-model="createForm.passwordConfirmation"
+              type="password"
+              required
+              minlength="6"
+              class="w-full px-4 py-2 border border-border-light dark:border-border-dark rounded-lg"
+              placeholder="Nhập lại mật khẩu"
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-2">Vai trò *</label>
+            <select
+              v-model="createForm.role"
+              required
+              class="w-full px-4 py-2 border border-border-light dark:border-border-dark rounded-lg"
+            >
+              <option value="">Chọn vai trò</option>
+              <option value="USER">User</option>
+              <option value="OWNER">Owner</option>
+              <option value="ADMIN">Admin</option>
+            </select>
+          </div>
+          <div class="flex gap-2 justify-end">
+            <button
+              type="button"
+              @click="closeCreateModal"
+              class="px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700"
+            >
+              Hủy
+            </button>
+            <button
+              type="submit"
+              :disabled="isCreating"
+              class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-opacity-90 disabled:opacity-50"
+            >
+              {{ isCreating ? "Đang tạo..." : "Tạo mới" }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
 import {ref, computed, onMounted} from "vue";
 import {useRouter} from "vue-router";
-import {adminApi} from "@/api";
+import {useAuthStore} from "@/stores/auth";
+import {adminApi, authApi} from "@/api";
+import {useToast} from "@/composables/useToast";
+import {useConfirm} from "@/composables/useConfirm";
 import LoadingSpinner from "@/components/common/LoadingSpinner.vue";
 import ErrorMessage from "@/components/common/ErrorMessage.vue";
 import ImageDisplay from "@/components/common/ImageDisplay.vue";
 
 const router = useRouter();
+const authStore = useAuthStore();
+const {success, error: showError} = useToast();
+const {confirm} = useConfirm();
 
 const isLoading = ref(false);
 const error = ref(null);
 const users = ref([]);
+const showCreateModal = ref(false);
+const isCreating = ref(false);
 const filters = ref({
   search: "",
   role: "",
   status: "",
+});
+const createForm = ref({
+  fullName: "",
+  email: "",
+  password: "",
+  passwordConfirmation: "",
+  role: "",
 });
 const pagination = ref({
   currentPage: 0,
@@ -341,6 +482,12 @@ const formatDate = (date) => {
   }
 };
 
+const isCurrentUser = (user) => {
+  const currentUser = authStore.user;
+  if (!currentUser || !user) return false;
+  return currentUser.id === user.id || currentUser.email === user.email;
+};
+
 const fetchUsers = async () => {
   isLoading.value = true;
   error.value = null;
@@ -350,27 +497,88 @@ const fetchUsers = async () => {
       size: pagination.value.pageSize,
     };
 
+    // Backend expects: searchTerm, roleName (enum), isActive
     if (filters.value.search) {
-      params.search = filters.value.search;
+      params.searchTerm = filters.value.search;
     }
     if (filters.value.role) {
-      params.role = filters.value.role;
+      // Backend expects roleName as enum: ROLE_USER, ROLE_OWNER, ROLE_ADMIN
+      const roleName = filters.value.role.startsWith("ROLE_") 
+        ? filters.value.role 
+        : `ROLE_${filters.value.role}`;
+      params.roleName = roleName;
     }
     if (filters.value.status !== "") {
       params.isActive = filters.value.status === "true";
     }
 
+    console.log("🔍 [UserManagement] Fetching users with params:", params);
     const response = await adminApi.getUsers(params);
-    const data = response.data || response;
+    console.log("✅ [UserManagement] Raw response:", response);
+    console.log("✅ [UserManagement] Response type:", typeof response);
+    console.log("✅ [UserManagement] Is array:", Array.isArray(response));
+    
+    // Handle Spring Data Page structure: { content: Array, totalElements, totalPages, ... }
+    // Or PageResponse structure: { data: Array, totalElements, totalPages, ... }
+    let pageData = response;
+    let allUsers = [];
+    
+    if (response && typeof response === 'object' && !Array.isArray(response)) {
+      // Check for Spring Data Page format (content array)
+      if (response.content && Array.isArray(response.content)) {
+        allUsers = response.content;
+        pageData = response;
+        console.log("✅ [UserManagement] Detected Spring Data Page format, users count:", allUsers.length);
+      }
+      // Check for PageResponse format (data array)
+      else if (response.data && Array.isArray(response.data)) {
+        allUsers = response.data;
+        pageData = response;
+        console.log("✅ [UserManagement] Detected PageResponse format, users count:", allUsers.length);
+      } else {
+        console.warn("⚠️ [UserManagement] Response object but no content/data array found:", Object.keys(response));
+      }
+    } else if (Array.isArray(response)) {
+      allUsers = response;
+      pageData = { totalElements: response.length, totalPages: 1 };
+      console.log("✅ [UserManagement] Response is array directly, users count:", allUsers.length);
+    } else {
+      console.error("❌ [UserManagement] Unexpected response format:", typeof response, response);
+    }
 
-    users.value = data.content || data.data || [];
-    if (data.totalElements !== undefined) {
-      pagination.value.totalElements = data.totalElements;
-      pagination.value.totalPages = data.totalPages || Math.ceil(data.totalElements / pagination.value.pageSize);
+    // Ensure users is always an array
+    users.value = Array.isArray(allUsers) ? allUsers : [];
+    console.log("✅ [UserManagement] Final users.value:", users.value);
+    console.log("✅ [UserManagement] Final users.value.length:", users.value.length);
+    
+    // Update pagination
+    if (pageData && typeof pageData === 'object' && !Array.isArray(pageData)) {
+      if (pageData.totalElements !== undefined) {
+        pagination.value.totalElements = pageData.totalElements;
+        pagination.value.totalPages = pageData.totalPages || Math.ceil(pageData.totalElements / pagination.value.pageSize);
+        console.log("✅ [UserManagement] Pagination updated:", {
+          totalElements: pagination.value.totalElements,
+          totalPages: pagination.value.totalPages,
+          currentPage: pagination.value.currentPage
+        });
+      } else {
+        console.warn("⚠️ [UserManagement] PageData has no totalElements:", pageData);
+      }
     }
   } catch (err) {
-    console.error("Error fetching users:", err);
-    error.value = err.response?.data?.message || "Không thể tải danh sách người dùng";
+    console.error("❌ [UserManagement] Error fetching users:", err);
+    console.error("❌ [UserManagement] Error response:", err.response);
+    console.error("❌ [UserManagement] Error details:", err.response?.data?.details);
+    
+    // Show detailed error message
+    const errorDetails = err.response?.data?.details;
+    let errorMessage = err.response?.data?.message || err.message || "Không thể tải danh sách người dùng";
+    
+    if (errorDetails && Array.isArray(errorDetails) && errorDetails.length > 0) {
+      errorMessage += `\nChi tiết: ${errorDetails.map(d => d.toString()).join(", ")}`;
+    }
+    
+    error.value = errorMessage;
   } finally {
     isLoading.value = false;
   }
@@ -398,31 +606,121 @@ const goToPage = (page) => {
 };
 
 const toggleUserStatus = async (user) => {
-  if (!confirm(`Bạn có chắc muốn ${user.isActive !== false ? "khóa" : "mở khóa"} người dùng này?`)) {
+  // Không cho admin tự khóa chính mình
+  if (isCurrentUser(user)) {
+    showError("Bạn không thể khóa chính mình");
     return;
   }
+
+  const confirmed = await confirm(
+    `Bạn có chắc muốn ${user.isActive !== false ? "khóa" : "mở khóa"} người dùng này?`
+  );
+  if (!confirmed) return;
 
   try {
     await adminApi.changeUserStatus(user.id, {
       isActive: user.isActive === false,
     });
+    success(`${user.isActive !== false ? "Khóa" : "Mở khóa"} người dùng thành công`);
     await fetchUsers();
   } catch (err) {
-    alert(err.response?.data?.message || "Có lỗi xảy ra");
+    showError(err.response?.data?.message || "Có lỗi xảy ra");
   }
 };
 
 const handleDeleteUser = async (user) => {
-  if (!confirm(`Bạn có chắc muốn xóa người dùng ${user.email}?`)) {
+  if (isCurrentUser(user)) {
+    showError("Bạn không thể xóa chính mình");
     return;
   }
 
+  const confirmed = await confirm(`Bạn có chắc muốn xóa người dùng ${user.email}?`);
+  if (!confirmed) return;
+
   try {
     await adminApi.deleteUser(user.id);
+    success("Xóa người dùng thành công");
     await fetchUsers();
   } catch (err) {
-    alert(err.response?.data?.message || "Có lỗi xảy ra");
+    showError(err.response?.data?.message || "Có lỗi xảy ra");
   }
+};
+
+const createUser = async () => {
+  if (createForm.value.password !== createForm.value.passwordConfirmation) {
+    showError("Mật khẩu xác nhận không khớp");
+    return;
+  }
+
+  isCreating.value = true;
+  try {
+    // Step 1: Register user
+    const registerData = {
+      fullName: createForm.value.fullName,
+      email: createForm.value.email,
+      password: createForm.value.password,
+      confirmPassword: createForm.value.passwordConfirmation,
+    };
+    
+    await authApi.register(registerData);
+    
+    // Step 2: Find user by email to get ID
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    const searchResponse = await adminApi.getUsers({
+      searchTerm: createForm.value.email,
+      page: 0,
+      size: 1,
+    });
+    
+    let userId = null;
+    const userList = searchResponse?.data || searchResponse?.content || searchResponse || [];
+    const foundUser = Array.isArray(userList) ? userList.find(u => u.email === createForm.value.email) : null;
+    
+    if (foundUser?.id) {
+      userId = foundUser.id;
+    } else {
+      throw new Error("Không thể tìm thấy người dùng vừa tạo. Vui lòng kiểm tra lại.");
+    }
+
+    // Step 3: Assign role if not USER
+    if (createForm.value.role && createForm.value.role !== "USER") {
+      try {
+        const roleType = createForm.value.role.startsWith("ROLE_") 
+          ? createForm.value.role 
+          : `ROLE_${createForm.value.role}`;
+        
+        await adminApi.assignUserRoles(userId, {
+          roleType: roleType,
+        });
+      } catch (roleErr) {
+        console.warn("Could not assign role:", roleErr);
+        showError(`Đã tạo người dùng nhưng không thể gán vai trò: ${roleErr.response?.data?.message || roleErr.message}`);
+        await fetchUsers();
+        return;
+      }
+    }
+
+    success("Tạo người dùng thành công");
+    closeCreateModal();
+    await fetchUsers();
+  } catch (err) {
+    console.error("Error creating user:", err);
+    showError(err.response?.data?.message || err.message || "Có lỗi xảy ra khi tạo người dùng");
+  } finally {
+    isCreating.value = false;
+  }
+};
+
+const closeCreateModal = () => {
+  showCreateModal.value = false;
+  createForm.value = {
+    fullName: "",
+    email: "",
+    password: "",
+    passwordConfirmation: "",
+    role: "",
+  };
 };
 
 onMounted(() => {

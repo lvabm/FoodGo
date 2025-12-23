@@ -25,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import jakarta.persistence.criteria.JoinType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -274,5 +275,52 @@ public class ReviewServiceImpl
     } else {
       review.setDislikesCount(Math.max(0, review.getDislikesCount() + delta));
     }
+  }
+
+  // --- RESTORE LOGIC (Admin Only) ---
+  @Override
+  @Transactional
+  public ReviewResponse restore(UUID id) {
+    Review review = reviewRepository.findById(id)
+        .orElseThrow(() -> new com.foodgo.backend.common.exception.ResourceNotFoundException(
+            getEntityName() + " không tìm thấy với ID: " + id));
+    
+    // Only admin can restore
+    if (!SecurityContext.isAdmin()) {
+      throw new ForbiddenException("Chỉ Admin mới có quyền khôi phục đánh giá.");
+    }
+
+    review.setIsDeleted(false);
+    Review restored = reviewRepository.save(review);
+
+    SuccessMessageContext.setMessage("Đã khôi phục đánh giá thành công.");
+    return reviewMapper.toResponse(restored);
+  }
+
+  // Override getDetail to fetch join relationships
+  @Override
+  @Transactional(readOnly = true)
+  public ReviewResponse getDetail(UUID id) {
+    Specification<Review> specById = (root, query, cb) -> {
+      // Fetch join để tránh LazyInitializationException
+      if (Long.class != query.getResultType()) {
+        root.fetch("outlet", JoinType.LEFT);
+        root.fetch("user", JoinType.LEFT).fetch("profile", JoinType.LEFT);
+        root.fetch("booking", JoinType.LEFT);
+        query.distinct(true);
+      }
+      return cb.equal(root.get("id"), id);
+    };
+    
+    // Don't filter by isDeleted for detail view (admin may want to see hidden reviews)
+    Review review = reviewRepository.findAll(specById).stream()
+        .findFirst()
+        .orElseThrow(() -> new com.foodgo.backend.common.exception.ResourceNotFoundException(
+            getEntityName() + " không tìm thấy với ID: " + id));
+
+    SuccessMessageContext.setMessage(
+        String.format(SuccessMessageContext.FETCH_DETAIL_SUCCESS, getEntityName(), id));
+
+    return reviewMapper.toResponse(review);
   }
 }

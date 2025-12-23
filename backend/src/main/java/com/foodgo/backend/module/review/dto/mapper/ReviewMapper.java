@@ -23,6 +23,8 @@ public interface ReviewMapper
   @Mapping(source = "user.id", target = "userId")
   @Mapping(source = "user.profile.fullName", target = "userName")
   @Mapping(source = "user.profile.avatarUrl", target = "userAvatar")
+  @Mapping(source = "outlet.id", target = "outletId")
+  @Mapping(source = "outlet.name", target = "outletName")
   @Mapping(target = "images", expression = "java(mapImages(entity.getReviewImages()))")
   @Mapping(source = "reviewReply", target = "reply")
   ReviewResponse toResponse(Review entity);
