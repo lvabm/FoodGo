@@ -140,7 +140,7 @@ public class BookingServiceImpl
 
     // 2. [PAYMENT MANUAL LOGIC] - Tự động tính và tạo Payment
     // Logic: Tiền cọc = Số khách * 20
-    BigDecimal depositRate = new BigDecimal("20"); // Định mức cọc: 20 (đơn vị tiền tệ)
+    BigDecimal depositRate = new BigDecimal("20000"); // Định mức cọc: 20 (đơn vị tiền tệ)
     BigDecimal depositAmount = depositRate.multiply(BigDecimal.valueOf(request.numberOfGuests()));
     entity.setDepositAmount(depositAmount);
 

@@ -93,8 +93,19 @@ public class OwnerDashboardServiceImpl implements OwnerDashboardService {
       }
     }
 
-    // 4. Month revenue (placeholder - would require payment/transaction data)
-    BigDecimal monthRevenue = BigDecimal.ZERO;
+    // 4. Month revenue: sum deposit amounts of COMPLETED bookings in current month
+    LocalDate nowDate = LocalDate.now();
+    LocalDate monthStart = nowDate.withDayOfMonth(1);
+    LocalDate monthEnd = nowDate.withDayOfMonth(nowDate.lengthOfMonth());
+
+    BigDecimal monthRevenue = bookingRepository.sumDepositAmountByOutletIdInAndBookingDateBetweenAndStatusIn(
+        outletIds,
+        monthStart,
+        monthEnd,
+        List.of(com.foodgo.backend.common.constant.BookingStatus.COMPLETED)
+    );
+    if (monthRevenue == null) monthRevenue = BigDecimal.ZERO;
+    log.info("Month revenue for outlets {} between {} and {} = {}", outletIds, monthStart, monthEnd, monthRevenue);
 
     // 5. Week bookings (last 7 days)
     List<OwnerDashboardStats.WeekBooking> weekBookings = computeWeekBookings(outletIds);

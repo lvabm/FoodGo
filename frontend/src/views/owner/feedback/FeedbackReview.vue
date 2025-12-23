@@ -13,7 +13,7 @@
         <select
           v-model="selectedOutletId"
           @change="loadReviews"
-          class="px-3 py-2 border rounded-lg"
+          class="px-3 py-2 border rounded-lg pr-8 truncate appearance-none"
         >
           <option disabled value="">Chọn quán</option>
           <option v-for="o in outlets" :key="o.id" :value="o.id">
@@ -36,7 +36,7 @@
         placeholder="Tìm theo tên hoặc nội dung"
         class="px-3 py-2 border rounded-lg w-96"
       />
-      <select v-model="minRating" class="px-3 py-2 border rounded-lg">
+      <select v-model="minRating" class="px-3 py-2 border rounded-lg pr-8 truncate appearance-none">
         <option :value="0">Tất cả</option>
         <option :value="5">5⭐</option>
         <option :value="4">4⭐+</option>
@@ -98,11 +98,13 @@
                   <div class="flex items-center">
                     <template v-for="i in 5" :key="i">
                       <span
-                        class="material-symbols-outlined text-yellow-400"
-                        v-html="i <= rev.overallRating ? 'star' : 'star_border'"
-                      ></span>
+                        class="material-symbols-outlined text-sm"
+                        :class="i <= (rev.overallRating || 0) ? 'text-yellow-500' : 'text-gray-300'">
+                        {{ i <= (rev.overallRating || 0) ? 'star' : 'star_border' }}
+                      </span>
                     </template>
                   </div>
+                  <span class="text-sm font-medium ml-2">{{ rev.overallRating || 0 }}/5</span>
                 </div>
               </div>
 

@@ -387,14 +387,17 @@
                               "Anonymous"
                             }}
                           </h4>
-                          <div class="flex items-center gap-1">
-                            <span
-                              class="material-symbols-outlined text-yellow-500 text-sm"
-                              >star</span
-                            >
-                            <span class="text-sm font-medium">{{
-                              review.rating
-                            }}</span>
+                          <div class="flex items-center gap-2">
+                            <div class="flex items-center">
+                              <template v-for="i in 5" :key="i">
+                                <span
+                                  class="material-symbols-outlined text-sm"
+                                  :class="i <= (review.rating ?? review.overallRating ?? 0) ? 'text-yellow-500' : 'text-gray-300'">
+                                  {{ i <= (review.rating ?? review.overallRating ?? 0) ? 'star' : 'star_border' }}
+                                </span>
+                              </template>
+                            </div>
+                            <span class="text-sm font-medium ml-2">{{ review.rating ?? review.overallRating ?? 0 }}/5</span>
                           </div>
                         </div>
                         <p
@@ -546,18 +549,10 @@
                     <button
                       v-for="star in 5"
                       :key="`food-${star}`"
-                      @click="canReview && (reviewForm.foodRating = star)"
+                      @click="reviewForm.foodRating = star"
                       type="button"
-                      class="text-3xl transition-colors"
-                      :class="[
-                        star <= reviewForm.foodRating
-                          ? 'text-yellow-500'
-                          : 'text-gray-300 dark:text-gray-600',
-                        !canReview
-                          ? 'cursor-not-allowed'
-                          : 'cursor-pointer hover:scale-110',
-                      ]"
-                      :disabled="!canReview"
+                      class="text-3xl transition-colors cursor-pointer hover:scale-110"
+                      :class="star <= reviewForm.foodRating ? 'text-yellow-500' : 'text-gray-300 dark:text-gray-600'"
                     >
                       <span class="material-symbols-outlined">{{
                         star <= reviewForm.foodRating ? "star" : "star_border"
@@ -575,18 +570,10 @@
                     <button
                       v-for="star in 5"
                       :key="`service-${star}`"
-                      @click="canReview && (reviewForm.serviceRating = star)"
+                      @click="reviewForm.serviceRating = star"
                       type="button"
-                      class="text-3xl transition-colors"
-                      :class="[
-                        star <= reviewForm.serviceRating
-                          ? 'text-yellow-500'
-                          : 'text-gray-300 dark:text-gray-600',
-                        !canReview
-                          ? 'cursor-not-allowed'
-                          : 'cursor-pointer hover:scale-110',
-                      ]"
-                      :disabled="!canReview"
+                      class="text-3xl transition-colors cursor-pointer hover:scale-110"
+                      :class="star <= reviewForm.serviceRating ? 'text-yellow-500' : 'text-gray-300 dark:text-gray-600'"
                     >
                       <span class="material-symbols-outlined">{{
                         star <= reviewForm.serviceRating
@@ -606,18 +593,10 @@
                     <button
                       v-for="star in 5"
                       :key="`amb-${star}`"
-                      @click="canReview && (reviewForm.ambianceRating = star)"
+                      @click="reviewForm.ambianceRating = star"
                       type="button"
-                      class="text-3xl transition-colors"
-                      :class="[
-                        star <= reviewForm.ambianceRating
-                          ? 'text-yellow-500'
-                          : 'text-gray-300 dark:text-gray-600',
-                        !canReview
-                          ? 'cursor-not-allowed'
-                          : 'cursor-pointer hover:scale-110',
-                      ]"
-                      :disabled="!canReview"
+                      class="text-3xl transition-colors cursor-pointer hover:scale-110"
+                      :class="star <= reviewForm.ambianceRating ? 'text-yellow-500' : 'text-gray-300 dark:text-gray-600'"
                     >
                       <span class="material-symbols-outlined">{{
                         star <= reviewForm.ambianceRating
@@ -637,18 +616,10 @@
                     <button
                       v-for="star in 5"
                       :key="`price-${star}`"
-                      @click="canReview && (reviewForm.priceRating = star)"
+                      @click="reviewForm.priceRating = star"
                       type="button"
-                      class="text-3xl transition-colors"
-                      :class="[
-                        star <= reviewForm.priceRating
-                          ? 'text-yellow-500'
-                          : 'text-gray-300 dark:text-gray-600',
-                        !canReview
-                          ? 'cursor-not-allowed'
-                          : 'cursor-pointer hover:scale-110',
-                      ]"
-                      :disabled="!canReview"
+                      class="text-3xl transition-colors cursor-pointer hover:scale-110"
+                      :class="star <= reviewForm.priceRating ? 'text-yellow-500' : 'text-gray-300 dark:text-gray-600'"
                     >
                       <span class="material-symbols-outlined">{{
                         star <= reviewForm.priceRating ? "star" : "star_border"

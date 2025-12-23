@@ -14,7 +14,7 @@
       <select
         v-model="selectedOutletId"
         @change="fetchOutletStats"
-        class="w-full md:w-96 px-4 py-2 border border-border-light dark:border-border-dark rounded-lg bg-white dark:bg-surface-dark text-text-light dark:text-text-dark focus:outline-none focus:ring-2 focus:ring-primary"
+        class="w-full md:w-96 px-4 py-2 border border-border-light dark:border-border-dark rounded-lg bg-white dark:bg-surface-dark text-text-light dark:text-text-dark focus:outline-none focus:ring-2 focus:ring-primary pr-8 truncate appearance-none"
       >
         <option value="">Tất cả quán</option>
         <option v-for="outlet in outlets" :key="outlet.id" :value="outlet.id">
@@ -130,41 +130,13 @@
         <h3 class="text-lg font-bold text-text-light dark:text-text-dark mb-6">
           Đặt bàn 7 ngày qua
         </h3>
-        <div
-          v-if="stats.weekBookings && stats.weekBookings.length > 0"
-          class="h-80"
-        >
-          <div class="h-full flex items-end justify-between gap-4">
-            <div
-              v-for="day in stats.weekBookings"
-              :key="day.dayName"
-              class="flex flex-col items-center flex-1"
-            >
-              <div
-                class="w-full bg-primary/20 rounded-lg hover:bg-primary/30 transition-colors relative group"
-                :style="{height: getBarHeight(day.count) + '%'}"
-              >
-                <div
-                  class="absolute bottom-0 left-0 w-full bg-primary rounded-lg flex items-center justify-center"
-                  :style="{height: '100%'}"
-                >
-                  <span class="text-sm text-white font-medium">{{
-                    day.count
-                  }}</span>
-                </div>
-                <!-- Tooltip -->
-                <div
-                  class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap"
-                >
-                  {{ day.count }} đặt bàn
-                </div>
-              </div>
-              <span
-                class="text-sm mt-3 text-subtext-light dark:text-subtext-dark font-medium"
-                >{{ day.dayName }}</span
-              >
-            </div>
-          </div>
+        <div v-if="stats.weekBookings && stats.weekBookings.length > 0" class="h-80">
+          <BarChart
+            :labels="stats.weekBookings.map(d => d.dayName)"
+            :values="stats.weekBookings.map(d => d.count)"
+            height="320"
+            color="#F97316"
+          />
         </div>
         <div v-else class="h-80 flex items-center justify-center">
           <p class="text-subtext-light dark:text-subtext-dark">
@@ -293,6 +265,7 @@
 <script setup>
 import {ref, onMounted} from "vue";
 import {ownerApi, outletApi} from "@/api";
+import BarChart from "@/components/charts/BarChart.vue";
 
 const loading = ref(true);
 const error = ref(null);

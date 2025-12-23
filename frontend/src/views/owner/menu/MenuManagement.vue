@@ -13,7 +13,7 @@
         <select
           v-model="selectedOutletId"
           @change="loadMenuItems"
-          class="px-3 py-2 border rounded-lg"
+          class="px-3 py-2 border rounded-lg pr-8 truncate appearance-none"
         >
           <option disabled value="">Chọn quán</option>
           <option v-for="o in outlets" :key="o.id" :value="o.id">

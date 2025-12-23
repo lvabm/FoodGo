@@ -142,38 +142,16 @@
           >
             Đặt bàn theo tuần
           </h3>
-          <div
-            v-if="stats.weekBookings && stats.weekBookings.length > 0"
-            class="h-64 flex items-end justify-between gap-2"
-          >
-            <div
-              v-for="day in stats.weekBookings"
-              :key="day.dayName"
-              class="flex flex-col items-center flex-1"
-            >
-              <div
-                class="w-full bg-primary/20 rounded-lg hover:bg-primary/30 transition-colors relative"
-                :style="{height: getBarHeight(day.count) + '%'}"
-              >
-                <div
-                  class="absolute bottom-0 left-0 w-full bg-primary rounded-lg flex items-center justify-center"
-                  :style="{height: '100%'}"
-                >
-                  <span class="text-xs text-white font-medium">{{
-                    day.count
-                  }}</span>
-                </div>
-              </div>
-              <span
-                class="text-xs mt-2 text-subtext-light dark:text-subtext-dark"
-                >{{ day.dayName }}</span
-              >
-            </div>
+            <div v-if="stats.weekBookings && stats.weekBookings.length > 0" class="h-64">
+            <BarChart
+              :labels="stats.weekBookings.map(d => d.dayName)"
+              :values="stats.weekBookings.map(d => d.count)"
+              height="240"
+              color="#F97316"
+            />
           </div>
           <div v-else class="h-64 flex items-center justify-center">
-            <p class="text-subtext-light dark:text-subtext-dark">
-              Chưa có dữ liệu
-            </p>
+            <p class="text-subtext-light dark:text-subtext-dark">Chưa có dữ liệu</p>
           </div>
         </div>
 
@@ -294,6 +272,7 @@
 <script setup>
 import {ref, onMounted, computed} from "vue";
 import {ownerApi} from "@/api";
+import BarChart from "@/components/charts/BarChart.vue";
 
 const loading = ref(true);
 const error = ref(null);

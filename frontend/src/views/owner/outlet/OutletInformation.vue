@@ -31,7 +31,7 @@
           <select
             v-model="selectedOutletId"
             @change="onSelectOutlet"
-            class="w-full mt-2 p-2 border rounded"
+            class="w-full mt-2 p-2 border rounded pr-8 truncate appearance-none"
           >
             <option v-for="o in outlets" :key="o.id" :value="o.id">
               {{ o.name }}
