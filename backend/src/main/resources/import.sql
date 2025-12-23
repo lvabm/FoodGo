@@ -195,6 +195,10 @@ INSERT INTO menu_item_category (id, type_id, name, description) VALUES (2, (SELE
 INSERT INTO menu_item_category (id, type_id, name, description) VALUES (3, (SELECT id FROM menu_item_type WHERE name = 'Đồ uống'), 'Nước Giải Khát', 'Đồ uống có đường, không cồn');
 INSERT INTO menu_item_category (id, type_id, name, description) VALUES (4, (SELECT id FROM menu_item_type WHERE name = 'Đồ uống'), 'Cà Phê & Trà', 'Cà phê và các loại trà');
 INSERT INTO menu_item_category (id, type_id, name, description) VALUES (5, (SELECT id FROM menu_item_type WHERE name = 'Tráng miệng'), 'Bánh Ngọt Âu Á', 'Các loại bánh tráng miệng');
+INSERT INTO menu_item_category (id, type_id, name, description) VALUES (6, (SELECT id FROM menu_item_type WHERE name = 'Món chính'), 'Bún/Phở', 'Các món bún, phở truyền thống');
+INSERT INTO menu_item_category (id, type_id, name, description) VALUES (7, (SELECT id FROM menu_item_type WHERE name = 'Đồ uống'), 'Cà phê', 'Các loại cà phê Việt Nam và thế giới');
+INSERT INTO menu_item_category (id, type_id, name, description) VALUES (8, (SELECT id FROM menu_item_type WHERE name = 'Đồ uống'), 'Trà sữa', 'Trà sữa và các loại đồ uống trà');
+INSERT INTO menu_item_category (id, type_id, name, description) VALUES (9, (SELECT id FROM menu_item_type WHERE name = 'Ăn vặt'), 'Ăn vặt', 'Các món ăn vặt, snack');
 
 --========================================================
 --8. MENU_ITEM_SUB_CATEGORY (Level 3): Các món hiện hữu
@@ -471,9 +475,22 @@ INSERT INTO outlet_feature_mapping (id, outlet_id, feature_id) VALUES (15, (SELE
 --========================================================
 --24. OUTLET_IMAGE
 --========================================================
-INSERT INTO outlet_image (id, outlet_id, image_url, display_order, is_primary, is_deleted) VALUES (1, (SELECT id FROM outlet WHERE name = 'The Workshop Coffee'), 'https://cdn.example.com/outlet/workshop-1.jpg', 1, true, false);
-INSERT INTO outlet_image (id, outlet_id, image_url, display_order, is_primary, is_deleted) VALUES (2, (SELECT id FROM outlet WHERE name = 'Highlands Coffee Lý Tự Trọng'), 'https://cdn.example.com/outlet/highlands-1.jpg', 1, true, false);
-INSERT INTO outlet_image (id, outlet_id, image_url, display_order, is_primary, is_deleted) VALUES (3, (SELECT id FROM outlet WHERE name = 'Starbucks Nguyễn Huệ'), 'https://cdn.example.com/outlet/starbucks-1.jpg', 1, true, false);
+-- The Workshop Coffee
+INSERT INTO outlet_image (id, outlet_id, image_url, display_order, is_primary, is_deleted) VALUES (1, (SELECT id FROM outlet WHERE name = 'The Workshop Coffee'), 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800', 1, true, false);
+INSERT INTO outlet_image (id, outlet_id, image_url, display_order, is_primary, is_deleted) VALUES (2, (SELECT id FROM outlet WHERE name = 'The Workshop Coffee'), 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800', 2, false, false);
+-- Highlands Coffee
+INSERT INTO outlet_image (id, outlet_id, image_url, display_order, is_primary, is_deleted) VALUES (3, (SELECT id FROM outlet WHERE name = 'Highlands Coffee Lý Tự Trọng'), 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=800', 1, true, false);
+INSERT INTO outlet_image (id, outlet_id, image_url, display_order, is_primary, is_deleted) VALUES (4, (SELECT id FROM outlet WHERE name = 'Highlands Coffee Lý Tự Trọng'), 'https://images.unsplash.com/photo-1442512595331-e89e73853f31?w=800', 2, false, false);
+-- Starbucks
+INSERT INTO outlet_image (id, outlet_id, image_url, display_order, is_primary, is_deleted) VALUES (5, (SELECT id FROM outlet WHERE name = 'Starbucks Nguyễn Huệ'), 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800', 1, true, false);
+INSERT INTO outlet_image (id, outlet_id, image_url, display_order, is_primary, is_deleted) VALUES (6, (SELECT id FROM outlet WHERE name = 'Starbucks Nguyễn Huệ'), 'https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=800', 2, false, false);
+-- LUsine Cafe
+INSERT INTO outlet_image (id, outlet_id, image_url, display_order, is_primary, is_deleted) VALUES (7, (SELECT id FROM outlet WHERE name = 'LUsine Cafe'), 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800', 1, true, false);
+-- Phúc Long Coffee & Tea
+INSERT INTO outlet_image (id, outlet_id, image_url, display_order, is_primary, is_deleted) VALUES (8, (SELECT id FROM outlet WHERE name = 'Phúc Long Coffee & Tea'), 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=800', 1, true, false);
+-- Chill Skybar
+INSERT INTO outlet_image (id, outlet_id, image_url, display_order, is_primary, is_deleted) VALUES (9, (SELECT id FROM outlet WHERE name = 'Chill Skybar'), 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=800', 1, true, false);
+INSERT INTO outlet_image (id, outlet_id, image_url, display_order, is_primary, is_deleted) VALUES (10, (SELECT id FROM outlet WHERE name = 'Chill Skybar'), 'https://images.unsplash.com/photo-1551218808-94e220e084d2?w=800', 2, false, false);
 
 --========================================================
 --25. OPERATING_HOURS
@@ -518,12 +535,37 @@ INSERT INTO menu_item (id, sub_category_id, province_id, name, description, is_p
 --26. OUTLET_MENU_ITEM
 --========================================================
 -- Note: Converting from outlet_has_fnb to outlet_menu_item
-INSERT INTO outlet_menu_item (id, outlet_id, menu_item_id, name, description, price, image_url, is_available) VALUES (1, (SELECT id FROM outlet WHERE name = 'The Workshop Coffee'), (SELECT id FROM menu_item WHERE name = 'Espresso'), 'Espresso Single Origin', 'Cà phê espresso hạt Arabica Đà Lạt', 45000.00, NULL, true);
-INSERT INTO outlet_menu_item (id, outlet_id, menu_item_id, name, description, price, image_url, is_available) VALUES (2, (SELECT id FROM outlet WHERE name = 'The Workshop Coffee'), (SELECT id FROM menu_item WHERE name = 'Cafe Latte'), 'Signature Latte', 'Cà phê latte nghệ thuật', 55000.00, NULL, true);
-INSERT INTO outlet_menu_item (id, outlet_id, menu_item_id, name, description, price, image_url, is_available) VALUES (3, (SELECT id FROM outlet WHERE name = 'Highlands Coffee Lý Tự Trọng'), (SELECT id FROM menu_item WHERE name = 'Cà Phê Sữa Đá'), 'Freeze Trà Xanh', 'Freeze trà xanh đặc biệt', 49000.00, NULL, true);
-INSERT INTO outlet_menu_item (id, outlet_id, menu_item_id, name, description, price, image_url, is_available) VALUES (4, (SELECT id FROM outlet WHERE name = 'LUsine Cafe'), (SELECT id FROM menu_item WHERE name = 'Cà Phê Sữa Đá'), 'Cà Phê Sữa Đá LUsine', 'Cà phê sữa đá kiểu LUsine', 45000.00, NULL, true);
-INSERT INTO outlet_menu_item (id, outlet_id, menu_item_id, name, description, price, image_url, is_available) VALUES (5, (SELECT id FROM outlet WHERE name = 'Phúc Long Coffee & Tea'), (SELECT id FROM menu_item WHERE name = 'Trà Sữa Trân Châu Đường Đen'), 'Trà Sữa Ô Long Đường Đen', 'Trà sữa ô long đường đen đặc biệt', 45000.00, NULL, true);
-INSERT INTO outlet_menu_item (id, outlet_id, menu_item_id, name, description, price, image_url, is_available) VALUES (6, (SELECT id FROM outlet WHERE name = 'Phúc Long Coffee & Tea'), (SELECT id FROM menu_item WHERE name = 'Trà Đào Cam Sả'), 'Trà Đào Cam Sả Phúc Long', 'Trà trái cây tươi mát', 42000.00, NULL, true);
+-- The Workshop Coffee - Espresso
+INSERT INTO outlet_menu_item (id, outlet_id, menu_item_id, name, description, price, image_url, is_available) VALUES (1, (SELECT id FROM outlet WHERE name = 'The Workshop Coffee'), (SELECT id FROM menu_item WHERE name = 'Espresso'), 'Espresso Single Origin', 'Cà phê espresso hạt Arabica Đà Lạt', 45000.00, 'https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?w=600', true);
+-- The Workshop Coffee - Cafe Latte
+INSERT INTO outlet_menu_item (id, outlet_id, menu_item_id, name, description, price, image_url, is_available) VALUES (2, (SELECT id FROM outlet WHERE name = 'The Workshop Coffee'), (SELECT id FROM menu_item WHERE name = 'Cafe Latte'), 'Signature Latte', 'Cà phê latte nghệ thuật', 55000.00, 'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=600', true);
+-- Highlands Coffee - Cà Phê Sữa Đá
+INSERT INTO outlet_menu_item (id, outlet_id, menu_item_id, name, description, price, image_url, is_available) VALUES (3, (SELECT id FROM outlet WHERE name = 'Highlands Coffee Lý Tự Trọng'), (SELECT id FROM menu_item WHERE name = 'Cà Phê Sữa Đá'), 'Freeze Trà Xanh', 'Freeze trà xanh đặc biệt', 49000.00, 'https://images.unsplash.com/photo-1517487881594-2787fef5ebf7?w=600', true);
+-- LUsine Cafe - Cà Phê Sữa Đá
+INSERT INTO outlet_menu_item (id, outlet_id, menu_item_id, name, description, price, image_url, is_available) VALUES (4, (SELECT id FROM outlet WHERE name = 'LUsine Cafe'), (SELECT id FROM menu_item WHERE name = 'Cà Phê Sữa Đá'), 'Cà Phê Sữa Đá LUsine', 'Cà phê sữa đá kiểu LUsine', 45000.00, 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600', true);
+-- Phúc Long - Trà Sữa
+INSERT INTO outlet_menu_item (id, outlet_id, menu_item_id, name, description, price, image_url, is_available) VALUES (5, (SELECT id FROM outlet WHERE name = 'Phúc Long Coffee & Tea'), (SELECT id FROM menu_item WHERE name = 'Trà Sữa Trân Châu Đường Đen'), 'Trà Sữa Ô Long Đường Đen', 'Trà sữa ô long đường đen đặc biệt', 45000.00, 'https://images.unsplash.com/photo-1525385444278-0e7ec8f2e7ed?w=600', true);
+-- Phúc Long - Trà Đào Cam Sả
+INSERT INTO outlet_menu_item (id, outlet_id, menu_item_id, name, description, price, image_url, is_available) VALUES (6, (SELECT id FROM outlet WHERE name = 'Phúc Long Coffee & Tea'), (SELECT id FROM menu_item WHERE name = 'Trà Đào Cam Sả'), 'Trà Đào Cam Sả Phúc Long', 'Trà trái cây tươi mát', 42000.00, 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=600', true);
+-- Thêm các món ăn khác với ảnh
+-- Phở Bò
+INSERT INTO outlet_menu_item (id, outlet_id, menu_item_id, name, description, price, image_url, is_available) VALUES (7, (SELECT id FROM outlet WHERE name = 'The Workshop Coffee'), (SELECT id FROM menu_item WHERE name = 'Phở Bò'), 'Phở Bò Đặc Biệt', 'Phở bò truyền thống với thịt bò tái, chín, gân, sách', 85000.00, 'https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?w=600', true);
+-- Bún Bò Huế
+INSERT INTO outlet_menu_item (id, outlet_id, menu_item_id, name, description, price, image_url, is_available) VALUES (8, (SELECT id FROM outlet WHERE name = 'LUsine Cafe'), (SELECT id FROM menu_item WHERE name = 'Bún Bò Huế'), 'Bún Bò Huế Cay', 'Bún bò Huế cay đậm đà với chả cua', 75000.00, 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=600', true);
+-- Cơm Tấm
+INSERT INTO outlet_menu_item (id, outlet_id, menu_item_id, name, description, price, image_url, is_available) VALUES (9, (SELECT id FROM outlet WHERE name = 'Highlands Coffee Lý Tự Trọng'), (SELECT id FROM menu_item WHERE name = 'Cơm Tấm Sườn Nướng'), 'Cơm Tấm Sườn Nướng', 'Cơm tấm sườn nướng đặc biệt', 65000.00, 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600', true);
+-- Trà Sữa Trân Châu
+INSERT INTO outlet_menu_item (id, outlet_id, menu_item_id, name, description, price, image_url, is_available) VALUES (10, (SELECT id FROM outlet WHERE name = 'Phúc Long Coffee & Tea'), (SELECT id FROM menu_item WHERE name = 'Trà Sữa Trân Châu'), 'Trà Sữa Trân Châu Phúc Long', 'Trà sữa truyền thống với trân châu đen', 45000.00, 'https://images.unsplash.com/photo-1525385444278-0e7ec8f2e7ed?w=600', true);
+-- Coca Cola
+INSERT INTO outlet_menu_item (id, outlet_id, menu_item_id, name, description, price, image_url, is_available) VALUES (11, (SELECT id FROM outlet WHERE name = 'Starbucks Nguyễn Huệ'), (SELECT id FROM menu_item WHERE name = 'Coca Cola Lon'), 'Coca Cola Lon', 'Nước ngọt có ga Coca Cola dạng lon 330ml', 25000.00, 'https://images.unsplash.com/photo-1554866585-cd94860890b7?w=600', true);
+-- Cheesecake
+INSERT INTO outlet_menu_item (id, outlet_id, menu_item_id, name, description, price, image_url, is_available) VALUES (12, (SELECT id FROM outlet WHERE name = 'The Workshop Coffee'), (SELECT id FROM menu_item WHERE name = 'Cheesecake'), 'New York Cheesecake', 'Bánh phô mai New York', 95000.00, 'https://images.unsplash.com/photo-1524351199678-941a58a3df50?w=600', true);
+-- Chocolate Lava Cake
+INSERT INTO outlet_menu_item (id, outlet_id, menu_item_id, name, description, price, image_url, is_available) VALUES (13, (SELECT id FROM outlet WHERE name = 'Starbucks Nguyễn Huệ'), (SELECT id FROM menu_item WHERE name = 'Chocolate Lava Cake'), 'Chocolate Lava Cake', 'Bánh sô-cô-la nóng chảy', 85000.00, 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600', true);
+-- Bún Chả
+INSERT INTO outlet_menu_item (id, outlet_id, menu_item_id, name, description, price, image_url, is_available) VALUES (14, (SELECT id FROM outlet WHERE name = 'LUsine Cafe'), (SELECT id FROM menu_item WHERE name = 'Bún Chả Hà Nội'), 'Bún Chả Hà Nội', 'Bún chả nướng kiểu Hà Nội', 70000.00, 'https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=600', true);
+-- Cơm Tấm Sườn Bì Chả
+INSERT INTO outlet_menu_item (id, outlet_id, menu_item_id, name, description, price, image_url, is_available) VALUES (15, (SELECT id FROM outlet WHERE name = 'Highlands Coffee Lý Tự Trọng'), (SELECT id FROM menu_item WHERE name = 'Cơm Tấm Sườn Bì Chả'), 'Cơm Tấm Sườn Bì Chả', 'Cơm tấm sườn bì chả trứng', 70000.00, 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600', true);
 
 --========================================================
 --27. MENU_ITEM_FEATURE

@@ -41,7 +41,7 @@ public class PasswordUpdateRunner implements ApplicationRunner {
 
     // 2. Lặp qua và cập nhật từng User
     for (UserAccount user : unhashedUsers) {
-      user.setPasswordHash(encodedPassword); // 🔑 SET MẬT KHẨU ĐÃ MÃ HÓA
+      user .setPasswordHash(encodedPassword); // 🔑 SET MẬT KHẨU ĐÃ MÃ HÓA
       userAccountRepository.save(user);
       System.out.printf("   - Mã hóa thành công mật khẩu cho user: %s%n", user.getUsername());
     }
