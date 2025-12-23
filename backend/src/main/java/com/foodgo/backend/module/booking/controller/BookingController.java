@@ -71,4 +71,17 @@ public class BookingController {
   public BookingResponse reject(@PathVariable UUID id, @RequestParam String reason) {
     return bookingService.rejectBooking(id, reason);
   }
+
+  @Operation(summary = "User check-in: Xác nhận đã tới quán")
+  @PostMapping("/{id}/user-checkin")
+  public BookingResponse userCheckIn(@PathVariable UUID id) {
+    return bookingService.userCheckIn(id);
+  }
+
+  @Operation(summary = "[Owner] Xác nhận khách đã tới")
+  @PreAuthorize("hasRole('OWNER')")
+  @PostMapping("/{id}/owner-checkin")
+  public BookingResponse ownerCheckIn(@PathVariable UUID id) {
+    return bookingService.ownerCheckIn(id);
+  }
 }

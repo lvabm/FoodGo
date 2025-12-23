@@ -30,6 +30,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Service
@@ -212,6 +214,74 @@ public class BookingServiceImpl
 
     Booking saved = bookingRepository.save(booking);
     SuccessMessageContext.setMessage("Đã từ chối đơn đặt bàn.");
+    return bookingMapper.toResponse(saved);
+  }
+
+  @Override
+  @Transactional
+  public BookingResponse userCheckIn(UUID bookingId) {
+    Booking booking = findByIdOrThrow(bookingId);
+
+    UUID currentUserId = SecurityContext.getCurrentUserId();
+    if (!booking.getUser().getId().equals(currentUserId) && !SecurityContext.isAdmin()) {
+      throw new ForbiddenException("Bạn không có quyền xác nhận tới quán cho đơn này.");
+    }
+
+    if (booking.getStatus() != BookingStatus.CONFIRMED) {
+      throw new BadRequestException("Chỉ có thể check-in cho đơn đã được xác nhận.");
+    }
+
+    if (!booking.getBookingDate().equals(LocalDate.now())) {
+      throw new BadRequestException("Chỉ có thể check-in trong ngày đặt bàn.");
+    }
+
+    // Idempotent: nếu đã check-in rồi thì trả về success
+    if (booking.getUserCheckedInAt() != null) {
+      return bookingMapper.toResponse(booking);
+    }
+
+    booking.setUserCheckedInAt(Instant.now());
+
+    if (booking.getOwnerCheckedInAt() != null && booking.getStatus() == BookingStatus.CONFIRMED) {
+      booking.setStatus(BookingStatus.COMPLETED);
+    }
+
+    Booking saved = bookingRepository.save(booking);
+    SuccessMessageContext.setMessage("Bạn đã check-in thành công.");
+    return bookingMapper.toResponse(saved);
+  }
+
+  @Override
+  @Transactional
+  public BookingResponse ownerCheckIn(UUID bookingId) {
+    Booking booking = findByIdOrThrow(bookingId);
+
+    UUID currentUserId = SecurityContext.getCurrentUserId();
+    if (!booking.getOutlet().getOwner().getId().equals(currentUserId) && !SecurityContext.isAdmin()) {
+      throw new ForbiddenException("Bạn không có quyền xác nhận khách tới cho đơn này.");
+    }
+
+    if (booking.getStatus() != BookingStatus.CONFIRMED) {
+      throw new BadRequestException("Chỉ có thể xác nhận khách tới cho đơn đã được xác nhận.");
+    }
+
+    if (!booking.getBookingDate().equals(LocalDate.now())) {
+      throw new BadRequestException("Chỉ có thể xác nhận khách trong ngày đặt bàn.");
+    }
+
+    // Idempotent
+    if (booking.getOwnerCheckedInAt() != null) {
+      return bookingMapper.toResponse(booking);
+    }
+
+    booking.setOwnerCheckedInAt(Instant.now());
+
+    if (booking.getUserCheckedInAt() != null && booking.getStatus() == BookingStatus.CONFIRMED) {
+      booking.setStatus(BookingStatus.COMPLETED);
+    }
+
+    Booking saved = bookingRepository.save(booking);
+    SuccessMessageContext.setMessage("Đã xác nhận khách đã tới.");
     return bookingMapper.toResponse(saved);
   }
 }

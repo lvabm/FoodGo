@@ -22,4 +22,10 @@ public interface BookingService
 
   // Owner/Admin từ chối đơn
   BookingResponse rejectBooking(UUID bookingId, String reason);
+
+  // User check-in (user confirms they've arrived)
+  BookingResponse userCheckIn(UUID bookingId);
+
+  // Owner check-in (owner confirms customer arrived)
+  BookingResponse ownerCheckIn(UUID bookingId);
 }

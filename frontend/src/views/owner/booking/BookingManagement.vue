@@ -190,6 +190,29 @@
                 Từ chối
               </button>
 
+              <!-- Owner check-in button (confirm customer arrived) -->
+              <button
+                v-if="
+                  booking.status === 'CONFIRMED' &&
+                  !booking.ownerCheckedInAt &&
+                  new Date(booking.bookingDate).toDateString() ===
+                    new Date().toDateString()
+                "
+                @click="ownerCheckIn(booking.id)"
+                :disabled="actionLoading[booking.id]"
+                class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 whitespace-nowrap"
+              >
+                <span v-if="actionLoading[booking.id]">Đang xử lý...</span>
+                <span v-else>Khách đã tới</span>
+              </button>
+
+              <div
+                v-else-if="booking.ownerCheckedInAt"
+                class="text-sm text-green-700 font-medium whitespace-nowrap"
+              >
+                ✓ Đã xác nhận: {{ formatDateTime(booking.ownerCheckedInAt) }}
+              </div>
+
               <!-- Chi tiết button -->
               <button
                 @click="viewDetail(booking.id)"
@@ -552,6 +575,35 @@ const viewDetail = (bookingId) => {
   router.push(`/owner/bookings/${bookingId}`);
 };
 
+// Owner check-in handler
+const ownerCheckIn = async (bookingId) => {
+  actionLoading.value[bookingId] = true;
+  try {
+    await bookingApi.ownerCheckIn(bookingId);
+    await loadBookings();
+  } catch (err) {
+    console.error("❌ Error during owner check-in:", err);
+    alert(
+      err.response?.data?.message ||
+        "Xác nhận khách thất bại. Vui lòng thử lại."
+    );
+  } finally {
+    actionLoading.value[bookingId] = false;
+  }
+};
+
+// Format date time helper
+const formatDateTime = (dateTimeString) => {
+  if (!dateTimeString) return "";
+  const date = new Date(dateTimeString);
+  return new Intl.DateTimeFormat("vi-VN", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(date);
+};
 // Status badge classes
 const getStatusClass = (status) => {
   const statusMap = {

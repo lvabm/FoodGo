@@ -108,6 +108,31 @@
             >
               Xem chi tiết
             </button>
+
+            <!-- User check-in button -->
+            <button
+              v-if="canUserCheckIn(booking)"
+              @click="userCheckIn(booking)"
+              :disabled="isChecking[booking.id]"
+              class="px-4 py-2 bg-green-500 text-white rounded-lg text-sm font-medium hover:bg-green-600 transition-colors disabled:opacity-50"
+            >
+              <span v-if="isChecking[booking.id]">Đang gửi...</span>
+              <span v-else>✓ Đã tới quán</span>
+            </button>
+
+            <!-- Check-in indicator -->
+            <div
+              v-else-if="booking.userCheckedInAt"
+              class="flex items-center gap-2"
+            >
+              <span class="text-sm text-green-700 font-medium"
+                >✓ Bạn đã check-in</span
+              >
+              <span class="text-xs text-subtext-light">{{
+                formatDateTime(booking.userCheckedInAt)
+              }}</span>
+            </div>
+
             <button
               v-if="canCancel(booking.status)"
               @click="openCancelDialog(booking)"
@@ -204,6 +229,37 @@ const showCancelDialog = ref(false);
 const selectedBooking = ref(null);
 const cancelReason = ref("");
 const isCancelling = ref(false);
+
+// Check-in state
+const isChecking = ref({});
+
+// Can user check-in? (status=CONFIRMED, booking date is today, not checked-in yet)
+const canUserCheckIn = (booking) => {
+  if (!booking) return false;
+  if (booking.status !== "CONFIRMED") return false;
+  const bookingDate = new Date(booking.bookingDate).toDateString();
+  const today = new Date().toDateString();
+  if (bookingDate !== today) return false;
+  return !booking.userCheckedInAt;
+};
+
+// User check-in action
+const userCheckIn = async (booking) => {
+  if (!booking) return;
+  isChecking.value[booking.id] = true;
+  try {
+    await bookingApi.userCheckIn(booking.id);
+    // Refresh list
+    await fetchBookings(currentPage.value);
+  } catch (err) {
+    console.error("❌ Error during user check-in:", err);
+    alert(
+      err.response?.data?.message || "Check-in thất bại. Vui lòng thử lại."
+    );
+  } finally {
+    isChecking.value[booking.id] = false;
+  }
+};
 
 // Fetch bookings
 const fetchBookings = async (page = 0) => {

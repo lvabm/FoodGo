@@ -40,4 +40,14 @@ export const bookingApi = {
       params: {reason},
     });
   },
+
+  // User: Check-in (confirm arrived at outlet)
+  userCheckIn(id) {
+    return apiClient.post(`/bookings/${id}/user-checkin`);
+  },
+
+  // Owner: Confirm customer arrived (check-in)
+  ownerCheckIn(id) {
+    return apiClient.post(`/bookings/${id}/owner-checkin`);
+  },
 };
