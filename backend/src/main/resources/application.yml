@@ -37,8 +37,36 @@ spring:
     livereload:
       enabled: true
 
+  # PHẦN 4: TẮT DOCKER COMPOSE AUTO-CONFIGURATION
+  docker:
+    compose:
+      enabled: false
+
 jwt:
   # 🔑 BẮT BUỘC: Chuỗi này phải là Base64-encoded và có độ dài ít nhất 256 bits (>= 32 ký tự sau khi decode)
   secret: MTAwUGVyY2VudFNlY3JldEtleUZvckZvb2RHb0JhY2tlbmRNYXlCRTEyMzQ1Njc4OQ==
   # Thời gian hết hạn (Phút)
   exp-minutes: 60
+
+google:
+  maps:
+    # Google Maps API Key - Lấy từ: https://console.cloud.google.com/google/maps-apis
+    # Để trống nếu chưa có API key (tính năng sẽ bị vô hiệu hóa)
+    api-key: ${GOOGLE_MAPS_API_KEY:}
+
+app:
+  moderation:
+    # Bật/tắt tự động duyệt review
+    auto-approve-enabled: true
+    # Số lượng báo cáo để tự động ẩn review
+    auto-hide-threshold: 3
+    # Bật/tắt kiểm tra spam
+    spam-check-enabled: true
+    # Bật/tắt kiểm tra từ ngữ không phù hợp
+    profanity-check-enabled: true
+    # Base URL của Google Maps API
+    base-url: https://maps.googleapis.com/maps/api
+    # Bật/tắt tính năng Google Maps
+    enabled: true
+    # Timeout cho API calls (milliseconds)
+    timeout: 5000

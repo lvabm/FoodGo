@@ -1,30 +1,34 @@
 <template>
-  <div
-    class="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-md w-full"
-    v-if="toasts.length > 0"
-  >
-    <TransitionGroup name="toast" tag="div">
-      <div
-        v-for="toast in toasts"
-        :key="toast.id"
-        :class="getToastClasses(toast.type)"
-        class="flex items-start gap-3 p-4 rounded-lg shadow-lg border"
-      >
-        <span class="material-symbols-outlined flex-shrink-0" :class="getIconColor(toast.type)">
-          {{ getIcon(toast.type) }}
-        </span>
-        <div class="flex-1">
-          <p class="text-sm font-medium">{{ toast.message }}</p>
-        </div>
-        <button
-          @click="removeToast(toast.id)"
-          class="flex-shrink-0 text-gray-400 hover:text-gray-600"
+  <Teleport to="body">
+    <div
+      class="fixed top-4 right-4 z-[9999] flex flex-col gap-3 max-w-md w-full pointer-events-none"
+      v-if="toasts.length > 0"
+    >
+      <TransitionGroup name="toast" tag="div" class="flex flex-col gap-3">
+        <div
+          v-for="toast in toasts"
+          :key="toast.id"
+          :class="getToastClasses(toast.type)"
+          class="flex items-start gap-3 p-4 rounded-xl shadow-xl border backdrop-blur-sm pointer-events-auto hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
         >
-          <span class="material-symbols-outlined text-lg">close</span>
-        </button>
-      </div>
-    </TransitionGroup>
-  </div>
+          <span class="material-symbols-outlined flex-shrink-0 text-xl" :class="getIconColor(toast.type)">
+            {{ getIcon(toast.type) }}
+          </span>
+          <div class="flex-1 min-w-0">
+            <p v-if="toast.title" class="text-sm font-semibold mb-1">{{ toast.title }}</p>
+            <p class="text-sm leading-relaxed">{{ toast.message }}</p>
+          </div>
+          <button
+            @click="removeToast(toast.id)"
+            class="flex-shrink-0 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
+            aria-label="Đóng"
+          >
+            <span class="material-symbols-outlined text-lg">close</span>
+          </button>
+        </div>
+      </TransitionGroup>
+    </div>
+  </Teleport>
 </template>
 
 <script setup>
@@ -34,10 +38,10 @@ const {toasts, removeToast} = useToast();
 
 const getToastClasses = (type) => {
   const classes = {
-    success: "bg-green-50 border-green-200 text-green-800 dark:bg-green-900/20 dark:border-green-800 dark:text-green-400",
-    error: "bg-red-50 border-red-200 text-red-800 dark:bg-red-900/20 dark:border-red-800 dark:text-red-400",
-    warning: "bg-yellow-50 border-yellow-200 text-yellow-800 dark:bg-yellow-900/20 dark:border-yellow-800 dark:text-yellow-400",
-    info: "bg-blue-50 border-blue-200 text-blue-800 dark:bg-blue-900/20 dark:border-blue-800 dark:text-blue-400",
+    success: "bg-green-50/95 dark:bg-green-900/30 border-green-200 dark:border-green-800 text-green-800 dark:text-green-300",
+    error: "bg-red-50/95 dark:bg-red-900/30 border-red-200 dark:border-red-800 text-red-800 dark:text-red-300",
+    warning: "bg-yellow-50/95 dark:bg-yellow-900/30 border-yellow-200 dark:border-yellow-800 text-yellow-800 dark:text-yellow-300",
+    info: "bg-blue-50/95 dark:bg-blue-900/30 border-blue-200 dark:border-blue-800 text-blue-800 dark:text-blue-300",
   };
   return classes[type] || classes.info;
 };
@@ -64,19 +68,27 @@ const getIcon = (type) => {
 </script>
 
 <style scoped>
-.toast-enter-active,
+.toast-enter-active {
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
 .toast-leave-active {
-  transition: all 0.3s ease;
+  transition: all 0.3s ease-in;
 }
 
 .toast-enter-from {
   opacity: 0;
-  transform: translateX(100%);
+  transform: translateX(120%) scale(0.9);
 }
 
 .toast-leave-to {
   opacity: 0;
-  transform: translateX(100%);
+  transform: translateX(120%) scale(0.9);
+}
+
+.toast-move {
+  transition: transform 0.3s ease;
 }
 </style>
+
 

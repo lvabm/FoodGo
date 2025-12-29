@@ -8,20 +8,23 @@ import com.foodgo.backend.module.admin.service.AdminReportService;
 import com.foodgo.backend.common.context.SuccessMessageContext;
 import com.foodgo.backend.common.exception.ResourceNotFoundException;
 import com.foodgo.backend.module.review.dto.criteria.ReviewReportSpecification;
-import com.foodgo.backend.common.constant.ReportStatus;
 import com.foodgo.backend.module.review.dto.mapper.ReviewReportMapper;
 import com.foodgo.backend.module.review.dto.request.filter.ReviewReportFilterRequest;
 import com.foodgo.backend.module.review.dto.request.update.ReviewReportStatusUpdateRequest;
 import com.foodgo.backend.module.review.dto.response.ReviewReportResponse;
 import com.foodgo.backend.module.review.entity.ReviewReport;
 import com.foodgo.backend.module.review.repository.ReviewReportRepository;
+import com.foodgo.backend.module.review.repository.ReviewRepository;
+import com.foodgo.backend.module.moderation.service.ModerationService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AdminReportServiceImpl
@@ -36,6 +39,9 @@ public class AdminReportServiceImpl
 
   private final ReviewReportRepository reviewReportRepository;
   private final ReviewReportMapper reviewReportMapper;
+  @SuppressWarnings("unused")
+  private final ReviewRepository reviewRepository; // Reserved for future use
+  private final ModerationService moderationService;
 
   private final String entityName = EntityName.REVIEW_REPORT.getFriendlyName();
 
@@ -95,8 +101,18 @@ public class AdminReportServiceImpl
         .orElseThrow(() -> new ResourceNotFoundException(
             getEntityName() + " không tìm thấy với ID: " + id));
     
+    ReportStatus oldStatus = report.getStatus();
     report.setStatus(request.getStatus());
     ReviewReport updated = reviewReportRepository.save(report);
+    
+    // Nếu báo cáo được chấp nhận (RESOLVED), kiểm tra xem có cần ẩn review không
+    if (request.getStatus() == ReportStatus.RESOLVED && oldStatus != ReportStatus.RESOLVED) {
+      var review = report.getReview();
+      if (review != null) {
+        // Kiểm tra xem review có cần tự động ẩn không
+        moderationService.shouldAutoHide(review);
+      }
+    }
     
     SuccessMessageContext.setMessage("Đã cập nhật trạng thái báo cáo thành công.");
     return reviewReportMapper.toResponse(updated);

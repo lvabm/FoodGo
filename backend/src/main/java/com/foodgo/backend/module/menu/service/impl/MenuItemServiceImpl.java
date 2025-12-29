@@ -17,8 +17,10 @@ import com.foodgo.backend.module.menu.dto.response.MenuItemResponse;
 import com.foodgo.backend.module.menu.entity.MenuItem;
 import com.foodgo.backend.module.menu.repository.MenuItemRepository;
 import com.foodgo.backend.module.menu.repository.MenuItemSubCategoryRepository;
+import com.foodgo.backend.module.menu.repository.OutletMenuItemRepository;
 import com.foodgo.backend.module.menu.service.MenuItemService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -28,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -45,6 +48,7 @@ public class MenuItemServiceImpl
   private final MenuItemMapper menuItemMapper;
   private final ProvinceRepository provinceRepository;
   private final MenuItemSubCategoryRepository subCategoryRepository;
+  private final OutletMenuItemRepository outletMenuItemRepository;
 
   private final String menuItemEntityName = EntityName.MENU_ITEM.getFriendlyName();
 
@@ -85,6 +89,34 @@ public class MenuItemServiceImpl
   @Override
   protected Specification<MenuItem> buildSpecification(MenuItemFilterRequest filterRequest) {
     return new MenuItemSearchSpecification(filterRequest);
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public String getMenuItemImageUrl(UUID menuItemId) {
+    log.info("🔍 Getting image URL for menu item: {}", menuItemId);
+    
+    try {
+      // Tìm outlet menu items có sử dụng menu item này và có ảnh (giới hạn 5 items)
+      java.util.List<com.foodgo.backend.module.menu.entity.OutletMenuItem> outletMenuItems = 
+          outletMenuItemRepository.findTop5ByMenuItemIdAndImageUrlIsNotNullOrderByIdAsc(menuItemId);
+      
+      log.info("📸 Found {} outlet menu items with images for menu item {}", outletMenuItems.size(), menuItemId);
+      
+      // Lấy ảnh đầu tiên nếu có
+      if (!outletMenuItems.isEmpty()) {
+        String imageUrl = outletMenuItems.get(0).getImageUrl();
+        log.info("✅ Returning image URL: {}", imageUrl);
+        return imageUrl;
+      }
+      
+      log.info("⚠️ No image found for menu item {}", menuItemId);
+      return null;
+    } catch (Exception e) {
+      log.error("❌ Error getting image URL for menu item {}: {}", menuItemId, e.getMessage(), e);
+      e.printStackTrace();
+      return null;
+    }
   }
 
   // --- Ghi đè CREATE/UPDATE để gán FK ---

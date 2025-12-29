@@ -13,13 +13,13 @@ public record ReviewReportSpecification(ReviewReportFilterRequest filter)
 
   @Override
   public jakarta.persistence.criteria.Predicate toPredicate(
-      jakarta.persistence.criteria.Root<ReviewReport> root,
-      jakarta.persistence.criteria.CriteriaQuery<?> query,
-      jakarta.persistence.criteria.CriteriaBuilder cb) {
+      @org.springframework.lang.NonNull jakarta.persistence.criteria.Root<ReviewReport> root,
+      @org.springframework.lang.Nullable jakarta.persistence.criteria.CriteriaQuery<?> query,
+      @org.springframework.lang.NonNull jakarta.persistence.criteria.CriteriaBuilder cb) {
     List<Predicate> predicates = new ArrayList<>();
 
     // Fetch join để tránh LazyInitializationException
-    if (Long.class != query.getResultType()) {
+    if (query != null && Long.class != query.getResultType()) {
       root.fetch("reporter", JoinType.LEFT).fetch("profile", JoinType.LEFT);
       root.fetch("review", JoinType.LEFT);
       query.distinct(true);

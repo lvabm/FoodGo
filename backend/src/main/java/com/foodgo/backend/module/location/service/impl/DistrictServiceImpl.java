@@ -11,6 +11,7 @@ import com.foodgo.backend.module.location.dto.mapper.DistrictMapper;
 import com.foodgo.backend.module.location.repository.DistrictRepository;
 import com.foodgo.backend.module.location.service.DistrictService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -54,5 +55,12 @@ public class DistrictServiceImpl
   @Override
   protected Specification<District> buildSpecification(DistrictFilterRequest filter) {
     return new DistrictSpecification(filter);
+  }
+
+  // Override getAll() để thêm cache
+  @Override
+  @Cacheable(value = "districts", unless = "#result == null || #result.isEmpty()")
+  public java.util.List<DistrictResponse> getAll() {
+    return super.getAll();
   }
 }

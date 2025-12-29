@@ -15,4 +15,6 @@ public interface ReviewRepository
   boolean existsByBookingId(UUID bookingId);
   
   List<Review> findByOutletIdIn(List<UUID> outletIds);
+  
+  long countByUserIdAndCreateAtAfter(UUID userId, java.time.LocalDateTime after);
 }

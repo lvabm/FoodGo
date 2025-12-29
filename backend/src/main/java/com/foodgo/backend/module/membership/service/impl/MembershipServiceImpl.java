@@ -4,7 +4,6 @@ import com.foodgo.backend.common.base.mapper.BaseMapper;
 import com.foodgo.backend.common.base.service.impl.BaseServiceImpl;
 import com.foodgo.backend.common.constant.*;
 import com.foodgo.backend.common.context.SecurityContext;
-import com.foodgo.backend.common.exception.DataConflictException;
 import com.foodgo.backend.common.exception.ForbiddenException;
 import com.foodgo.backend.common.exception.ResourceNotFoundException;
 import com.foodgo.backend.module.admin.service.AdminMembershipService;

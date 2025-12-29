@@ -2,7 +2,6 @@ package com.foodgo.backend.facade;
 
 import com.foodgo.backend.common.context.SecurityContext;
 import com.foodgo.backend.module.booking.entity.Booking;
-import com.foodgo.backend.module.location.entity.Country;
 import com.foodgo.backend.module.notification.entity.Notification;
 import com.foodgo.backend.module.outlet.entity.Outlet;
 import com.foodgo.backend.module.review.entity.Review;

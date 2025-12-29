@@ -10,11 +10,14 @@ import com.foodgo.backend.module.review.entity.ReviewReply;
 import org.mapstruct.*;
 
 import java.util.List;
+import java.util.UUID;
+import org.mapstruct.ReportingPolicy;
 import java.util.stream.Collectors;
 
 @Mapper(
     componentModel = "spring",
-    nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
+    unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ReviewMapper
     extends BaseMapper<Review, ReviewCreateRequest, ReviewUpdateRequest, ReviewResponse> {
 
@@ -27,11 +30,34 @@ public interface ReviewMapper
   @Mapping(source = "outlet.name", target = "outletName")
   @Mapping(target = "images", expression = "java(mapImages(entity.getReviewImages()))")
   @Mapping(source = "reviewReply", target = "reply")
+  @Mapping(source = "createAt", target = "createdAt")
+  @Mapping(source = "moderationStatus", target = "moderationStatus")
+  @Mapping(source = "moderationReason", target = "moderationReason")
+  @Mapping(source = "moderatedAt", target = "moderatedAt")
+  @Mapping(target = "moderatedBy", expression = "java(mapModeratedBy(entity))")
   ReviewResponse toResponse(Review entity);
+  
+  // Helper: Map moderatedBy safely
+  default UUID mapModeratedBy(Review entity) {
+    return entity.getModeratedBy() != null ? entity.getModeratedBy().getId() : null;
+  }
 
   // Custom mapping cho Reply
-  @Mapping(source = "owner.profile.fullName", target = "ownerName")
-  ReviewResponse.ReplyResponse mapReply(ReviewReply reply);
+  default ReviewResponse.ReplyResponse mapReply(ReviewReply reply) {
+    if (reply == null) {
+      return null;
+    }
+    String ownerName = reply.getOwner() != null && reply.getOwner().getProfile() != null
+        ? reply.getOwner().getProfile().getFullName()
+        : null;
+    // Note: ReviewReply extends BaseIntegerEntity which doesn't have createAt field
+    // Using null for createdAt as it's not available in the entity
+    return new ReviewResponse.ReplyResponse(
+        ownerName,
+        reply.getReplyText(),
+        null // createdAt not available in ReviewReply entity
+    );
+  }
 
   // Helper: List<Entity> -> List<String>
   default List<String> mapImages(List<ReviewImage> images) {

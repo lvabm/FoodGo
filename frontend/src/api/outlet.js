@@ -67,4 +67,23 @@ export const outletApi = {
   getOperatingHours(outletId) {
     return apiClient.get(`/outlets/${outletId}/operating-hours`);
   },
+
+  // Lấy outlets mới nhất
+  getNewestOutlets(limit = 20) {
+    return apiClient.get("/outlets/newest", {
+      params: { limit },
+    });
+  },
+
+  // Lấy outlets đang khuyến mãi
+  getPromotedOutlets(limit = 20) {
+    return apiClient.get("/outlets/promotions", {
+      params: { limit },
+    });
+  },
+
+  // Lấy thống kê công khai (tổng số quán, món, đánh giá, người dùng)
+  getPublicStatistics() {
+    return apiClient.get("/statistics/public");
+  },
 };

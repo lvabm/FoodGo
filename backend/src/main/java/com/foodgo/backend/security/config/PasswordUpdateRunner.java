@@ -3,6 +3,7 @@ package com.foodgo.backend.security.config;
 import com.foodgo.backend.module.user.entity.UserAccount;
 import com.foodgo.backend.module.user.repository.UserAccountRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -11,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Slf4j
 @Component
 // @Profile("dev")
 @RequiredArgsConstructor
@@ -26,14 +28,14 @@ public class PasswordUpdateRunner implements ApplicationRunner {
   @Override
   @Transactional
   public void run(ApplicationArguments args) throws Exception {
-    System.out.println("⏳ Kiểm tra và mã hóa mật khẩu từ SQL Seeding...");
+    log.info("⏳ Kiểm tra và mã hóa mật khẩu từ SQL Seeding...");
 
     // 1. Tìm tất cả UserAccount có mật khẩu khớp với chuỗi đánh dấu
     // 💡 Giả định UserRepository của bạn có phương thức findByPasswordHash
     List<UserAccount> unhashedUsers = userAccountRepository.findByPasswordHash(PLAINTEXT_MARKER);
 
     if (unhashedUsers.isEmpty()) {
-      System.out.println("✅ Không tìm thấy mật khẩu cần mã hóa. Bỏ qua.");
+      log.info("✅ Không tìm thấy mật khẩu cần mã hóa. Bỏ qua.");
       return;
     }
 
@@ -41,11 +43,11 @@ public class PasswordUpdateRunner implements ApplicationRunner {
 
     // 2. Lặp qua và cập nhật từng User
     for (UserAccount user : unhashedUsers) {
-      user .setPasswordHash(encodedPassword); // 🔑 SET MẬT KHẨU ĐÃ MÃ HÓA
+      user.setPasswordHash(encodedPassword); // 🔑 SET MẬT KHẨU ĐÃ MÃ HÓA
       userAccountRepository.save(user);
-      System.out.printf("   - Mã hóa thành công mật khẩu cho user: %s%n", user.getUsername());
+      log.info("   - Mã hóa thành công mật khẩu cho user: {}", user.getUsername());
     }
 
-    System.out.println("✅ Hoàn tất quá trình mã hóa mật khẩu sau SQL Seeding.");
+    log.info("✅ Hoàn tất quá trình mã hóa mật khẩu sau SQL Seeding.");
   }
 }

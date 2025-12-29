@@ -337,33 +337,40 @@ const fetchReports = async () => {
       params.status = filters.value.status;
     }
     const response = await adminApi.getReports(params);
-    // Handle different response structures
+    // Axios interceptor đã xử lý response, trả về Spring Data Page object
     let allReports = [];
-    if (response?.data?.content) {
-      allReports = response.data.content;
-      pagination.value = {
-        currentPage: response.data.pageNumber || 0,
-        totalPages: response.data.totalPages || 0,
-        totalElements: response.data.totalElements || 0,
-        size: response.data.size || 10,
-      };
-    } else if (response?.content) {
+    if (response?.content && Array.isArray(response.content)) {
+      // Spring Data Page format: { content: [...], totalElements, totalPages, number, size, ... }
       allReports = response.content;
       pagination.value = {
-        currentPage: response.pageNumber || 0,
+        currentPage: response.number || 0,
         totalPages: response.totalPages || 0,
         totalElements: response.totalElements || 0,
         size: response.size || 10,
       };
-    } else if (Array.isArray(response?.data)) {
-      allReports = response.data;
     } else if (Array.isArray(response)) {
+      // Direct array (fallback)
       allReports = response;
+      pagination.value = {
+        currentPage: 0,
+        totalPages: 1,
+        totalElements: response.length,
+        size: response.length,
+      };
+    } else if (response?.data && Array.isArray(response.data)) {
+      // Wrapped in data field (fallback)
+      allReports = response.data;
+      pagination.value = {
+        currentPage: response.pageNumber || 0,
+        totalPages: response.totalPages || 1,
+        totalElements: response.totalElements || response.data.length,
+        size: response.size || 10,
+      };
     }
     reports.value = allReports || [];
   } catch (err) {
     console.error("Error fetching reports:", err);
-    error.value = err.response?.data?.message || "Không thể tải danh sách báo cáo";
+    error.value = err.message || err.response?.data?.message || "Không thể tải danh sách báo cáo";
     showError(error.value);
     reports.value = [];
   } finally {

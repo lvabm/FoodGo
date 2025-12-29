@@ -9,3 +9,4 @@ export {locationApi} from "./location";
 export {membershipApi} from "./membership";
 export {adminApi} from "./admin";
 export {ownerApi} from "./owner";
+export {searchApi} from "./search";

@@ -12,3 +12,5 @@ public interface AdminOutletCategoryService
         UpdatableService<Integer, OutletCategoryUpdateRequest, OutletCategoryResponse>,
         DeletableService<Integer, OutletCategoryResponse> {}
 
+
+

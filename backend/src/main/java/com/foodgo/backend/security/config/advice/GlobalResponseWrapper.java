@@ -14,6 +14,8 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpResponse;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
@@ -29,20 +31,22 @@ public class GlobalResponseWrapper implements ResponseBodyAdvice<Object> {
 
   @Override
   public boolean supports(
-      MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
+      @NonNull MethodParameter returnType, 
+      @NonNull Class<? extends HttpMessageConverter<?>> converterType) {
     // KHÔNG bọc nếu Controller trả về ResponseEntity (vì nó đã kiểm soát hoàn toàn)
     // và KHÔNG bọc nếu nó là các lớp lỗi (ApiError, BaseResponse lỗi...)
     return !returnType.getParameterType().equals(ResponseEntity.class);
   }
 
   @Override
+  @Nullable
   public Object beforeBodyWrite(
-      Object body,
-      MethodParameter returnType,
-      MediaType selectedContentType,
-      Class<? extends HttpMessageConverter<?>> selectedConverterType,
-      ServerHttpRequest request,
-      ServerHttpResponse response) {
+      @Nullable Object body,
+      @NonNull MethodParameter returnType,
+      @NonNull MediaType selectedContentType,
+      @NonNull Class<? extends HttpMessageConverter<?>> selectedConverterType,
+      @NonNull ServerHttpRequest request,
+      @NonNull ServerHttpResponse response) {
 
     // 1. Nếu body đã là BaseResponse hoặc null (ví dụ: ControllerAdvice trả về)
     if (body == null || body instanceof BaseResponse) {

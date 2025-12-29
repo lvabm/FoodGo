@@ -167,24 +167,39 @@
               Sửa
             </button>
             <button
-              v-if="outlet.isActive === false"
+              v-if="outlet.isActive === false && !outlet.isDeleted"
               @click="approveOutlet(outlet)"
               class="flex-1 px-3 py-2 bg-positive text-white rounded-lg hover:bg-opacity-90 text-sm"
             >
               Kích hoạt
             </button>
             <button
-              v-else
+              v-else-if="outlet.isActive === true"
               @click="lockOutlet(outlet)"
               class="flex-1 px-3 py-2 bg-yellow-600 text-white rounded-lg hover:bg-opacity-90 text-sm"
             >
               Vô hiệu hóa
             </button>
             <button
+              v-if="outlet.isActive === false && !outlet.isDeleted"
+              @click="unlockOutlet(outlet)"
+              class="flex-1 px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-opacity-90 text-sm"
+            >
+              Mở khóa
+            </button>
+            <button
+              v-if="!outlet.isDeleted"
               @click="deleteOutlet(outlet)"
               class="px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-opacity-90 text-sm"
             >
               Xóa
+            </button>
+            <button
+              v-if="outlet.isDeleted"
+              @click="restoreOutlet(outlet)"
+              class="px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-opacity-90 text-sm"
+            >
+              Khôi phục
             </button>
           </div>
         </div>
@@ -764,16 +779,46 @@ const editOutlet = async (outlet) => {
   }
 };
 
+const unlockOutlet = async (outlet) => {
+  const confirmed = await confirm(`Bạn có chắc muốn mở khóa địa điểm "${outlet.name}"?`);
+  if (!confirmed) return;
+
+  try {
+    await adminApi.unlockOutlet(outlet.id);
+    success("Mở khóa địa điểm thành công");
+    await fetchOutlets();
+  } catch (err) {
+    const errorMsg = err.response?.data?.message || err.message || "Có lỗi xảy ra";
+    showError(errorMsg);
+    console.error("Error unlocking outlet:", err);
+  }
+};
+
 const deleteOutlet = async (outlet) => {
   const confirmed = await confirm(`Bạn có chắc muốn xóa địa điểm "${outlet.name}"?`);
   if (!confirmed) return;
 
   try {
-    await outletApi.deleteOutlet(outlet.id);
+    await adminApi.deleteOutlet(outlet.id);
     success("Xóa địa điểm thành công");
     await fetchOutlets();
   } catch (err) {
     showError(err.response?.data?.message || "Có lỗi xảy ra");
+  }
+};
+
+const restoreOutlet = async (outlet) => {
+  const confirmed = await confirm(`Bạn có chắc muốn khôi phục địa điểm "${outlet.name}"?`);
+  if (!confirmed) return;
+
+  try {
+    await adminApi.restoreOutlet(outlet.id);
+    success("Khôi phục địa điểm thành công");
+    await fetchOutlets();
+  } catch (err) {
+    const errorMsg = err.response?.data?.message || err.message || "Có lỗi xảy ra";
+    showError(errorMsg);
+    console.error("Error restoring outlet:", err);
   }
 };
 

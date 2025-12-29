@@ -65,4 +65,9 @@ export const menuApi = {
   getProvinces() {
     return apiClient.get("/provinces");
   },
+
+  // Lấy ảnh cho menu item từ outlet menu items
+  getMenuItemImage(menuItemId) {
+    return apiClient.get(`/menu-items/${menuItemId}/image`);
+  },
 };

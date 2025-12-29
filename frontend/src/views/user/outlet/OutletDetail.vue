@@ -1029,12 +1029,12 @@ const handleBookingClick = () => {
   errorMessage.value = "";
   successMessage.value = "";
 
-  // Check authentication
+  // Check authentication - khách vãng lai không thể đặt bàn
   if (!authStore.isAuthenticated) {
-    errorMessage.value = "Vui lòng đăng nhập để đặt bàn. Đang chuyển hướng...";
+    errorMessage.value = "Vui lòng đăng nhập hoặc đăng ký tài khoản để đặt bàn. Chức năng đặt bàn chỉ dành cho thành viên đã đăng ký. Đang chuyển hướng...";
     setTimeout(() => {
       router.push("/auth/login");
-    }, 2000);
+    }, 2500);
     return;
   }
 

@@ -7,8 +7,6 @@ import com.foodgo.backend.module.outlet.entity.Outlet;
 import com.foodgo.backend.module.outlet.entity.OutletFeature;
 import com.foodgo.backend.module.outlet.entity.OutletFeatureMapping;
 
-import java.util.UUID;
-
 public interface OutletFeatureMappingService
     extends BaseMappingService<
         Outlet,

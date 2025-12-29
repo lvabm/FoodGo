@@ -4,6 +4,8 @@ import com.foodgo.backend.module.menu.dto.request.MenuItemFilterRequest;
 import com.foodgo.backend.module.menu.entity.MenuItem;
 import jakarta.persistence.criteria.*;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +15,7 @@ public record MenuItemSearchSpecification(MenuItemFilterRequest request)
 
   @Override
   public Predicate toPredicate(
-      Root<MenuItem> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
+      @NonNull Root<MenuItem> root, @Nullable CriteriaQuery<?> query, @NonNull CriteriaBuilder builder) {
     List<Predicate> predicates = new ArrayList<>();
 
     request
@@ -43,7 +45,9 @@ public record MenuItemSearchSpecification(MenuItemFilterRequest request)
               predicates.add(builder.equal(root.get("province").get("id"), provinceId));
             });
 
-    query.distinct(true);
+    if (query != null) {
+      query.distinct(true);
+    }
 
     return builder.and(predicates.toArray(new Predicate[0]));
   }

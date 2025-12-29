@@ -6,6 +6,11 @@ export const adminApi = {
     return apiClient.get("/admin/dashboard/stats");
   },
 
+  // Admin Statistics (100% real data)
+  getStatistics() {
+    return apiClient.get("/admin/statistics");
+  },
+
   // User Management
   getUsers(params) {
     return apiClient.get("/admin/user-accounts/search", {params});
@@ -29,29 +34,50 @@ export const adminApi = {
 
   // Outlet Management
   getOutlets(params) {
-    return apiClient.get("/outlets/search", {params});
+    return apiClient.get("/admin/outlets/search", {params});
   },
 
   getOutletDetail(id) {
-    return apiClient.get(`/outlets/${id}`);
+    return apiClient.get(`/admin/outlets/${id}`);
   },
 
-  // Outlet Management - Approve/Lock
-  // Note: Backend OutletUpdateRequest doesn't have isActive field
-  // These endpoints may need to be added to backend:
-  // - PATCH /admin/outlets/{id}/approve
-  // - PATCH /admin/outlets/{id}/lock
-  // For now, using update endpoint (may not work until backend supports isActive)
+  // Outlet Management - Approve/Lock/Unlock/Restore
   approveOutlet(id) {
-    // TODO: Backend needs to add PATCH /admin/outlets/{id}/approve
-    // or add isActive field to OutletUpdateRequest
-    return apiClient.patch(`/outlets/${id}`, {isActive: true});
+    return apiClient.post(`/admin/outlets/${id}/approve`);
   },
 
-  lockOutlet(id) {
-    // TODO: Backend needs to add PATCH /admin/outlets/{id}/lock
-    // or add isActive field to OutletUpdateRequest
-    return apiClient.patch(`/outlets/${id}`, {isActive: false});
+  lockOutlet(id, reason = "Vi phạm quy định") {
+    return apiClient.post(`/admin/outlets/${id}/lock`, null, {
+      params: {reason},
+    });
+  },
+
+  unlockOutlet(id) {
+    return apiClient.post(`/admin/outlets/${id}/unlock`);
+  },
+
+  restoreOutlet(id) {
+    return apiClient.post(`/admin/outlets/${id}/restore`);
+  },
+
+  deleteOutlet(id, reason = "Vi phạm quy định") {
+    return apiClient.delete(`/admin/outlets/${id}`, {
+      params: {reason},
+    });
+  },
+
+  bulkApproveOutlet(ids) {
+    return apiClient.post("/admin/outlets/bulk/approve", {ids});
+  },
+
+  bulkLockOutlet(ids, reason = "Vi phạm quy định") {
+    return apiClient.post(`/admin/outlets/bulk/lock`, {ids}, {
+      params: {reason},
+    });
+  },
+
+  bulkUnlockOutlet(ids) {
+    return apiClient.post("/admin/outlets/bulk/unlock", {ids});
   },
 
   // Booking Management
@@ -226,6 +252,23 @@ export const adminApi = {
 
   deleteCountry(id) {
     return apiClient.delete(`/admin/countries/${id}`);
+  },
+
+  // Owner Registration Management
+  getOwnerRegistrationRequests() {
+    return apiClient.get("/admin/owner-registrations");
+  },
+
+  getOwnerRegistrationRequestDetail(id) {
+    return apiClient.get(`/admin/owner-registrations/${id}`);
+  },
+
+  approveOwnerRegistration(id, adminNotes = "") {
+    return apiClient.post(`/admin/owner-registrations/${id}/approve`, adminNotes);
+  },
+
+  rejectOwnerRegistration(id, adminNotes) {
+    return apiClient.post(`/admin/owner-registrations/${id}/reject`, adminNotes);
   },
 };
 

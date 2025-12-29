@@ -77,4 +77,37 @@ public class OutletController {
   public OutletResponse getDetail(@PathVariable UUID id) {
     return outletService.getDetail(id);
   }
+
+  @PermitAll
+  @GetMapping("/nearby")
+  @Operation(
+      summary = "Tìm outlets gần nhất",
+      description = "Tìm các outlets trong bán kính nhất định từ một điểm. Sắp xếp theo khoảng cách.")
+  public List<com.foodgo.backend.module.outlet.dto.response.OutletWithDistanceResponse> findNearbyOutlets(
+      @RequestParam java.math.BigDecimal latitude,
+      @RequestParam java.math.BigDecimal longitude,
+      @RequestParam(required = false, defaultValue = "10.0") Double radius,
+      @RequestParam(required = false, defaultValue = "50") Integer maxResults) {
+    return outletService.findNearbyOutlets(latitude, longitude, radius, maxResults);
+  }
+
+  @PermitAll
+  @GetMapping("/newest")
+  @Operation(
+      summary = "Lấy outlets mới nhất",
+      description = "Lấy danh sách outlets mới nhất, sắp xếp theo ID (UUID được tạo theo thời gian)")
+  public List<OutletResponse> getNewestOutlets(
+      @RequestParam(required = false, defaultValue = "20") Integer limit) {
+    return outletService.getNewestOutlets(limit);
+  }
+
+  @PermitAll
+  @GetMapping("/promotions")
+  @Operation(
+      summary = "Lấy outlets đang khuyến mãi",
+      description = "Lấy danh sách outlets có active advertisements (quảng cáo đang hoạt động)")
+  public List<OutletResponse> getPromotedOutlets(
+      @RequestParam(required = false, defaultValue = "20") Integer limit) {
+    return outletService.getPromotedOutlets(limit);
+  }
 }

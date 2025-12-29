@@ -7,6 +7,8 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +18,7 @@ public record OutletMenuItemSearchSpecification(OutletMenuItemFilterRequest requ
 
   @Override
   public Predicate toPredicate(
-      Root<OutletMenuItem> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
+      @NonNull Root<OutletMenuItem> root, @Nullable CriteriaQuery<?> query, @NonNull CriteriaBuilder builder) {
     List<Predicate> predicates = new ArrayList<>();
 
     // 1. Lọc theo Tên món ăn (tương đối)
@@ -45,7 +47,9 @@ public record OutletMenuItemSearchSpecification(OutletMenuItemFilterRequest requ
             });
 
     // Query luôn phải distinct nếu có thể có Join (mặc dù hiện tại không Join Many-to-Many)
-    query.distinct(true);
+    if (query != null) {
+      query.distinct(true);
+    }
 
     return builder.and(predicates.toArray(new Predicate[0]));
   }

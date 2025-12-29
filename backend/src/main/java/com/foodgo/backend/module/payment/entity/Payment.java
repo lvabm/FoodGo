@@ -6,9 +6,10 @@ import com.foodgo.backend.common.constant.PaymentStatus;
 import com.foodgo.backend.common.constant.PaymentType;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
-import java.util.UUID;
+import java.time.Instant;
 
 @Entity
 @Table(name = "payment")
@@ -42,4 +43,9 @@ public class Payment extends BaseUUIDEntity {
   @Column(name = "type", nullable = false, length = 20)
   @Enumerated(EnumType.STRING)
   private PaymentType type;
+
+  // Thời gian tạo payment
+  @Column(name = "created_at", nullable = false, updatable = false)
+  @CreationTimestamp
+  private Instant createdAt;
 }

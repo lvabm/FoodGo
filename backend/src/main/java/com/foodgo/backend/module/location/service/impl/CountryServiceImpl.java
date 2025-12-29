@@ -11,6 +11,7 @@ import com.foodgo.backend.module.location.dto.mapper.CountryMapper;
 import com.foodgo.backend.module.location.repository.CountryRepository;
 import com.foodgo.backend.module.location.service.CountryService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -77,5 +78,12 @@ public class CountryServiceImpl
   @Override
   protected Specification<Country> buildSpecification(CountryFilterRequest filter) {
     return new CountrySpecification(filter);
+  }
+
+  // Override getAll() để thêm cache
+  @Override
+  @Cacheable(value = "countries", unless = "#result == null || #result.isEmpty()")
+  public java.util.List<CountryResponse> getAll() {
+    return super.getAll();
   }
 }

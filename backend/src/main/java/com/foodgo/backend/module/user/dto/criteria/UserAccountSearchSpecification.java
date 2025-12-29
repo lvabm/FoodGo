@@ -9,6 +9,8 @@ import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -18,11 +20,11 @@ public record UserAccountSearchSpecification(UserAccountFilterRequest filter)
     implements Specification<UserAccount> {
 
   @Override
-  public Predicate toPredicate(Root<UserAccount> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+  public Predicate toPredicate(@NonNull Root<UserAccount> root, @Nullable CriteriaQuery<?> query, @NonNull CriteriaBuilder cb) {
     List<Predicate> predicates = new ArrayList<>();
 
     // Fetch join để tránh N+1 query khi lấy Role và Profile
-    if (Long.class != query.getResultType()) {
+    if (query != null && Long.class != query.getResultType()) {
       root.fetch("role", JoinType.LEFT);
       root.fetch("profile", JoinType.LEFT);
       query.distinct(true);

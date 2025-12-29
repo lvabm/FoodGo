@@ -1,5 +1,6 @@
 package com.foodgo.backend;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -9,6 +10,7 @@ import org.springframework.context.annotation.Bean;
 
 import javax.sql.DataSource;
 
+@Slf4j
 @SpringBootApplication
 public class FoodGoApplication {
   public static void main(String[] args) {
@@ -31,17 +33,15 @@ public class FoodGoApplication {
         // Lấy thông tin Driver Name từ DataSource Metadata
         String driver = dataSource.getConnection().getMetaData().getDriverName();
 
-        System.out.println("--------------------------------------------------");
-        System.out.println("✨ PostgreSQL Connection Details (Development Only):");
-
-        // Sử dụng các biến đã tiêm
-        System.out.println("👉 URL: " + dbUrl);
-        System.out.println("👉 User: " + dbUser);
-        System.out.println("👉 Password: " + dbPassword);
-        System.out.println("👉 Driver: " + driver);
-        System.out.println("--------------------------------------------------");
+        log.info("--------------------------------------------------");
+        log.info("✨ PostgreSQL Connection Details (Development Only):");
+        log.info("👉 URL: {}", dbUrl);
+        log.info("👉 User: {}", dbUser);
+        log.info("👉 Password: {}", dbPassword != null ? "***" : "null");
+        log.info("👉 Driver: {}", driver);
+        log.info("--------------------------------------------------");
       } catch (Exception e) {
-        System.err.println("❌ ERROR: Could not retrieve DataSource details. " + e.getMessage());
+        log.error("❌ ERROR: Could not retrieve DataSource details", e);
       }
     };
   }

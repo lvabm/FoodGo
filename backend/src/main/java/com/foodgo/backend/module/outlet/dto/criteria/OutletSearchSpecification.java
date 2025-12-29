@@ -5,6 +5,8 @@ import com.foodgo.backend.module.outlet.entity.Outlet;
 import com.foodgo.backend.module.outlet.entity.OutletFeatureMapping;
 import jakarta.persistence.criteria.*;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,23 +15,36 @@ public record OutletSearchSpecification(OutletFilterRequest request)
     implements Specification<Outlet> {
 
   @Override
-  public Predicate toPredicate(Root<Outlet> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
+  public Predicate toPredicate(@NonNull Root<Outlet> root, @Nullable CriteriaQuery<?> query, @NonNull CriteriaBuilder builder) {
     List<Predicate> predicates = new ArrayList<>();
 
     // Fetch join outletImages để tránh LazyInitializationException và N+1 query
     // Chỉ fetch khi không phải count query
-    if (Long.class != query.getResultType()) {
+    if (query != null && Long.class != query.getResultType()) {
       root.fetch("outletImages", JoinType.LEFT);
       query.distinct(true);
     }
 
-    // 1. Lọc theo Tên (tương đối)
+    // 1. Multi-field search: Tên, Mô tả, Địa chỉ (tương đối với fuzzy matching)
     request
         .optionalName()
         .ifPresent(
-            name ->
-                predicates.add(
-                    builder.like(builder.lower(root.get("name")), "%" + name.toLowerCase() + "%")));
+            name -> {
+              String searchPattern = "%" + name.toLowerCase() + "%";
+              
+              // Search in multiple fields: name, description, address
+              Predicate namePredicate = builder.like(
+                  builder.lower(root.get("name")), searchPattern);
+              
+              Predicate descriptionPredicate = builder.like(
+                  builder.lower(root.get("description")), searchPattern);
+              
+              Predicate addressPredicate = builder.like(
+                  builder.lower(root.get("address")), searchPattern);
+              
+              // Combine with OR - matches any field
+              predicates.add(builder.or(namePredicate, descriptionPredicate, addressPredicate));
+            });
 
     // 2. Lọc theo Price Range (Chính xác)
     request
@@ -70,7 +85,9 @@ public record OutletSearchSpecification(OutletFilterRequest request)
               predicates.add(featureJoin.get("id").in(featureIds));
 
               // Đảm bảo không bị trùng lặp kết quả khi join Many-to-Many
-              query.distinct(true);
+              if (query != null) {
+                query.distinct(true);
+              }
             });
 
     // Thêm điều kiện mặc định: isActive = true và isDeleted = false (từ BaseUUIDEntity)

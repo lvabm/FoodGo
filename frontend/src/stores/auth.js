@@ -12,15 +12,27 @@ export const useAuthStore = defineStore("auth", () => {
 
   // Getters
   const isAuthenticated = computed(() => !!accessToken.value);
-  const isAdmin = computed(
-    () => user.value?.roleName === "ROLE_ADMIN" || user.value?.role === "ADMIN"
-  );
-  const isOwner = computed(
-    () => user.value?.roleName === "ROLE_OWNER" || user.value?.role === "OWNER"
-  );
-  const isUser = computed(
-    () => user.value?.roleName === "ROLE_USER" || user.value?.role === "USER"
-  );
+  const isAdmin = computed(() => {
+    if (!user.value) return false;
+    // Check multiple possible field names and formats
+    const role = user.value?.roleName || user.value?.roleType || user.value?.role || user.value?.role?.name || "";
+    const roleUpper = role.toUpperCase();
+    return roleUpper === "ROLE_ADMIN" || roleUpper === "ROLE_SYSTEM_ADMIN" || roleUpper === "ADMIN" || roleUpper === "SYSTEM_ADMIN";
+  });
+  const isOwner = computed(() => {
+    if (!user.value) return false;
+    // Check multiple possible field names and formats
+    const role = user.value?.roleName || user.value?.roleType || user.value?.role || user.value?.role?.name || "";
+    const roleUpper = role.toUpperCase();
+    return roleUpper === "ROLE_OWNER" || roleUpper === "OWNER";
+  });
+  const isUser = computed(() => {
+    if (!user.value) return false;
+    // Check multiple possible field names and formats
+    const role = user.value?.roleName || user.value?.roleType || user.value?.role || user.value?.role?.name || "";
+    const roleUpper = role.toUpperCase();
+    return roleUpper === "ROLE_USER" || roleUpper === "USER";
+  });
 
   // Actions
   async function login(credentials) {

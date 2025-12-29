@@ -1,6 +1,7 @@
 package com.foodgo.backend.module.review.entity;
 
 import com.foodgo.backend.common.base.dto.BaseUUIDEntity;
+import com.foodgo.backend.common.constant.ModerationStatus;
 import com.foodgo.backend.module.booking.entity.Booking;
 import com.foodgo.backend.module.outlet.entity.Outlet;
 import com.foodgo.backend.module.user.entity.UserAccount;
@@ -48,6 +49,21 @@ public class Review extends BaseUUIDEntity {
   @Column(name = "create_at")
   @Builder.Default
   private LocalDateTime createAt = LocalDateTime.now();
+
+  @Column(name = "moderation_status", nullable = false, length = 20)
+  @Enumerated(EnumType.STRING)
+  @Builder.Default
+  private ModerationStatus moderationStatus = ModerationStatus.PENDING;
+
+  @Column(name = "moderation_reason", length = 500)
+  private String moderationReason;
+
+  @Column(name = "moderated_at")
+  private LocalDateTime moderatedAt;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "moderated_by")
+  private UserAccount moderatedBy;
 
   // 1. QUAN HỆ ONE-TO-ONE: Review <--> Booking
   // Review sở hữu quan hệ (fk_booking_id_review)

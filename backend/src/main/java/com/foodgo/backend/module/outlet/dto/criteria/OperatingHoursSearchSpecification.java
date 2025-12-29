@@ -4,6 +4,8 @@ import com.foodgo.backend.module.outlet.dto.request.filter.OperatingHoursFilterR
 import com.foodgo.backend.module.outlet.entity.OperatingHours;
 import jakarta.persistence.criteria.*;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +15,7 @@ public record OperatingHoursSearchSpecification(OperatingHoursFilterRequest requ
 
   @Override
   public Predicate toPredicate(
-      Root<OperatingHours> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
+      @NonNull Root<OperatingHours> root, @Nullable CriteriaQuery<?> query, @NonNull CriteriaBuilder builder) {
     List<Predicate> predicates = new ArrayList<>();
 
     // 1. Lọc theo Outlet ID (cốt lõi)

@@ -38,6 +38,7 @@ import DistrictManagement from "@/views/admin/geographic/DistrictManagement.vue"
 import MembershipManagement from "@/views/admin/membership/MembershipManagement.vue";
 import ReportList from "@/views/admin/reporting/ReportList.vue";
 import TransactionHistory from "@/views/admin/reporting/TransactionHistory.vue";
+import OwnerRegistrationManagement from "@/views/admin/owner/OwnerRegistrationManagement.vue";
 
 // Owner Pages
 import OwnerDashboard from "@/views/owner/Dashboard.vue";
@@ -54,10 +55,10 @@ const routes = [
     path: "/",
     component: UserLayout,
     children: [
-      {path: "", name: "Home", component: UserHome},
-      {path: "search", name: "Search", component: UserSearch},
-      {path: "outlet/:id", name: "OutletDetail", component: OutletDetail},
-      {path: "booking/:outletId", name: "BookingForm", component: BookingForm},
+      {path: "", name: "Home", component: UserHome, meta: {requiresAuth: false}},
+      {path: "search", name: "Search", component: UserSearch, meta: {requiresAuth: false}},
+      {path: "outlet/:id", name: "OutletDetail", component: OutletDetail, meta: {requiresAuth: false}},
+      {path: "booking/:outletId", name: "BookingForm", component: BookingForm, meta: {requiresAuth: true}},
       {
         path: "booking-history",
         name: "BookingHistory",
@@ -163,6 +164,11 @@ const routes = [
         path: "transactions",
         name: "TransactionHistory",
         component: TransactionHistory,
+      },
+      {
+        path: "owner-registrations",
+        name: "OwnerRegistrationManagement",
+        component: OwnerRegistrationManagement,
       },
     ],
   },

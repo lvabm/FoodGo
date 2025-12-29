@@ -99,11 +99,24 @@ public class OutletImageServiceImpl
     for (int i = 0; i < files.size(); i++) {
       MultipartFile file = files.get(i);
 
-      // 3. Fake Upload Logic
+      // 3. Validate file
+      if (!com.foodgo.backend.common.util.FileUtils.isValidImageFile(file)) {
+        throw new com.foodgo.backend.common.exception.BadRequestException(
+            String.format("File '%s' không hợp lệ. Chỉ chấp nhận ảnh (JPG, PNG, GIF, WEBP) và kích thước tối đa %s.",
+                file.getOriginalFilename(),
+                com.foodgo.backend.common.util.FileUtils.formatFileSize(
+                    com.foodgo.backend.common.util.FileUtils.getMaxImageSize())));
+      }
+
+      // 4. Sanitize filename
       String originalFilename = file.getOriginalFilename();
+      String sanitizedFilename = com.foodgo.backend.common.util.FileUtils.sanitizeFilename(
+          originalFilename != null ? originalFilename : "image");
+
+      // 5. Fake Upload Logic (replace with real upload service in production)
       String fakeUrl =
           "https://via.placeholder.com/600x400?text="
-              + (originalFilename != null ? originalFilename.replace(" ", "+") : "Image");
+              + sanitizedFilename.replace(" ", "+");
 
       OutletImage image =
           OutletImage.builder()

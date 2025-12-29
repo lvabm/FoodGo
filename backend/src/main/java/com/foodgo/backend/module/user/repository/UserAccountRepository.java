@@ -1,14 +1,14 @@
 package com.foodgo.backend.module.user.repository;
 
 import com.foodgo.backend.module.user.entity.UserAccount;
+import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.lang.NonNull;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
-import org.springframework.data.jpa.repository.EntityGraph;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 public interface UserAccountRepository
     extends JpaRepository<UserAccount, UUID>, JpaSpecificationExecutor<UserAccount> {
@@ -27,7 +27,9 @@ public interface UserAccountRepository
   List<UserAccount> findByPasswordHash(String passwordHash);
 
   @EntityGraph(attributePaths = {"profile", "profile.country", "role"})
-  Optional<UserAccount> findById(UUID id);
+  @NonNull
+  @Override
+  Optional<UserAccount> findById(@NonNull UUID id);
 
   // BOOKINGS
   @EntityGraph(attributePaths = {"bookings"})

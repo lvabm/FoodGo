@@ -14,17 +14,23 @@
       v-else-if="outlet"
       class="w-full max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
     >
-      <!-- Header -->
-      <div class="mb-8">
-        <h1 class="text-3xl font-bold text-text-light dark:text-text-dark mb-2">
-          Đặt bàn
+      <!-- Header with Premium Style -->
+      <div class="mb-8 animate-fade-in-scale">
+        <h1 class="text-4xl sm:text-5xl font-black text-text-light dark:text-text-dark mb-2">
+          <span class="text-gradient-primary">Đặt bàn</span>
         </h1>
-        <p class="text-subtext-light dark:text-subtext-dark">
-          {{ outlet.name }}
-        </p>
-        <p class="text-sm text-subtext-light dark:text-subtext-dark">
-          {{ outlet.address }}
-        </p>
+        <div class="flex items-center gap-2 mb-2">
+          <span class="material-symbols-outlined text-primary">restaurant</span>
+          <p class="text-lg font-semibold text-text-light dark:text-text-dark">
+            {{ outlet.name }}
+          </p>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-subtext-light dark:text-subtext-dark text-sm">location_on</span>
+          <p class="text-sm text-subtext-light dark:text-subtext-dark">
+            {{ outlet.address }}
+          </p>
+        </div>
       </div>
 
       <!-- Error Message -->
@@ -43,10 +49,10 @@
         {{ successMessage }}
       </div>
 
-      <!-- Form -->
+      <!-- Form with Premium Style -->
       <form
         @submit.prevent="handleSubmit"
-        class="bg-white dark:bg-surface-dark rounded-xl border border-border-light dark:border-border-dark p-6 space-y-6"
+        class="card-premium p-8 space-y-6 animate-fade-in-scale stagger-1"
       >
         <!-- Date Selection -->
         <div>
@@ -60,7 +66,7 @@
             type="date"
             :min="minDate"
             required
-            class="w-full px-4 py-3 rounded-lg border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark focus:ring-2 focus:ring-primary/50 focus:border-primary"
+            class="w-full px-4 py-3 rounded-xl border-2 border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark focus:ring-4 focus:ring-primary/20 focus:border-primary transition-all duration-300 hover:border-primary/50"
           />
         </div>
 
@@ -75,7 +81,7 @@
             v-model="formData.bookingTime"
             type="time"
             required
-            class="w-full px-4 py-3 rounded-lg border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark focus:ring-2 focus:ring-primary/50 focus:border-primary"
+            class="w-full px-4 py-3 rounded-xl border-2 border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark focus:ring-4 focus:ring-primary/20 focus:border-primary transition-all duration-300 hover:border-primary/50"
           />
         </div>
 
@@ -90,24 +96,24 @@
             <button
               type="button"
               @click="decreaseGuests"
-              class="w-10 h-10 rounded-lg border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors flex items-center justify-center"
+              class="w-12 h-12 rounded-xl border-2 border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark hover:bg-primary/10 dark:hover:bg-primary/20 hover:border-primary transition-all duration-300 flex items-center justify-center hover:scale-110"
             >
-              <span class="material-symbols-outlined">remove</span>
+              <span class="material-symbols-outlined text-primary">remove</span>
             </button>
             <input
               v-model.number="formData.numberOfGuests"
               type="number"
               min="1"
-              max="50"
+              :max="outlet?.capacity || 50"
               required
-              class="flex-1 px-4 py-3 rounded-lg border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark text-center focus:ring-2 focus:ring-primary/50 focus:border-primary"
+              class="flex-1 px-4 py-3 rounded-xl border-2 border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark text-center font-bold text-lg focus:ring-4 focus:ring-primary/20 focus:border-primary transition-all duration-300 hover:border-primary/50"
             />
             <button
               type="button"
               @click="increaseGuests"
-              class="w-10 h-10 rounded-lg border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors flex items-center justify-center"
+              class="w-12 h-12 rounded-xl border-2 border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark hover:bg-primary/10 dark:hover:bg-primary/20 hover:border-primary transition-all duration-300 flex items-center justify-center hover:scale-110"
             >
-              <span class="material-symbols-outlined">add</span>
+              <span class="material-symbols-outlined text-primary">add</span>
             </button>
           </div>
         </div>
@@ -123,7 +129,7 @@
             v-model="formData.userNotes"
             rows="4"
             placeholder="Ví dụ: Yêu cầu vị trí ngồi, dị ứng thực phẩm, ..."
-            class="w-full px-4 py-3 rounded-lg border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark focus:ring-2 focus:ring-primary/50 focus:border-primary resize-none"
+            class="w-full px-4 py-3 rounded-xl border-2 border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark focus:ring-4 focus:ring-primary/20 focus:border-primary resize-none transition-all duration-300 hover:border-primary/50"
           ></textarea>
         </div>
 
@@ -176,10 +182,16 @@
           <button
             type="submit"
             :disabled="isSubmitting"
-            class="flex-1 px-6 py-3 rounded-lg bg-primary text-white font-bold hover:bg-opacity-90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            class="btn-premium flex-1 px-6 py-3 rounded-xl text-white font-bold disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:transform-none"
           >
-            <span v-if="!isSubmitting">Xác nhận đặt bàn</span>
-            <span v-else>Đang xử lý...</span>
+            <span v-if="!isSubmitting" class="flex items-center justify-center gap-2">
+              <span class="material-symbols-outlined">restaurant</span>
+              Xác nhận đặt bàn
+            </span>
+            <span v-else class="flex items-center justify-center gap-2">
+              <LoadingSpinner size="sm" color="white" />
+              Đang xử lý...
+            </span>
           </button>
         </div>
       </form>
@@ -193,6 +205,7 @@ import {useRoute, useRouter} from "vue-router";
 import {outletApi} from "@/api";
 import {bookingApi} from "@/api/booking";
 import {useAuthStore} from "@/stores/auth";
+import LoadingSpinner from "@/components/common/LoadingSpinner.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -265,12 +278,12 @@ const formatDate = (dateString) => {
 
 // Submit booking
 const handleSubmit = async () => {
-  // Check authentication
+  // Check authentication - khách vãng lai không thể đặt bàn
   if (!authStore.isAuthenticated) {
-    errorMessage.value = "Vui lòng đăng nhập để đặt bàn";
+    errorMessage.value = "Vui lòng đăng nhập hoặc đăng ký tài khoản để đặt bàn. Chức năng đặt bàn chỉ dành cho thành viên đã đăng ký.";
     setTimeout(() => {
       router.push("/auth/login");
-    }, 2000);
+    }, 2500);
     return;
   }
 
@@ -323,6 +336,24 @@ const handleSubmit = async () => {
 
 // Lifecycle
 onMounted(() => {
+  // Check authentication first
+  if (!authStore.isAuthenticated) {
+    errorMessage.value = "Vui lòng đăng nhập để đặt bàn. Đang chuyển hướng...";
+    setTimeout(() => {
+      router.push("/auth/login");
+    }, 2000);
+    return;
+  }
+
+  // Check membership
+  if (!authStore.user?.membershipIsActive) {
+    errorMessage.value = "Bạn cần đăng ký gói membership để đặt bàn. Đang chuyển hướng...";
+    setTimeout(() => {
+      router.push("/membership");
+    }, 2000);
+    return;
+  }
+
   fetchOutlet();
 });
 </script>

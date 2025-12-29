@@ -5,7 +5,7 @@
     <div class="flex h-full grow flex-col">
       <main class="flex min-h-screen w-full items-center justify-center">
         <div
-          class="flex w-full max-w-6xl overflow-hidden rounded-xl shadow-2xl bg-white dark:bg-[#231510]"
+          class="flex w-full max-w-6xl overflow-hidden rounded-2xl shadow-premium-lg bg-white dark:bg-[#231510] animate-fade-in-scale"
         >
           <div class="w-full lg:w-1/2 p-8 sm:p-12 flex flex-col justify-center">
             <div class="max-w-md mx-auto w-full">
@@ -66,7 +66,7 @@
                     v-model="formData.name"
                     type="text"
                     placeholder="Nhập họ và tên"
-                    class="w-full h-12 px-4 rounded-lg border border-gray-300 dark:border-[#684031] bg-gray-50 dark:bg-[#342018] text-black dark:text-white focus:ring-2 focus:ring-primary/50"
+                    class="w-full h-12 px-4 rounded-xl border-2 border-gray-300 dark:border-[#684031] bg-gray-50 dark:bg-[#342018] text-black dark:text-white focus:ring-4 focus:ring-primary/20 focus:border-primary transition-all duration-300 hover:border-primary/50"
                   />
                 </div>
 
@@ -79,7 +79,7 @@
                     v-model="formData.email"
                     type="email"
                     placeholder="email@example.com"
-                    class="w-full h-12 px-4 rounded-lg border border-gray-300 dark:border-[#684031] bg-gray-50 dark:bg-[#342018] text-black dark:text-white focus:ring-2 focus:ring-primary/50"
+                    class="w-full h-12 px-4 rounded-xl border-2 border-gray-300 dark:border-[#684031] bg-gray-50 dark:bg-[#342018] text-black dark:text-white focus:ring-4 focus:ring-primary/20 focus:border-primary transition-all duration-300 hover:border-primary/50"
                   />
                 </div>
 
@@ -93,7 +93,7 @@
                     v-model="formData.password"
                     type="password"
                     placeholder="Nhập mật khẩu"
-                    class="w-full h-12 px-4 rounded-lg border border-gray-300 dark:border-[#684031] bg-gray-50 dark:bg-[#342018] text-black dark:text-white focus:ring-2 focus:ring-primary/50"
+                    class="w-full h-12 px-4 rounded-xl border-2 border-gray-300 dark:border-[#684031] bg-gray-50 dark:bg-[#342018] text-black dark:text-white focus:ring-4 focus:ring-primary/20 focus:border-primary transition-all duration-300 hover:border-primary/50"
                   />
                 </div>
 
@@ -106,29 +106,43 @@
                     v-model="formData.confirmPassword"
                     type="password"
                     placeholder="Nhập lại mật khẩu"
-                    class="w-full h-12 px-4 rounded-lg border border-gray-300 dark:border-[#684031] bg-gray-50 dark:bg-[#342018] text-black dark:text-white focus:ring-2 focus:ring-primary/50"
+                    class="w-full h-12 px-4 rounded-xl border-2 border-gray-300 dark:border-[#684031] bg-gray-50 dark:bg-[#342018] text-black dark:text-white focus:ring-4 focus:ring-primary/20 focus:border-primary transition-all duration-300 hover:border-primary/50"
                   />
                 </div>
 
                 <button
                   type="submit"
                   :disabled="isLoading"
-                  class="w-full h-12 bg-primary text-white rounded-lg font-bold hover:bg-opacity-90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  class="btn-premium w-full h-12 text-white rounded-xl font-bold disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:transform-none"
                 >
-                  <span v-if="!isLoading">Đăng ký</span>
-                  <span v-else>Đang xử lý...</span>
+                  <span v-if="!isLoading" class="flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined">person_add</span>
+                    Đăng ký
+                  </span>
+                  <span v-else class="flex items-center justify-center gap-2">
+                    <LoadingSpinner size="sm" color="white" />
+                    Đang xử lý...
+                  </span>
                 </button>
               </form>
             </div>
           </div>
 
-          <!-- Right Side Image -->
+          <!-- Right Side Image with Overlay -->
           <div
-            class="hidden lg:block lg:w-1/2 bg-cover bg-center"
+            class="hidden lg:block lg:w-1/2 bg-cover bg-center relative overflow-hidden"
             style="
               background-image: url('https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800');
             "
-          ></div>
+          >
+            <div class="absolute inset-0 bg-gradient-to-br from-primary/80 via-primary/60 to-primary/40"></div>
+            <div class="absolute inset-0 flex flex-col items-center justify-center p-8 text-white z-10">
+              <div class="text-center animate-fade-in-scale">
+                <h2 class="text-4xl font-black mb-4 text-shadow-lg">Tham gia FoodGo</h2>
+                <p class="text-lg opacity-90 text-shadow">Khám phá hàng ngàn quán ăn tuyệt vời tại Sài Gòn</p>
+              </div>
+            </div>
+          </div>
         </div>
       </main>
     </div>
@@ -139,6 +153,7 @@
 import {ref} from "vue";
 import {useRouter} from "vue-router";
 import {useAuthStore} from "@/stores/auth";
+import LoadingSpinner from "@/components/common/LoadingSpinner.vue";
 
 const router = useRouter();
 const authStore = useAuthStore();

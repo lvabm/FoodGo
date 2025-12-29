@@ -9,6 +9,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -16,15 +18,25 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @Component
+@Order(3) // Execute after RateLimitFilter (1) and ResponseHeaderFilter (2), before UsernamePasswordAuthenticationFilter
 @RequiredArgsConstructor
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
+public class JwtAuthenticationFilter extends OncePerRequestFilter implements Ordered {
+  
+  private static final int FILTER_ORDER = 3; // Execute after RateLimitFilter (1) and ResponseHeaderFilter (2), before UsernamePasswordAuthenticationFilter
+  
+  @Override
+  public int getOrder() {
+    return FILTER_ORDER;
+  }
   private final JwtService jwtService;
   private final JpaUserDetailsServiceImpl jpaUserDetailsServiceImpl;
   private final RefreshTokenRepository refreshTokenRepository;
 
   @Override
   protected void doFilterInternal(
-      HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+      @org.springframework.lang.NonNull HttpServletRequest request,
+      @org.springframework.lang.NonNull HttpServletResponse response,
+      @org.springframework.lang.NonNull FilterChain filterChain)
       throws ServletException, IOException {
 
     String authHeader = request.getHeader("Authorization");
@@ -41,7 +53,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       // 🔑 Mới: Lấy rtid từ token
       Long rtid = jwtService.extractRefreshTokenId(token);
 
-      if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+      if (username != null && rtid != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
         // 🛡️ CHECK NGHIÊM NGẶT: Kiểm tra Session trong DB
         var storedRefreshToken = refreshTokenRepository.findById(rtid).orElse(null);

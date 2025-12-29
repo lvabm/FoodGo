@@ -13,9 +13,11 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ApiError {
+  @Builder.Default
   private boolean success = false;
   private String errorCode;
   private String message;
   private List<String> details;
+  @Builder.Default
   private Instant timestamp = Instant.now();
 }

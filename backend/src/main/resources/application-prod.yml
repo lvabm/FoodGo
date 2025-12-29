@@ -1,0 +1,27 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+
+  devtools:
+    restart:
+      enabled: false
+    livereload:
+      enabled: false
+
+logging:
+  level:
+    root: WARN
+    com.foodgo: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/foodgo.log
+    max-size: 10MB
+    max-history: 30
+
+

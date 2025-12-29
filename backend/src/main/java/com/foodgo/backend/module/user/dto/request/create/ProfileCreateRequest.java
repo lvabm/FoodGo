@@ -1,7 +1,5 @@
 package com.foodgo.backend.module.user.dto.request.create;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.Optional;
 

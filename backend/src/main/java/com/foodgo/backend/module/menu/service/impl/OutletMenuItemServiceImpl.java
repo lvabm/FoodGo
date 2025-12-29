@@ -150,7 +150,7 @@ public class OutletMenuItemServiceImpl
   @Transactional
   public OutletMenuItemResponse update(Integer id, OutletMenuItemUpdateRequest request) {
     // 1. BaseServiceImpl.update gọi findByIdOrThrow -> ensurePermission (kiểm tra quyền Owner)
-    OutletMenuItemResponse response = super.update(id, request);
+    super.update(id, request);
 
     // 2. Cập nhật Entity FK nếu menuItemId được cung cấp (Partial Update Logic)
     request

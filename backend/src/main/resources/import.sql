@@ -753,6 +753,132 @@ INSERT INTO advertisement (id, outlet_id, position, start_date, end_date, is_act
 --================================================================================================================
 --================================================================================================================
 
+--========================================================
+--📊 THÊM DỮ LIỆU TEST CHO TÌM KIẾM NÂNG CAO
+--========================================================
+
+-- Thêm nhiều outlets đa dạng để test search
+INSERT INTO outlet (id, owner_id, type_id, name, description, address, email, phone_number, website, district_id, latitude, longitude, price_range, capacity, is_active, average_rating, total_reviews, is_deleted) VALUES 
+('20000000-0000-0000-0000-000000000021', (SELECT id FROM user_account WHERE username = 'thien.ho_39'), (SELECT id FROM outlet_type WHERE name = 'Restaurant'), 'Phở Gia Truyền', 'Phở bò truyền thống gia truyền 3 đời', '123 Nguyễn Thị Minh Khai, Quận 1', 'pho@example.com', '02838234567', NULL, (SELECT id FROM district WHERE name = 'Quận 1'), 10.78000000, 106.70000000, 'cheap', 40, true, 4.5, 2340, false),
+('20000000-0000-0000-0000-000000000022', (SELECT id FROM user_account WHERE username = 'phong.duong_65'), (SELECT id FROM outlet_type WHERE name = 'Restaurant'), 'Bún Bò Huế Cô Ba', 'Bún bò Huế cay nồng đậm đà', '456 Lê Lợi, Quận 1', 'bunbo@example.com', '02838234568', NULL, (SELECT id FROM district WHERE name = 'Quận 1'), 10.77500000, 106.70500000, 'cheap', 35, true, 4.3, 1890, false),
+('20000000-0000-0000-0000-000000000023', (SELECT id FROM user_account WHERE username = 'thinh.vu_11'), (SELECT id FROM outlet_type WHERE name = 'Restaurant'), 'Cơm Tấm Cali', 'Cơm tấm sườn nướng đặc biệt', '789 Điện Biên Phủ, Quận Bình Thạnh', 'comtam@example.com', '02838234569', NULL, (SELECT id FROM district WHERE name = 'Quận Bình Thạnh'), 10.79000000, 106.72000000, 'cheap', 50, true, 4.4, 2567, false),
+('20000000-0000-0000-0000-000000000024', (SELECT id FROM user_account WHERE username = 'chau.pham_40'), (SELECT id FROM outlet_type WHERE name = 'Cafe'), 'Cà Phê Sài Gòn Xưa', 'Cà phê phin truyền thống không gian cổ điển', '321 Võ Văn Tần, Quận 3', 'caphe@example.com', '02838234570', NULL, (SELECT id FROM district WHERE name = 'Quận 3'), 10.78500000, 106.69000000, 'cheap', 30, true, 4.6, 3120, false),
+('20000000-0000-0000-0000-000000000025', (SELECT id FROM user_account WHERE username = 'lam.ly_50'), (SELECT id FROM outlet_type WHERE name = 'Cafe'), 'Trà Sữa Gong Cha', 'Trà sữa Đài Loan nổi tiếng', '654 Nguyễn Huệ, Quận 1', 'trasua@example.com', '02838234571', NULL, (SELECT id FROM district WHERE name = 'Quận 1'), 10.77400000, 106.70200000, 'moderate', 45, true, 4.2, 1789, false),
+('20000000-0000-0000-0000-000000000026', (SELECT id FROM user_account WHERE username = 'tin.nguyen_22'), (SELECT id FROM outlet_type WHERE name = 'Restaurant'), 'Bánh Mì Bà Lan', 'Bánh mì thịt nướng đặc biệt', '987 Nguyễn Trãi, Quận 5', 'banhmi@example.com', '02838234572', NULL, (SELECT id FROM district WHERE name = 'Quận 5'), 10.75500000, 106.67000000, 'cheap', 25, true, 4.7, 4230, false),
+('20000000-0000-0000-0000-000000000027', (SELECT id FROM user_account WHERE username = 'vi.ngo_27'), (SELECT id FROM outlet_type WHERE name = 'Restaurant'), 'Lẩu Cá Kèo', 'Lẩu cá kèo đặc sản miền Tây', '147 Trần Hưng Đạo, Quận 5', 'lau@example.com', '02838234573', NULL, (SELECT id FROM district WHERE name = 'Quận 5'), 10.75200000, 106.66800000, 'moderate', 60, true, 4.5, 1980, false),
+('20000000-0000-0000-0000-000000000028', (SELECT id FROM user_account WHERE username = 'phong.phan_22'), (SELECT id FROM outlet_type WHERE name = 'Restaurant'), 'Bánh Xèo Mười Xiềm', 'Bánh xèo giòn tan đặc biệt', '258 Võ Văn Tần, Quận 3', 'banhxeo@example.com', '02838234574', NULL, (SELECT id FROM district WHERE name = 'Quận 3'), 10.78300000, 106.68800000, 'cheap', 40, true, 4.4, 1678, false),
+('20000000-0000-0000-0000-000000000029', (SELECT id FROM user_account WHERE username = 'thien.ho_39'), (SELECT id FROM outlet_type WHERE name = 'Cafe'), 'Cà Phê Cộng', 'Cà phê vỉa hè phong cách xưa', '369 Điện Biên Phủ, Quận Bình Thạnh', 'cong@example.com', '02838234575', NULL, (SELECT id FROM district WHERE name = 'Quận Bình Thạnh'), 10.79200000, 106.72500000, 'cheap', 20, true, 4.3, 1456, false),
+('20000000-0000-0000-0000-000000000030', (SELECT id FROM user_account WHERE username = 'phong.duong_65'), (SELECT id FROM outlet_type WHERE name = 'Restaurant'), 'Bún Riêu Cua', 'Bún riêu cua đậm đà hương vị', '741 Nguyễn Văn Cừ, Quận 5', 'bunrieu@example.com', '02838234576', NULL, (SELECT id FROM district WHERE name = 'Quận 5'), 10.75000000, 106.66500000, 'cheap', 35, true, 4.6, 2234, false);
+
+-- Thêm menu items đa dạng
+INSERT INTO menu_item (id, sub_category_id, province_id, name, description, is_popular, is_deleted) VALUES 
+('60000000-0000-0000-0000-000000000017', (SELECT id FROM menu_item_sub_category WHERE name = 'Phở'), (SELECT id FROM province WHERE name = 'Hồ Chí Minh'), 'Phở Bò Tái Nạm Gân', 'Phở bò đầy đủ tái, nạm, gân', true, false),
+('60000000-0000-0000-0000-000000000018', (SELECT id FROM menu_item_sub_category WHERE name = 'Phở'), (SELECT id FROM province WHERE name = 'Hồ Chí Minh'), 'Phở Bò Viên', 'Phở bò với viên bò thơm ngon', false, false),
+('60000000-0000-0000-0000-000000000019', (SELECT id FROM menu_item_sub_category WHERE name = 'Mì/Hủ Tiếu'), (SELECT id FROM province WHERE name = 'Hồ Chí Minh'), 'Hủ Tiếu Nam Vang', 'Hủ tiếu Nam Vang đặc biệt', true, false),
+('60000000-0000-0000-0000-000000000020', (SELECT id FROM menu_item_sub_category WHERE name = 'Mì/Hủ Tiếu'), (SELECT id FROM province WHERE name = 'Hồ Chí Minh'), 'Bún Mắm', 'Bún mắm miền Tây đậm đà', true, false),
+('60000000-0000-0000-0000-000000000021', (SELECT id FROM menu_item_sub_category WHERE name = 'Cơm Chiên'), (SELECT id FROM province WHERE name = 'Hồ Chí Minh'), 'Cơm Tấm Sườn Bì Chả Trứng', 'Cơm tấm đầy đủ sườn, bì, chả, trứng', true, false),
+('60000000-0000-0000-0000-000000000022', (SELECT id FROM menu_item_sub_category WHERE name = 'Cơm Chiên'), (SELECT id FROM province WHERE name = 'Hồ Chí Minh'), 'Cơm Gà Hải Nam', 'Cơm gà Hải Nam thơm ngon', false, false),
+('60000000-0000-0000-0000-000000000023', (SELECT id FROM menu_item_sub_category WHERE name = 'Trà Sữa'), (SELECT id FROM province WHERE name = 'Hồ Chí Minh'), 'Trà Sữa Matcha', 'Trà sữa matcha Nhật Bản', true, false),
+('60000000-0000-0000-0000-000000000024', (SELECT id FROM menu_item_sub_category WHERE name = 'Trà Sữa'), (SELECT id FROM province WHERE name = 'Hồ Chí Minh'), 'Trà Sữa Oolong', 'Trà sữa ô long thơm ngon', false, false),
+('60000000-0000-0000-0000-000000000025', (SELECT id FROM menu_item_sub_category WHERE name = 'Cà Phê Truyền Thống'), (SELECT id FROM province WHERE name = 'Hồ Chí Minh'), 'Cà Phê Đen Đá', 'Cà phê đen đá nguyên chất', true, false),
+('60000000-0000-0000-0000-000000000026', (SELECT id FROM menu_item_sub_category WHERE name = 'Cà Phê Truyền Thống'), (SELECT id FROM province WHERE name = 'Hồ Chí Minh'), 'Bạc Xỉu', 'Cà phê sữa đặc biệt', true, false),
+('60000000-0000-0000-0000-000000000027', (SELECT id FROM menu_item_sub_category WHERE name = 'Bánh Mì'), (SELECT id FROM province WHERE name = 'Hồ Chí Minh'), 'Bánh Mì Thịt Nướng', 'Bánh mì thịt nướng đặc biệt', true, false),
+('60000000-0000-0000-0000-000000000028', (SELECT id FROM menu_item_sub_category WHERE name = 'Bánh Mì'), (SELECT id FROM province WHERE name = 'Hồ Chí Minh'), 'Bánh Mì Chả Cá', 'Bánh mì chả cá thơm ngon', false, false),
+('60000000-0000-0000-0000-000000000029', (SELECT id FROM menu_item_sub_category WHERE name = 'Bánh Xèo'), (SELECT id FROM province WHERE name = 'Hồ Chí Minh'), 'Bánh Xèo Tôm Thịt', 'Bánh xèo tôm thịt giòn tan', true, false),
+('60000000-0000-0000-0000-000000000030', (SELECT id FROM menu_item_sub_category WHERE name = 'Lẩu'), (SELECT id FROM province WHERE name = 'Hồ Chí Minh'), 'Lẩu Thái', 'Lẩu Thái chua cay đậm đà', true, false),
+('60000000-0000-0000-0000-000000000031', (SELECT id FROM menu_item_sub_category WHERE name = 'Lẩu'), (SELECT id FROM province WHERE name = 'Hồ Chí Minh'), 'Lẩu Cá Kèo', 'Lẩu cá kèo miền Tây', true, false);
+
+-- Thêm outlet_menu_item cho các outlets mới
+INSERT INTO outlet_menu_item (id, outlet_id, menu_item_id, name, description, price, image_url, is_available) VALUES 
+(16, (SELECT id FROM outlet WHERE name = 'Phở Gia Truyền'), (SELECT id FROM menu_item WHERE name = 'Phở Bò Tái Nạm Gân'), 'Phở Bò Tái Nạm Gân', 'Phở bò đầy đủ tái, nạm, gân', 75000.00, 'https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?w=600', true),
+(17, (SELECT id FROM outlet WHERE name = 'Bún Bò Huế Cô Ba'), (SELECT id FROM menu_item WHERE name = 'Bún Bò Huế'), 'Bún Bò Huế Đặc Biệt', 'Bún bò Huế cay đậm đà', 70000.00, 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=600', true),
+(18, (SELECT id FROM outlet WHERE name = 'Cơm Tấm Cali'), (SELECT id FROM menu_item WHERE name = 'Cơm Tấm Sườn Bì Chả Trứng'), 'Cơm Tấm Đặc Biệt', 'Cơm tấm sườn bì chả trứng', 65000.00, 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600', true),
+(19, (SELECT id FROM outlet WHERE name = 'Cà Phê Sài Gòn Xưa'), (SELECT id FROM menu_item WHERE name = 'Cà Phê Đen Đá'), 'Cà Phê Đen Đá', 'Cà phê đen đá nguyên chất', 25000.00, 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600', true),
+(20, (SELECT id FROM outlet WHERE name = 'Cà Phê Sài Gòn Xưa'), (SELECT id FROM menu_item WHERE name = 'Bạc Xỉu'), 'Bạc Xỉu', 'Cà phê sữa đặc biệt', 30000.00, 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600', true),
+(21, (SELECT id FROM outlet WHERE name = 'Trà Sữa Gong Cha'), (SELECT id FROM menu_item WHERE name = 'Trà Sữa Matcha'), 'Trà Sữa Matcha', 'Trà sữa matcha Nhật Bản', 55000.00, 'https://images.unsplash.com/photo-1525385444278-0e7ec8f2e7ed?w=600', true),
+(22, (SELECT id FROM outlet WHERE name = 'Bánh Mì Bà Lan'), (SELECT id FROM menu_item WHERE name = 'Bánh Mì Thịt Nướng'), 'Bánh Mì Thịt Nướng', 'Bánh mì thịt nướng đặc biệt', 35000.00, 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600', true),
+(23, (SELECT id FROM outlet WHERE name = 'Lẩu Cá Kèo'), (SELECT id FROM menu_item WHERE name = 'Lẩu Cá Kèo'), 'Lẩu Cá Kèo Đặc Biệt', 'Lẩu cá kèo miền Tây', 250000.00, 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=600', true),
+(24, (SELECT id FROM outlet WHERE name = 'Bánh Xèo Mười Xiềm'), (SELECT id FROM menu_item WHERE name = 'Bánh Xèo Tôm Thịt'), 'Bánh Xèo Tôm Thịt', 'Bánh xèo tôm thịt giòn tan', 60000.00, 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=600', true),
+(25, (SELECT id FROM outlet WHERE name = 'Bún Riêu Cua'), (SELECT id FROM menu_item WHERE name = 'Bún Bò Huế'), 'Bún Riêu Cua', 'Bún riêu cua đậm đà', 55000.00, 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=600', true);
+
+-- Thêm operating hours cho các outlets mới
+INSERT INTO operating_hours (id, outlet_id, day_of_week, open_time, close_time, is_closed, is_deleted) VALUES 
+(15, (SELECT id FROM outlet WHERE name = 'Phở Gia Truyền'), 1, '06:00', '22:00', false, false),
+(16, (SELECT id FROM outlet WHERE name = 'Phở Gia Truyền'), 2, '06:00', '22:00', false, false),
+(17, (SELECT id FROM outlet WHERE name = 'Phở Gia Truyền'), 3, '06:00', '22:00', false, false),
+(18, (SELECT id FROM outlet WHERE name = 'Phở Gia Truyền'), 4, '06:00', '22:00', false, false),
+(19, (SELECT id FROM outlet WHERE name = 'Phở Gia Truyền'), 5, '06:00', '22:00', false, false),
+(20, (SELECT id FROM outlet WHERE name = 'Phở Gia Truyền'), 6, '06:00', '22:00', false, false),
+(21, (SELECT id FROM outlet WHERE name = 'Phở Gia Truyền'), 0, '06:00', '22:00', false, false),
+(22, (SELECT id FROM outlet WHERE name = 'Bún Bò Huế Cô Ba'), 1, '07:00', '21:00', false, false),
+(23, (SELECT id FROM outlet WHERE name = 'Bún Bò Huế Cô Ba'), 2, '07:00', '21:00', false, false),
+(24, (SELECT id FROM outlet WHERE name = 'Bún Bò Huế Cô Ba'), 3, '07:00', '21:00', false, false),
+(25, (SELECT id FROM outlet WHERE name = 'Bún Bò Huế Cô Ba'), 4, '07:00', '21:00', false, false),
+(26, (SELECT id FROM outlet WHERE name = 'Bún Bò Huế Cô Ba'), 5, '07:00', '21:00', false, false),
+(27, (SELECT id FROM outlet WHERE name = 'Bún Bò Huế Cô Ba'), 6, '07:00', '21:00', false, false),
+(28, (SELECT id FROM outlet WHERE name = 'Bún Bò Huế Cô Ba'), 0, '07:00', '21:00', false, false);
+
+-- Thêm outlet images cho các outlets mới
+INSERT INTO outlet_image (id, outlet_id, image_url, display_order, is_primary, is_deleted) VALUES 
+(39, (SELECT id FROM outlet WHERE name = 'Phở Gia Truyền'), 'https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?w=800', 1, true, false),
+(40, (SELECT id FROM outlet WHERE name = 'Bún Bò Huế Cô Ba'), 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=800', 1, true, false),
+(41, (SELECT id FROM outlet WHERE name = 'Cơm Tấm Cali'), 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800', 1, true, false),
+(42, (SELECT id FROM outlet WHERE name = 'Cà Phê Sài Gòn Xưa'), 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800', 1, true, false),
+(43, (SELECT id FROM outlet WHERE name = 'Trà Sữa Gong Cha'), 'https://images.unsplash.com/photo-1525385444278-0e7ec8f2e7ed?w=800', 1, true, false),
+(44, (SELECT id FROM outlet WHERE name = 'Bánh Mì Bà Lan'), 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800', 1, true, false),
+(45, (SELECT id FROM outlet WHERE name = 'Lẩu Cá Kèo'), 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=800', 1, true, false),
+(46, (SELECT id FROM outlet WHERE name = 'Bánh Xèo Mười Xiềm'), 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=800', 1, true, false),
+(47, (SELECT id FROM outlet WHERE name = 'Cà Phê Cộng'), 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800', 1, true, false),
+(48, (SELECT id FROM outlet WHERE name = 'Bún Riêu Cua'), 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=800', 1, true, false);
+
+-- Thêm outlet_category_mapping cho các outlets mới
+INSERT INTO outlet_category_mapping (id, outlet_id, category_id) VALUES 
+(11, (SELECT id FROM outlet WHERE name = 'Phở Gia Truyền'), (SELECT id FROM outlet_category WHERE name = 'Vietnamese')),
+(12, (SELECT id FROM outlet WHERE name = 'Bún Bò Huế Cô Ba'), (SELECT id FROM outlet_category WHERE name = 'Vietnamese')),
+(13, (SELECT id FROM outlet WHERE name = 'Cơm Tấm Cali'), (SELECT id FROM outlet_category WHERE name = 'Vietnamese')),
+(14, (SELECT id FROM outlet WHERE name = 'Bánh Mì Bà Lan'), (SELECT id FROM outlet_category WHERE name = 'Vietnamese')),
+(15, (SELECT id FROM outlet WHERE name = 'Lẩu Cá Kèo'), (SELECT id FROM outlet_category WHERE name = 'Vietnamese')),
+(16, (SELECT id FROM outlet WHERE name = 'Bánh Xèo Mười Xiềm'), (SELECT id FROM outlet_category WHERE name = 'Vietnamese')),
+(17, (SELECT id FROM outlet WHERE name = 'Bún Riêu Cua'), (SELECT id FROM outlet_category WHERE name = 'Vietnamese')),
+(18, (SELECT id FROM outlet WHERE name = 'Cà Phê Sài Gòn Xưa'), (SELECT id FROM outlet_category WHERE name = 'Coffee Shop')),
+(19, (SELECT id FROM outlet WHERE name = 'Cà Phê Cộng'), (SELECT id FROM outlet_category WHERE name = 'Coffee Shop')),
+(20, (SELECT id FROM outlet WHERE name = 'Trà Sữa Gong Cha'), (SELECT id FROM outlet_category WHERE name = 'Traditional Tea'));
+
+-- Thêm outlet_feature_mapping cho các outlets mới để test filter
+INSERT INTO outlet_feature_mapping (id, outlet_id, feature_id) VALUES 
+(20, (SELECT id FROM outlet WHERE name = 'Phở Gia Truyền'), (SELECT id FROM outlet_feature WHERE name = 'Máy Lạnh')),
+(21, (SELECT id FROM outlet WHERE name = 'Phở Gia Truyền'), (SELECT id FROM outlet_feature WHERE name = 'Dịch Vụ Mang Đi')),
+(22, (SELECT id FROM outlet WHERE name = 'Bún Bò Huế Cô Ba'), (SELECT id FROM outlet_feature WHERE name = 'Máy Lạnh')),
+(23, (SELECT id FROM outlet WHERE name = 'Bún Bò Huế Cô Ba'), (SELECT id FROM outlet_feature WHERE name = 'Dịch Vụ Mang Đi')),
+(24, (SELECT id FROM outlet WHERE name = 'Cơm Tấm Cali'), (SELECT id FROM outlet_feature WHERE name = 'Máy Lạnh')),
+(25, (SELECT id FROM outlet WHERE name = 'Cơm Tấm Cali'), (SELECT id FROM outlet_feature WHERE name = 'Chỗ Đậu Xe')),
+(26, (SELECT id FROM outlet WHERE name = 'Cà Phê Sài Gòn Xưa'), (SELECT id FROM outlet_feature WHERE name = 'Wifi Miễn Phí')),
+(27, (SELECT id FROM outlet WHERE name = 'Cà Phê Sài Gòn Xưa'), (SELECT id FROM outlet_feature WHERE name = 'Máy Lạnh')),
+(28, (SELECT id FROM outlet WHERE name = 'Cà Phê Sài Gòn Xưa'), (SELECT id FROM outlet_feature WHERE name = 'Khu Vực Ngoài Trời')),
+(29, (SELECT id FROM outlet WHERE name = 'Trà Sữa Gong Cha'), (SELECT id FROM outlet_feature WHERE name = 'Wifi Miễn Phí')),
+(30, (SELECT id FROM outlet WHERE name = 'Trà Sữa Gong Cha'), (SELECT id FROM outlet_feature WHERE name = 'Máy Lạnh')),
+(31, (SELECT id FROM outlet WHERE name = 'Trà Sữa Gong Cha'), (SELECT id FROM outlet_feature WHERE name = 'Dịch Vụ Mang Đi')),
+(32, (SELECT id FROM outlet WHERE name = 'Bánh Mì Bà Lan'), (SELECT id FROM outlet_feature WHERE name = 'Dịch Vụ Mang Đi')),
+(33, (SELECT id FROM outlet WHERE name = 'Lẩu Cá Kèo'), (SELECT id FROM outlet_feature WHERE name = 'Máy Lạnh')),
+(34, (SELECT id FROM outlet WHERE name = 'Lẩu Cá Kèo'), (SELECT id FROM outlet_feature WHERE name = 'Chỗ Đậu Xe')),
+(35, (SELECT id FROM outlet WHERE name = 'Bánh Xèo Mười Xiềm'), (SELECT id FROM outlet_feature WHERE name = 'Máy Lạnh')),
+(36, (SELECT id FROM outlet WHERE name = 'Cà Phê Cộng'), (SELECT id FROM outlet_feature WHERE name = 'Khu Vực Ngoài Trời')),
+(37, (SELECT id FROM outlet WHERE name = 'Bún Riêu Cua'), (SELECT id FROM outlet_feature WHERE name = 'Máy Lạnh')),
+(38, (SELECT id FROM outlet WHERE name = 'Bún Riêu Cua'), (SELECT id FROM outlet_feature WHERE name = 'Dịch Vụ Mang Đi'));
+
+-- Thêm reviews cho các outlets mới để có ratings đa dạng
+INSERT INTO review (id, outlet_id, user_id, booking_id, food_rating, service_rating, ambiance_rating, price_rating, overall_rating, comment, likes_count, dislikes_count) VALUES 
+('50000000-0000-0000-0000-000000000004', (SELECT id FROM outlet WHERE name = 'Phở Gia Truyền'), (SELECT id FROM user_account WHERE username = 'ha.hoang_97'), NULL, 5, 5, 4, 5, 5, 'Phở ngon đậm đà, nước dùng thơm, thịt mềm', 10, 0),
+('50000000-0000-0000-0000-000000000005', (SELECT id FROM outlet WHERE name = 'Bún Bò Huế Cô Ba'), (SELECT id FROM user_account WHERE username = 'ngoc.do_31'), NULL, 4, 4, 4, 4, 4, 'Bún bò cay nồng đúng vị Huế', 5, 0),
+('50000000-0000-0000-0000-000000000006', (SELECT id FROM outlet WHERE name = 'Cơm Tấm Cali'), (SELECT id FROM user_account WHERE username = 'lam.hoang_71'), NULL, 5, 4, 3, 5, 4, 'Cơm tấm ngon, sườn nướng thơm', 8, 0),
+('50000000-0000-0000-0000-000000000007', (SELECT id FROM outlet WHERE name = 'Cà Phê Sài Gòn Xưa'), (SELECT id FROM user_account WHERE username = 'ha.hoang_97'), NULL, 5, 5, 5, 5, 5, 'Cà phê đậm đà, không gian cổ điển đẹp', 15, 0),
+('50000000-0000-0000-0000-000000000008', (SELECT id FROM outlet WHERE name = 'Trà Sữa Gong Cha'), (SELECT id FROM user_account WHERE username = 'ngoc.do_31'), NULL, 4, 4, 4, 3, 4, 'Trà sữa ngon, nhiều topping', 6, 0),
+('50000000-0000-0000-0000-000000000009', (SELECT id FROM outlet WHERE name = 'Bánh Mì Bà Lan'), (SELECT id FROM user_account WHERE username = 'lam.hoang_71'), NULL, 5, 4, 3, 5, 5, 'Bánh mì giòn, thịt nướng thơm ngon', 12, 0),
+('50000000-0000-0000-0000-000000000010', (SELECT id FROM outlet WHERE name = 'Lẩu Cá Kèo'), (SELECT id FROM user_account WHERE username = 'ha.hoang_97'), NULL, 5, 4, 4, 4, 4, 'Lẩu cá kèo đậm đà, cá tươi ngon', 7, 0),
+('50000000-0000-0000-0000-000000000011', (SELECT id FROM outlet WHERE name = 'Bánh Xèo Mười Xiềm'), (SELECT id FROM user_account WHERE username = 'ngoc.do_31'), NULL, 4, 4, 3, 4, 4, 'Bánh xèo giòn tan, nhân đầy đủ', 5, 0),
+('50000000-0000-0000-0000-000000000012', (SELECT id FROM outlet WHERE name = 'Cà Phê Cộng'), (SELECT id FROM user_account WHERE username = 'lam.hoang_71'), NULL, 4, 3, 4, 5, 4, 'Cà phê vỉa hè đúng chất Sài Gòn', 4, 0),
+('50000000-0000-0000-0000-000000000013', (SELECT id FROM outlet WHERE name = 'Bún Riêu Cua'), (SELECT id FROM user_account WHERE username = 'ha.hoang_97'), NULL, 5, 4, 3, 4, 5, 'Bún riêu cua đậm đà, cua tươi', 9, 0);
+
 -- 🔑 1. Profile (BIGINT ID)
 SELECT setval(pg_get_serial_sequence('profile', 'id'), (SELECT COALESCE(MAX(id), 0) FROM profile) + 1, false);
 

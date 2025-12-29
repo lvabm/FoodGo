@@ -125,6 +125,15 @@
             <span class="material-symbols-outlined text-xl">assessment</span>
             <p class="text-sm font-medium">Báo cáo</p>
           </router-link>
+
+          <router-link
+            to="/admin/owner-registrations"
+            class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-primary/10"
+            active-class="bg-primary/20 text-primary dark:text-white dark:bg-primary/30"
+          >
+            <span class="material-symbols-outlined text-xl">person_add</span>
+            <p class="text-sm font-medium">Duyệt đăng ký Owner</p>
+          </router-link>
         </nav>
       </div>
 

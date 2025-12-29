@@ -8,22 +8,33 @@ const apiClient = axios.create({
   },
 });
 
+// Kiểm tra môi trường để quyết định có log hay không
+const isDevelopment = import.meta.env.DEV || import.meta.env.VITE_APP_ENV === "development";
+
 // Request interceptor - Thêm token vào header
 apiClient.interceptors.request.use(
   (config) => {
-    console.log("🚀 API Request:", config.method?.toUpperCase(), config.url);
-    console.log("🚀 Request data:", config.data);
+    if (isDevelopment) {
+      console.log("🚀 API Request:", config.method?.toUpperCase(), config.url);
+      if (config.data) {
+        console.log("🚀 Request data:", config.data);
+      }
+    }
     const token = localStorage.getItem("accessToken");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
-      console.log("🚀 Token added to header");
-    } else {
+      if (isDevelopment) {
+        console.log("🚀 Token added to header");
+      }
+    } else if (isDevelopment) {
       console.log("⚠️ No token found");
     }
     return config;
   },
   (error) => {
-    console.error("❌ Request interceptor error:", error);
+    if (isDevelopment) {
+      console.error("❌ Request interceptor error:", error);
+    }
     return Promise.reject(error);
   }
 );
@@ -31,9 +42,10 @@ apiClient.interceptors.request.use(
 // Response interceptor - Xử lý lỗi chung
 apiClient.interceptors.response.use(
   (response) => {
-    console.log("✅ API Response:", response.config.url);
-    console.log("✅ Status:", response.status);
-    console.log("✅ Raw response.data:", response.data);
+    if (isDevelopment) {
+      console.log("✅ API Response:", response.config.url);
+      console.log("✅ Status:", response.status);
+    }
 
     // Backend có 3 loại response:
     // 1. BaseResponse<T>: { success, message, data: T, timestamp }
@@ -44,7 +56,9 @@ apiClient.interceptors.response.use(
 
     // Nếu là Spring Data Page (có content array), trả về toàn bộ object
     if (responseData?.content && Array.isArray(responseData.content)) {
-      console.log("📊 Spring Data Page detected, returning full object");
+      if (isDevelopment) {
+        console.log("📊 Spring Data Page detected, returning full object");
+      }
       return responseData;
     }
 
@@ -53,14 +67,34 @@ apiClient.interceptors.response.use(
       responseData?.pageNumber !== undefined ||
       (responseData?.totalPages !== undefined && responseData?.data)
     ) {
-      console.log("📊 PageResponse detected, returning full object");
+      if (isDevelopment) {
+        console.log("📊 PageResponse detected, returning full object");
+      }
       return responseData;
     }
 
+    // Nếu là SearchResultResponse (có results array và totalElements), trả về toàn bộ object
+    if (responseData?.results !== undefined && responseData?.totalElements !== undefined) {
+      if (isDevelopment) {
+        console.log("🔍 SearchResultResponse detected, returning full object");
+      }
+      return responseData;
+    }
+
+    // Nếu là String response (từ ResponseEntity.ok(String)), trả về trực tiếp
+    if (typeof responseData === 'string') {
+      if (isDevelopment) {
+        console.log("📝 String response detected, returning as is");
+      }
+      return responseData;
+    }
+    
     // Nếu là BaseResponse bình thường, extract data field
     const extractedData =
       responseData?.data !== undefined ? responseData.data : responseData;
-    console.log("📦 BaseResponse detected, extracted data:", extractedData);
+    if (isDevelopment) {
+      console.log("📦 BaseResponse detected, extracted data:", extractedData);
+    }
     return extractedData;
   },
   (error) => {
@@ -68,47 +102,59 @@ apiClient.interceptors.response.use(
     const isAdminApi = url.includes("/admin/");
     const status = error.response?.status;
 
-    // For admin APIs, 403/500 from permission issues are expected for non-admin users
-    // Don't log them as errors to reduce console noise
-    if (isAdminApi && (status === 403 || status === 500)) {
-      // Silently handle permission errors for admin APIs
-      console.log("ℹ️ Admin API access denied (expected for non-admin users):", url);
-    } else {
-      // Log other errors normally
-      console.error("❌ API Error:", url);
-      console.error("❌ Error details:", error.response || error);
-    }
-
     if (error.response) {
       // Server responded with error
       const {status, data} = error.response;
       
-      if (!isAdminApi || (status !== 403 && status !== 500)) {
+      // For admin APIs, 403/500 from permission issues are expected for non-admin users
+      if (isAdminApi && (status === 403 || status === 500)) {
+        if (isDevelopment) {
+          console.log("ℹ️ Admin API access denied (expected for non-admin users):", url);
+        }
+      } else if (isDevelopment) {
+        // Log other errors normally in development
+        console.error("❌ API Error:", url);
         console.error("❌ Status:", status);
         console.error("❌ Response data:", data);
       }
 
       if (status === 401) {
         // Token expired or invalid
-        console.error("❌ 401 Unauthorized - clearing tokens");
+        if (isDevelopment) {
+          console.error("❌ 401 Unauthorized - clearing tokens");
+        }
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
-        window.location.href = "/auth/login";
+        
+        // Only redirect to login if not on a public page
+        // Public pages: home (/), search (/search), outlet detail (/outlet/:id), auth pages (/auth/*)
+        const currentPath = window.location.pathname;
+        const isPublicPage = 
+          currentPath === "/" || 
+          currentPath === "/search" || 
+          currentPath.startsWith("/outlet/") ||
+          currentPath.startsWith("/auth/");
+        
+        // Don't redirect if already on a public page or auth page
+        if (!isPublicPage) {
+          window.location.href = "/auth/login";
+        }
       }
 
       // Backend error response structure: { success: false, message: string, data: any }
       const errorMessage = data?.message || data?.error || error.message;
-      if (!isAdminApi || (status !== 403 && status !== 500)) {
-        console.error("❌ Error message:", errorMessage);
-      }
       return Promise.reject(new Error(errorMessage));
     } else if (error.request) {
       // Request made but no response
-      console.error("❌ No response from server");
+      if (isDevelopment) {
+        console.error("❌ No response from server");
+      }
       return Promise.reject(new Error("Không thể kết nối đến server"));
     } else {
       // Something else happened
-      console.error("❌ Unknown error:", error.message);
+      if (isDevelopment) {
+        console.error("❌ Unknown error:", error.message);
+      }
       return Promise.reject(new Error(error.message));
     }
   }

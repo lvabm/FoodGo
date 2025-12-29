@@ -1,0 +1,48 @@
+spring:
+  # Test database configuration - Use H2 in-memory database
+  datasource:
+    url: jdbc:h2:mem:testdb;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+      database-platform: org.hibernate.dialect.H2Dialect
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+
+  # Disable unnecessary features for tests
+  devtools:
+    restart:
+      enabled: false
+    livereload:
+      enabled: false
+
+  # Disable Docker Compose for tests
+  docker:
+    compose:
+      enabled: false
+
+# JWT configuration for tests
+jwt:
+  secret: MTAwUGVyY2VudFNlY3JldEtleUZvckZvb2RHb0JhY2tlbmRNYXlCRTEyMzQ1Njc4OQ==
+  exp-minutes: 60
+
+# Google Maps - Disable for tests
+google:
+  maps:
+    enabled: false
+    api-key: test-key
+
+# Moderation - Use default values
+moderation:
+  auto-approve-enabled: true
+  auto-hide-threshold: 3
+  spam-check-enabled: true
+  profanity-check-enabled: true
+
+

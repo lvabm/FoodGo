@@ -1,7 +1,6 @@
 package com.foodgo.backend.module.menu.dto.mapper;
 
 import com.foodgo.backend.common.base.mapper.BaseMapper;
-import com.foodgo.backend.common.base.mapper.ReadableMapper;
 import com.foodgo.backend.module.menu.dto.response.MenuItemCategoryResponse;
 import com.foodgo.backend.module.menu.entity.MenuItemCategory;
 import org.mapstruct.Mapper;

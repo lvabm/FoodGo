@@ -7,3 +7,5 @@ public record CountryCreateRequest(
     @NotBlank @Size(max = 100) String name,
     @NotBlank @Size(max = 10) String code) {}
 
+
+

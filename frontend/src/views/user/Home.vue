@@ -1,104 +1,160 @@
 <template>
   <div class="w-full">
-    <!-- Hero Section -->
-    <section class="w-full py-16 sm:py-20 relative overflow-hidden">
-      <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="@container">
-          <div class="@[480px]:p-4">
-            <div
-              class="flex min-h-[480px] flex-col gap-6 rounded-xl bg-cover bg-center bg-no-repeat @[480px]:gap-8 items-center justify-center p-6 text-center"
-              style="
-                background-image: linear-gradient(
-                    rgba(0, 0, 0, 0.2) 0%,
-                    rgba(0, 0, 0, 0.5) 100%
-                  ),
-                  url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200');
-              "
-            >
-              <div class="flex flex-col gap-2 animate-fade-in">
-                <h1
-                  class="text-white text-4xl font-black leading-tight tracking-[-0.033em] @[480px]:text-5xl drop-shadow-lg"
-                >
-                  Khám phá Ẩm thực Sài Gòn
-                </h1>
-                <h2
-                  class="text-white text-sm font-normal leading-normal @[480px]:text-base drop-shadow-md"
-                >
-                  Tìm kiếm hàng ngàn quán ăn, đồ uống tuyệt vời tại TPHCM.
-                </h2>
-              </div>
-
-              <!-- Search Bar -->
-              <div class="flex w-full max-w-[560px]">
-                <div
-                  class="flex w-full flex-1 items-stretch rounded-xl h-14 shadow-lg bg-white dark:bg-surface-dark"
-                >
-                  <div
-                    class="flex border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark items-center justify-center pl-4 rounded-l-xl border-r-0"
-                  >
-                    <span class="material-symbols-outlined text-subtext-light dark:text-subtext-dark"
-                      >search</span
-                    >
-                  </div>
-                  <input
-                    v-model="searchQuery"
-                    @keyup.enter="handleSearch"
-                    type="text"
-                    placeholder="Tìm món ăn, nhà hàng, địa điểm..."
-                    class="flex-1 border-y border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark px-2 text-sm text-text-light dark:text-text-dark focus:outline-none placeholder:text-subtext-light dark:placeholder:text-subtext-dark"
-                  />
-                  <div
-                    class="flex items-center justify-center rounded-r-xl border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark pr-2"
-                  >
-                    <button
-                      @click="handleSearch"
-                      class="h-10 px-4 bg-primary text-white rounded-lg font-bold hover:bg-opacity-90 transition-colors"
-                    >
-                      Tìm kiếm
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Quick filters -->
-              <div class="flex gap-3 flex-wrap justify-center">
-                <button
-                  v-for="filter in quickFilters"
-                  :key="filter.key"
-                  @click="handleQuickFilter(filter.key)"
-                  class="h-8 px-4 rounded-full bg-white/20 text-white hover:bg-white/30 transition-colors text-sm font-medium backdrop-blur-sm"
-                >
-                  {{ filter.label }}
-                </button>
-              </div>
+    <!-- Premium Hero Section -->
+    <section class="w-full py-20 sm:py-28 relative overflow-hidden">
+      <!-- Animated Background -->
+      <div class="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary/10 to-transparent"></div>
+      <div 
+        class="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20"
+        style="background-image: url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200');"
+      ></div>
+      
+      <!-- Floating decorative elements -->
+      <div class="absolute top-20 left-10 w-72 h-72 bg-primary/10 rounded-full blur-3xl animate-float"></div>
+      <div class="absolute bottom-20 right-10 w-96 h-96 bg-primary/5 rounded-full blur-3xl animate-float" style="animation-delay: 1.5s;"></div>
+      
+      <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="flex flex-col items-center justify-center min-h-[600px] text-center">
+          <!-- Hero Content -->
+          <div class="flex flex-col gap-4 mb-8 animate-fade-in-scale">
+            <div class="inline-block">
+              <span class="text-sm font-semibold text-primary bg-primary/10 px-4 py-2 rounded-full backdrop-blur-sm">
+                🍜 Khám phá Ẩm thực Việt Nam
+              </span>
             </div>
+            <h1 class="text-5xl sm:text-6xl lg:text-7xl font-black leading-tight tracking-tight">
+              <span class="text-gradient-primary">Khám phá</span>
+              <br />
+              <span class="text-text-light dark:text-text-dark">Ẩm thực Sài Gòn</span>
+            </h1>
+            <p class="text-lg sm:text-xl text-subtext-light dark:text-subtext-dark max-w-2xl mx-auto leading-relaxed">
+              Tìm kiếm hàng ngàn quán ăn, đồ uống tuyệt vời tại TPHCM. 
+              <span class="text-primary font-semibold">Đặt bàn ngay hôm nay!</span>
+            </p>
+          </div>
+
+          <!-- Premium Search Bar -->
+          <div class="w-full max-w-3xl mb-6 animate-fade-in-scale stagger-1">
+            <div class="glass-premium rounded-2xl p-2 shadow-premium-lg">
+              <SearchAutocomplete
+                v-model="searchQuery"
+                placeholder="Tìm món ăn, nhà hàng, địa điểm..."
+                @search="handleSearch"
+                @select="handleSearchSelect"
+                class="w-full"
+              >
+                <template #input="{ value, onInput, onFocus, onBlur, onKeydown }">
+                  <div class="flex w-full items-center rounded-xl bg-white dark:bg-surface-dark shadow-lg overflow-hidden">
+                    <div class="flex items-center justify-center pl-5 pr-3">
+                      <span class="material-symbols-outlined text-2xl text-primary">search</span>
+                    </div>
+                    <input
+                      :value="value"
+                      @input="onInput"
+                      @focus="onFocus"
+                      @blur="onBlur"
+                      @keydown="onKeydown"
+                      @keyup.enter="handleSearch"
+                      type="text"
+                      placeholder="Tìm món ăn, nhà hàng, địa điểm..."
+                      class="flex-1 py-4 px-2 text-base text-text-light dark:text-text-dark bg-transparent focus:outline-none placeholder:text-subtext-light dark:placeholder:text-subtext-dark"
+                    />
+                    <div class="flex items-center pr-2">
+                      <button
+                        @click="handleSearch"
+                        class="btn-premium text-white px-6 py-3 rounded-lg font-bold"
+                      >
+                        Tìm kiếm
+                      </button>
+                    </div>
+                  </div>
+                </template>
+              </SearchAutocomplete>
+            </div>
+          </div>
+
+          <!-- Quick filters with premium style -->
+          <div class="flex gap-3 flex-wrap justify-center animate-fade-in-scale stagger-2">
+            <button
+              v-for="(filter, index) in quickFilters"
+              :key="filter.key"
+              @click="handleQuickFilter(filter.key)"
+              class="group glass-premium px-6 py-3 rounded-full text-white hover:bg-white/30 transition-premium hover-lift backdrop-blur-md border border-white/20"
+              :style="{ animationDelay: `${index * 0.1}s` }"
+            >
+              <span class="flex items-center gap-2 text-sm font-semibold">
+                <span class="material-symbols-outlined text-base">{{ filter.icon || 'restaurant' }}</span>
+                {{ filter.label }}
+              </span>
+            </button>
+            <!-- Admin Management Button -->
+            <button
+              v-if="authStore.isAdmin"
+              @click="router.push('/admin')"
+              class="group glass-premium px-6 py-3 rounded-full text-white hover:bg-yellow-400/30 transition-premium hover-lift backdrop-blur-md border border-yellow-400/30 animate-fade-in-scale"
+              style="animation-delay: 0.4s"
+            >
+              <span class="flex items-center gap-2 text-sm font-semibold">
+                <span class="material-symbols-outlined text-base">admin_panel_settings</span>
+                Quản lý Admin
+              </span>
+            </button>
+            <!-- Owner Management Button -->
+            <button
+              v-if="authStore.isOwner"
+              @click="router.push('/owner')"
+              class="group glass-premium px-6 py-3 rounded-full text-white hover:bg-purple-400/30 transition-premium hover-lift backdrop-blur-md border border-purple-400/30 animate-fade-in-scale"
+              style="animation-delay: 0.4s"
+            >
+              <span class="flex items-center gap-2 text-sm font-semibold">
+                <span class="material-symbols-outlined text-base">storefront</span>
+                Quản lý Quán
+              </span>
+            </button>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Statistics Section -->
-    <section class="w-full py-12 bg-gradient-to-r from-primary/5 to-primary/10 dark:from-primary/10 dark:to-primary/20">
-      <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+    <!-- Premium Statistics Section -->
+    <section class="w-full py-20 bg-gradient-to-br from-primary/5 via-white to-primary/5 dark:from-primary/10 dark:via-surface-dark dark:to-primary/10 relative overflow-hidden">
+      <!-- Decorative background elements -->
+      <div class="absolute inset-0 opacity-30">
+        <div class="absolute top-10 left-10 w-64 h-64 bg-primary/5 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-10 right-10 w-80 h-80 bg-primary/5 rounded-full blur-3xl"></div>
+      </div>
+      
+      <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl sm:text-4xl font-black text-text-light dark:text-text-dark mb-3">
+            Số liệu thống kê
+          </h2>
+          <p class="text-subtext-light dark:text-subtext-dark text-lg">
+            Hàng ngàn quán ăn và món ngon đang chờ bạn khám phá
+          </p>
+        </div>
+        
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 lg:gap-8">
           <div
             v-for="(stat, index) in statistics"
             :key="stat.label"
             :style="{ animationDelay: `${index * 0.1}s` }"
-            class="text-center p-6 bg-white dark:bg-surface-dark rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 animate-slide-up"
+            class="group card-premium text-center p-6 lg:p-8 hover-lift animate-fade-in-scale"
           >
-            <div class="flex justify-center mb-3">
-              <span class="material-symbols-outlined text-4xl text-primary">
-                {{ stat.icon }}
-              </span>
+            <div class="flex justify-center mb-4">
+              <div class="p-4 bg-primary/10 dark:bg-primary/20 rounded-2xl group-hover:bg-primary/20 dark:group-hover:bg-primary/30 group-hover:scale-110 transition-premium">
+                <span class="material-symbols-outlined text-4xl text-primary">
+                  {{ stat.icon }}
+                </span>
+              </div>
             </div>
-            <div v-if="stat.loading" class="text-3xl font-bold text-primary mb-2">
-              <div class="inline-block h-8 w-16 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+            <div v-if="stat.loading" class="text-4xl font-black text-primary mb-3 min-h-[48px] flex items-center justify-center">
+              <div class="inline-block h-10 w-20 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse"></div>
             </div>
-            <div v-else class="text-3xl font-bold text-primary mb-2">
+            <div v-else class="text-4xl lg:text-5xl font-black text-gradient-primary mb-3 min-h-[48px] flex items-center justify-center">
               {{ stat.value }}
             </div>
-            <div class="text-sm text-subtext-light dark:text-subtext-dark font-medium">
+            <div class="text-sm text-subtext-light dark:text-subtext-dark font-semibold uppercase tracking-wide">
               {{ stat.label }}
             </div>
           </div>
@@ -107,18 +163,22 @@
     </section>
 
     <!-- Category Section -->
-    <section class="w-full py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-between mb-4">
-        <h2
-          class="text-text-light dark:text-text-dark text-[22px] font-bold leading-tight"
-        >
-          Bạn muốn ăn gì hôm nay?
-        </h2>
+    <section class="w-full py-12 lg:py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
+        <div>
+          <h2 class="text-3xl sm:text-4xl font-black text-text-light dark:text-text-dark mb-2">
+            Bạn muốn ăn gì hôm nay?
+          </h2>
+          <p class="text-subtext-light dark:text-subtext-dark text-base">
+            Khám phá các danh mục ẩm thực phong phú
+          </p>
+        </div>
         <button
           @click="router.push('/search')"
-          class="text-sm text-primary hover:underline font-medium"
+          class="group flex items-center gap-2 px-6 py-3 bg-primary/10 dark:bg-primary/20 text-primary rounded-xl font-semibold hover:bg-primary hover:text-white transition-all duration-300 hover:scale-105"
         >
-          Xem tất cả →
+          <span>Xem tất cả</span>
+          <span class="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
         </button>
       </div>
       
@@ -131,22 +191,28 @@
         ></div>
       </div>
       
-      <!-- Categories Grid -->
+      <!-- Premium Categories Grid -->
       <div v-else-if="categories.length > 0" class="grid grid-cols-2 gap-4 md:grid-cols-4">
         <div
           v-for="(category, index) in categories"
           :key="category.id"
           @click="handleCategoryClick(category.id)"
           :style="{ animationDelay: `${index * 0.1}s` }"
-          class="group relative cursor-pointer overflow-hidden rounded-xl shadow-md hover:shadow-xl transition-all duration-300 animate-slide-up"
+          class="group relative cursor-pointer overflow-hidden rounded-2xl shadow-premium hover:shadow-premium-lg transition-premium animate-fade-in-scale image-overlay"
         >
           <div
-            class="bg-cover bg-center flex flex-col justify-end p-4 aspect-[4/3] transition-transform duration-300 group-hover:scale-105"
-            :style="`background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 60%), url(${category.image});`"
+            class="bg-cover bg-center flex flex-col justify-end p-6 aspect-[4/3] transition-transform duration-500 group-hover:scale-110"
+            :style="`background-image: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.4) 50%, rgba(0, 0, 0, 0.8) 100%), url(${category.image});`"
           >
-            <p class="text-white text-base font-bold leading-tight drop-shadow-lg">
-              {{ category.name }}
-            </p>
+            <div class="relative z-10">
+              <p class="text-white text-lg font-black leading-tight drop-shadow-lg mb-1">
+                {{ category.name }}
+              </p>
+              <div class="flex items-center gap-1 text-white/90 text-sm">
+                <span class="material-symbols-outlined text-base">arrow_forward</span>
+                <span class="font-medium">Khám phá</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -160,18 +226,22 @@
     </section>
 
     <!-- Featured Restaurants Section -->
-    <section class="w-full py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-between mb-4">
-        <h2
-          class="text-text-light dark:text-text-dark text-[22px] font-bold leading-tight"
-        >
-          Quán ngon không thể bỏ lỡ
-        </h2>
+    <section class="w-full py-12 lg:py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-gray-50/50 dark:bg-gray-900/30 rounded-3xl my-8">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
+        <div>
+          <h2 class="text-3xl sm:text-4xl font-black text-text-light dark:text-text-dark mb-2">
+            Quán ngon không thể bỏ lỡ
+          </h2>
+          <p class="text-subtext-light dark:text-subtext-dark text-base">
+            Những địa điểm ẩm thực được yêu thích nhất
+          </p>
+        </div>
         <button
           @click="router.push('/search')"
-          class="text-sm text-primary hover:underline font-medium"
+          class="group flex items-center gap-2 px-6 py-3 bg-primary/10 dark:bg-primary/20 text-primary rounded-xl font-semibold hover:bg-primary hover:text-white transition-all duration-300 hover:scale-105"
         >
-          Xem tất cả →
+          <span>Xem tất cả</span>
+          <span class="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
         </button>
       </div>
       
@@ -191,14 +261,14 @@
         </div>
       </div>
       
-      <!-- Restaurants Grid -->
-      <div v-else-if="featuredRestaurants.length > 0" class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <!-- Premium Restaurants Grid -->
+      <div v-else-if="featuredRestaurants.length > 0" class="grid grid-cols-1 gap-6 sm:gap-8 sm:grid-cols-2 lg:grid-cols-3">
         <div
           v-for="(restaurant, index) in featuredRestaurants"
           :key="restaurant.id"
           @click="viewOutletDetail(restaurant.id)"
           :style="{ animationDelay: `${index * 0.1}s` }"
-          class="group flex cursor-pointer flex-col overflow-hidden rounded-xl bg-white dark:bg-surface-dark shadow-md transition-all duration-300 hover:shadow-xl hover:-translate-y-1 animate-slide-up"
+          class="group card-premium cursor-pointer overflow-hidden animate-fade-in-scale hover-lift"
         >
           <div class="relative overflow-hidden">
             <div class="h-48 w-full transition-transform duration-300 group-hover:scale-105">
@@ -273,18 +343,22 @@
     </section>
 
     <!-- Popular Menu Items Section -->
-    <section v-if="popularMenuItems.length > 0" class="w-full py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-gray-50 dark:bg-gray-900/50">
-      <div class="flex items-center justify-between mb-4">
-        <h2
-          class="text-text-light dark:text-text-dark text-[22px] font-bold leading-tight"
-        >
-          Món ăn phổ biến
-        </h2>
+    <section v-if="popularMenuItems.length > 0" class="w-full py-12 lg:py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
+        <div>
+          <h2 class="text-3xl sm:text-4xl font-black text-text-light dark:text-text-dark mb-2">
+            Món ăn phổ biến
+          </h2>
+          <p class="text-subtext-light dark:text-subtext-dark text-base">
+            Những món ăn được yêu thích nhất
+          </p>
+        </div>
         <button
           @click="router.push('/search')"
-          class="text-sm text-primary hover:underline font-medium"
+          class="group flex items-center gap-2 px-6 py-3 bg-primary/10 dark:bg-primary/20 text-primary rounded-xl font-semibold hover:bg-primary hover:text-white transition-all duration-300 hover:scale-105"
         >
-          Xem tất cả →
+          <span>Xem tất cả</span>
+          <span class="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
         </button>
       </div>
       
@@ -299,7 +373,7 @@
           <!-- Image Display with fallback -->
           <div class="aspect-square rounded-lg mb-3 overflow-hidden bg-gradient-to-br from-primary/10 to-primary/20 dark:from-primary/20 dark:to-primary/30 group-hover:scale-105 transition-transform">
             <ImageDisplay
-              :image-url="item.imageUrl || getMenuImageUrl(item)"
+              :image-url="item.imageUrl"
               :alt="item.name"
               :lazy="true"
               placeholder-icon="restaurant_menu"
@@ -324,18 +398,23 @@
     </section>
 
     <!-- Top Rated Restaurants Section -->
-    <section v-if="topRatedRestaurants.length > 0" class="w-full py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-between mb-4">
-        <h2
-          class="text-text-light dark:text-text-dark text-[22px] font-bold leading-tight"
-        >
-          ⭐ Quán được đánh giá cao nhất
-        </h2>
+    <section v-if="topRatedRestaurants.length > 0" class="w-full py-12 lg:py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-yellow-50/50 to-orange-50/50 dark:from-yellow-900/10 dark:to-orange-900/10 rounded-3xl my-8">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
+        <div>
+          <h2 class="text-3xl sm:text-4xl font-black text-text-light dark:text-text-dark mb-2 flex items-center gap-2">
+            <span class="text-yellow-500">⭐</span>
+            <span>Quán được đánh giá cao nhất</span>
+          </h2>
+          <p class="text-subtext-light dark:text-subtext-dark text-base">
+            Những quán ăn có rating cao nhất từ cộng đồng
+          </p>
+        </div>
         <button
           @click="router.push({path: '/search', query: {sort: 'averageRating,desc'}})"
-          class="text-sm text-primary hover:underline font-medium"
+          class="group flex items-center gap-2 px-6 py-3 bg-primary/10 dark:bg-primary/20 text-primary rounded-xl font-semibold hover:bg-primary hover:text-white transition-all duration-300 hover:scale-105"
         >
-          Xem tất cả →
+          <span>Xem tất cả</span>
+          <span class="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
         </button>
       </div>
       
@@ -345,32 +424,40 @@
           :key="restaurant.id"
           @click="viewOutletDetail(restaurant.id)"
           :style="{ animationDelay: `${index * 0.1}s` }"
-          class="group flex cursor-pointer flex-col overflow-hidden rounded-xl bg-white dark:bg-surface-dark shadow-md transition-all duration-300 hover:shadow-xl hover:-translate-y-1 animate-slide-up"
+          class="group card-premium cursor-pointer overflow-hidden animate-fade-in-scale hover-lift"
         >
           <div class="relative overflow-hidden">
-            <div
-              class="h-40 w-full bg-gradient-to-br from-yellow-100 to-yellow-200 dark:from-yellow-900 dark:to-yellow-800 transition-transform duration-300 group-hover:scale-105 flex items-center justify-center"
-            >
-              <span class="material-symbols-outlined text-5xl text-yellow-600 dark:text-yellow-400">
-                star
-              </span>
+            <div class="h-48 w-full transition-transform duration-500 group-hover:scale-110">
+              <ImageDisplay
+                :image-url="restaurant.imageUrl || null"
+                :alt="restaurant.name"
+                :lazy="true"
+                placeholder-icon="restaurant"
+                :icon-size="'64px'"
+                container-class="w-full h-full bg-gradient-to-br from-yellow-100 to-yellow-200 dark:from-yellow-900 dark:to-yellow-800 flex items-center justify-center"
+                image-class="w-full h-full object-cover"
+              />
             </div>
             <div
-              class="absolute top-3 right-3 rounded-full bg-yellow-500 px-3 py-1 text-xs font-bold text-white shadow-lg"
+              class="absolute top-4 right-4 rounded-full bg-yellow-500/95 backdrop-blur-sm px-4 py-2 text-sm font-black text-white shadow-xl flex items-center gap-1 z-10"
             >
-              {{ restaurant.rating }} ⭐
+              <span class="material-symbols-outlined text-base fill">star</span>
+              <span>{{ restaurant.rating }}</span>
             </div>
           </div>
-          <div class="flex flex-col gap-2 p-4">
-            <h3 class="text-lg font-bold text-text-light dark:text-text-dark line-clamp-1">
+          <div class="flex flex-col gap-2 p-5">
+            <h3 class="text-lg font-black text-text-light dark:text-text-dark line-clamp-1">
               {{ restaurant.name }}
             </h3>
             <p class="text-sm text-subtext-light dark:text-subtext-dark line-clamp-1">
               {{ restaurant.category }} • {{ restaurant.district }}
             </p>
-            <div class="flex items-center gap-1 text-sm">
-              <span class="text-yellow-500 font-bold">{{ restaurant.rating }}</span>
-              <span class="text-subtext-light dark:text-subtext-dark">
+            <div class="flex items-center gap-2 mt-1">
+              <div class="flex items-center gap-1">
+                <span class="material-symbols-outlined fill text-yellow-500 text-base">star</span>
+                <span class="text-sm font-black text-yellow-600 dark:text-yellow-400">{{ restaurant.rating }}</span>
+              </div>
+              <span class="text-xs text-subtext-light dark:text-subtext-dark">
                 ({{ restaurant.reviews }} đánh giá)
               </span>
             </div>
@@ -380,26 +467,66 @@
     </section>
 
     <!-- Call to Action Section -->
-    <section class="w-full py-16 bg-gradient-to-r from-primary to-primary/80 dark:from-primary/90 dark:to-primary/70">
-      <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h2 class="text-3xl font-bold text-white mb-4">
-          Sẵn sàng khám phá ẩm thực?
+    <section class="w-full py-20 lg:py-28 bg-gradient-to-br from-primary via-primary/90 to-primary/80 dark:from-primary/90 dark:via-primary/80 dark:to-primary/70 relative overflow-hidden">
+      <!-- Animated background elements -->
+      <div class="absolute inset-0 opacity-20">
+        <div class="absolute top-10 left-10 w-72 h-72 bg-white/10 rounded-full blur-3xl animate-float"></div>
+        <div class="absolute bottom-10 right-10 w-96 h-96 bg-white/10 rounded-full blur-3xl animate-float" style="animation-delay: 1.5s;"></div>
+      </div>
+      
+      <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+        <div class="inline-block mb-4">
+          <span class="text-sm font-semibold text-white/90 bg-white/20 px-4 py-2 rounded-full backdrop-blur-sm">
+            🍜 Bắt đầu hành trình ẩm thực
+          </span>
+        </div>
+        <h2 class="text-4xl sm:text-5xl lg:text-6xl font-black text-white mb-6 leading-tight">
+          Sẵn sàng khám phá<br />
+          <span class="text-yellow-200">ẩm thực Sài Gòn?</span>
         </h2>
-        <p class="text-white/90 mb-8 text-lg">
-          Tìm kiếm hàng ngàn quán ăn và món ngon tại Sài Gòn
+        <p class="text-white/90 mb-10 text-lg sm:text-xl max-w-2xl mx-auto leading-relaxed">
+          Tìm kiếm hàng ngàn quán ăn và món ngon tại Sài Gòn. 
+          Đặt bàn ngay hôm nay để trải nghiệm ẩm thực tuyệt vời!
         </p>
         <div class="flex gap-4 justify-center flex-wrap">
           <button
             @click="router.push('/search')"
-            class="px-8 py-3 bg-white text-primary rounded-lg font-bold hover:bg-gray-100 transition-colors shadow-lg"
+            class="group px-8 py-4 bg-white text-primary rounded-xl font-black hover:bg-gray-100 transition-all duration-300 shadow-xl hover:shadow-2xl hover:scale-105 flex items-center gap-2"
           >
-            Khám phá ngay
+            <span>Khám phá ngay</span>
+            <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
           </button>
           <button
-            @click="router.push('/booking')"
-            class="px-8 py-3 bg-white/10 backdrop-blur-sm text-white border-2 border-white rounded-lg font-bold hover:bg-white/20 transition-colors"
+            v-if="authStore.isAuthenticated"
+            @click="router.push('/booking-history')"
+            class="px-8 py-4 bg-white/10 backdrop-blur-md text-white border-2 border-white/30 rounded-xl font-black hover:bg-white/20 hover:border-white/50 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
           >
             Đặt bàn ngay
+          </button>
+          <button
+            v-else
+            @click="router.push('/auth/login')"
+            class="px-8 py-4 bg-white/10 backdrop-blur-md text-white border-2 border-white/30 rounded-xl font-black hover:bg-white/20 hover:border-white/50 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
+          >
+            Đăng nhập để đặt bàn
+          </button>
+          <!-- Admin Management Button -->
+          <button
+            v-if="authStore.isAdmin"
+            @click="router.push('/admin')"
+            class="group px-8 py-4 bg-yellow-400/90 text-gray-900 rounded-xl font-black hover:bg-yellow-300 transition-all duration-300 shadow-xl hover:shadow-2xl hover:scale-105 flex items-center gap-2"
+          >
+            <span class="material-symbols-outlined">admin_panel_settings</span>
+            <span>Quản lý Admin</span>
+          </button>
+          <!-- Owner Management Button -->
+          <button
+            v-if="authStore.isOwner"
+            @click="router.push('/owner')"
+            class="group px-8 py-4 bg-purple-400/90 text-white rounded-xl font-black hover:bg-purple-300 transition-all duration-300 shadow-xl hover:shadow-2xl hover:scale-105 flex items-center gap-2"
+          >
+            <span class="material-symbols-outlined">storefront</span>
+            <span>Quản lý Quán</span>
           </button>
         </div>
       </div>
@@ -411,20 +538,24 @@
 import {ref, onMounted} from "vue";
 import {useRouter} from "vue-router";
 import {useOutletStore} from "@/stores/outlet";
+import {useAuthStore} from "@/stores/auth";
 import {menuApi, outletApi, adminApi} from "@/api";
 import apiClient from "@/api/axios";
 import ImageDisplay from "@/components/common/ImageDisplay.vue";
+import SearchAutocomplete from "@/components/common/SearchAutocomplete.vue";
 import {processImageUrl} from "@/utils/imageUtils";
 
 const router = useRouter();
 const outletStore = useOutletStore();
+const authStore = useAuthStore();
 
 const searchQuery = ref("");
+const searchFocused = ref(false);
 const quickFilters = ref([
-  { key: "nearby", label: "Gần tôi" },
-  { key: "newest", label: "Mới nhất" },
-  { key: "promotion", label: "Đang khuyến mãi" },
-  { key: "booking", label: "Đặt bàn" },
+  { key: "nearby", label: "Gần tôi", icon: "near_me" },
+  { key: "newest", label: "Mới nhất", icon: "new_releases" },
+  { key: "promotion", label: "Đang khuyến mãi", icon: "local_offer" },
+  { key: "booking", label: "Đặt bàn", icon: "event_available" },
 ]);
 
 const isLoadingCategories = ref(false);
@@ -463,6 +594,18 @@ onMounted(async () => {
     loadPopularMenuItems(),
     loadStatistics(),
   ]);
+  
+  // Debug: Log user role info
+  if (authStore.isAuthenticated) {
+    console.log("🔍 [Home] User info:", {
+      user: authStore.user,
+      isAdmin: authStore.isAdmin,
+      isOwner: authStore.isOwner,
+      roleName: authStore.user?.roleName,
+      roleType: authStore.user?.roleType,
+      role: authStore.user?.role,
+    });
+  }
 });
 
 const loadCategories = async () => {
@@ -569,6 +712,11 @@ const loadTopRatedRestaurants = async () => {
       })
       .map((outlet) => {
         const rating = outlet.averageRating ?? outlet.rating;
+        // Get first image from outlet.images array
+        const firstImage = outlet.images && Array.isArray(outlet.images) && outlet.images.length > 0 
+          ? outlet.images[0] 
+          : null;
+        
         return {
           id: outlet.id,
           name: outlet.name,
@@ -576,6 +724,7 @@ const loadTopRatedRestaurants = async () => {
           district: outlet.districtName || outlet.district?.name || "TPHCM",
           rating: Number(rating).toFixed(1),
           reviews: outlet.totalReviews ?? 0,
+          imageUrl: firstImage, // Add image URL for ImageDisplay
         };
       });
   } catch (error) {
@@ -619,17 +768,45 @@ const loadPopularMenuItems = async () => {
     // For each menu item, try to get an image from an outlet that serves it
     const enrichedItems = await Promise.all(
       selectedItems.map(async (item) => {
-        // Try to get image from outlet menu items
+        // Try to get image from outlet menu items using the new API endpoint
         try {
-          // Get a sample outlet menu item that uses this master menu item
-          // Note: This requires an API endpoint to search outlet menu items by menuItemId
-          // For now, we'll keep the item as is and ImageDisplay will show placeholder
+          const imageResponse = await menuApi.getMenuItemImage(item.id);
+          console.log(`📸 Image response for menu item ${item.id}:`, imageResponse);
+          
+          // Handle different response formats
+          let imageUrl = null;
+          if (typeof imageResponse === 'string') {
+            // Direct string response
+            imageUrl = imageResponse;
+          } else if (imageResponse?.data) {
+            // BaseResponse wrapper
+            imageUrl = imageResponse.data;
+          } else if (imageResponse) {
+            // Try to extract from response object
+            imageUrl = imageResponse;
+          }
+          
+          // Only use non-empty strings
+          if (imageUrl && typeof imageUrl === 'string' && imageUrl.trim().length > 0) {
+            console.log(`✅ Found image for ${item.name}:`, imageUrl);
+            return {
+              ...item,
+              imageUrl: imageUrl,
+            };
+          } else {
+            console.log(`⚠️ No image found for ${item.name}`);
+            return {
+              ...item,
+              imageUrl: null,
+            };
+          }
+        } catch (err) {
+          // If API fails, return item without image (ImageDisplay will show placeholder)
+          console.warn(`❌ Failed to get image for menu item ${item.id}:`, err);
           return {
             ...item,
-            imageUrl: item.imageUrl || null, // Will be null for master menu items
+            imageUrl: item.imageUrl || null,
           };
-        } catch (err) {
-          return item;
         }
       })
     );
@@ -644,12 +821,48 @@ const loadPopularMenuItems = async () => {
 // Load statistics from real API data
 const loadStatistics = async () => {
   try {
-    // Load all statistics in parallel
+    // Use new public statistics API endpoint
+    try {
+      const statsResponse = await outletApi.getPublicStatistics();
+      console.log("📊 Public statistics response:", statsResponse);
+      
+      // Extract data from BaseResponse wrapper
+      const stats = statsResponse?.data || statsResponse;
+      
+      if (stats) {
+        statistics.value[0].value = formatNumber(stats.totalOutlets || 0);
+        statistics.value[0].loading = false;
+        
+        statistics.value[1].value = formatNumber(stats.totalMenuItems || 0);
+        statistics.value[1].loading = false;
+        
+        statistics.value[2].value = formatNumber(stats.totalReviews || 0);
+        statistics.value[2].loading = false;
+        
+        statistics.value[3].value = formatNumber(stats.totalUsers || 0);
+        statistics.value[3].loading = false;
+        
+        console.log("✅ Statistics loaded:", {
+          outlets: statistics.value[0].value,
+          menuItems: statistics.value[1].value,
+          reviews: statistics.value[2].value,
+          users: statistics.value[3].value,
+        });
+        return; // Success, exit early
+      }
+    } catch (statsError) {
+      console.warn("⚠️ Public statistics API failed, falling back to individual APIs:", statsError);
+    }
+    
+    // Fallback: Load all statistics in parallel using individual APIs
     const [outletsResponse, menuItemsResponse, reviewsResponse] = await Promise.allSettled([
       outletApi.searchOutlets({page: 0, size: 1}),
       menuApi.searchMasterMenuItems({page: 0, size: 1}),
       // Get all reviews by calling search without outletId filter
-      apiClient.get("/reviews/search", {params: {page: 0, size: 1}}),
+      apiClient.get("/reviews/search", {params: {page: 0, size: 1}}).catch(err => {
+        console.warn("Failed to fetch reviews:", err);
+        return null;
+      }),
     ]);
 
     // Update outlets count
@@ -677,70 +890,101 @@ const loadStatistics = async () => {
     }
 
     // Update reviews count
-    if (reviewsResponse.status === 'fulfilled') {
+    if (reviewsResponse.status === 'fulfilled' && reviewsResponse.value) {
       const response = reviewsResponse.value;
+      console.log("📊 Reviews response:", response);
       // Axios interceptor returns full PageResponse/Spring Data Page object
-      const total = response?.totalElements || response?.total || 0;
+      // Check multiple possible response formats
+      const total = response?.totalElements || 
+                    response?.total || 
+                    (response?.content ? response.content.length : 0) ||
+                    (Array.isArray(response) ? response.length : 0) ||
+                    0;
+      console.log("📊 Reviews total:", total);
       statistics.value[2].value = formatNumber(total);
       statistics.value[2].loading = false;
     } else {
+      console.warn("⚠️ Reviews response failed or empty:", reviewsResponse);
       statistics.value[2].value = "0";
       statistics.value[2].loading = false;
     }
 
     // Users count - try to get from admin API first (only if user is admin)
+    // Skip if user is not authenticated or not admin
     let usersCountLoaded = false;
-    try {
-      const usersResponse = await adminApi.getUsers({page: 0, size: 1});
-      const total = usersResponse?.totalElements || usersResponse?.total || 0;
-      if (total > 0) {
-        statistics.value[3].value = formatNumber(total);
-        usersCountLoaded = true;
-      }
-    } catch (error) {
-      // Admin API requires admin role - 403/500 is expected for non-admin users
-      // Silently skip and use alternative method
-      const status = error?.response?.status;
-      if (status === 403 || status === 500) {
-        // Expected behavior for non-admin users, don't log as error
-      } else {
-        // Other errors might be worth logging
-        console.warn("Admin API error:", error?.response?.status, error?.message);
+    if (authStore.isAuthenticated && authStore.isAdmin) {
+      try {
+        const usersResponse = await adminApi.getUsers({page: 0, size: 1});
+        const total = usersResponse?.totalElements || usersResponse?.total || 0;
+        if (total > 0) {
+          statistics.value[3].value = formatNumber(total);
+          usersCountLoaded = true;
+        }
+      } catch (error) {
+        // Admin API requires admin role - 403/500 is expected for non-admin users
+        // Silently skip and use alternative method
+        const status = error?.response?.status;
+        if (status === 403 || status === 500) {
+          // Expected behavior for non-admin users, don't log as error
+        } else {
+          // Other errors might be worth logging
+          console.warn("Admin API error:", error?.response?.status, error?.message);
+        }
       }
     }
     
     // If admin API didn't work, try to estimate from reviews
-    if (!usersCountLoaded && reviewsResponse.status === 'fulfilled') {
+    if (!usersCountLoaded && reviewsResponse.status === 'fulfilled' && reviewsResponse.value) {
       try {
         // Get reviews to count unique users
         const reviewsData = reviewsResponse.value;
-        const totalReviews = reviewsData?.totalElements || 0;
+        const totalReviews = reviewsData?.totalElements || 
+                            reviewsData?.total || 
+                            (reviewsData?.content ? reviewsData.content.length : 0) ||
+                            0;
+        
+        console.log("📊 Total reviews for user estimation:", totalReviews);
         
         if (totalReviews > 0) {
-          // Get a larger sample to estimate better
+          // Get a larger sample to estimate better (max 200 reviews)
+          const sampleSize = Math.min(200, totalReviews);
           const sampleResponse = await apiClient.get("/reviews/search", {
-            params: {page: 0, size: Math.min(200, totalReviews)}
+            params: {page: 0, size: sampleSize}
+          }).catch(err => {
+            console.warn("Failed to fetch sample reviews:", err);
+            return null;
           });
           
-          const sampleReviews = sampleResponse?.data || sampleResponse?.content || [];
-          const uniqueUserIds = new Set();
-          
-          sampleReviews.forEach(review => {
-            if (review?.userId) {
-              uniqueUserIds.add(review.userId);
+          if (sampleResponse) {
+            const sampleReviews = sampleResponse?.content || 
+                                 sampleResponse?.data || 
+                                 (Array.isArray(sampleResponse) ? sampleResponse : []);
+            
+            console.log("📊 Sample reviews count:", sampleReviews.length);
+            
+            const uniqueUserIds = new Set();
+            
+            sampleReviews.forEach(review => {
+              if (review?.userId) {
+                uniqueUserIds.add(review.userId);
+              }
+            });
+            
+            console.log("📊 Unique users from reviews:", uniqueUserIds.size);
+            
+            // Estimate: if we sampled all reviews, use unique count directly
+            // Otherwise, estimate based on sample ratio
+            if (sampleReviews.length >= totalReviews) {
+              // We have all reviews, count unique users
+              statistics.value[3].value = formatNumber(uniqueUserIds.size);
+            } else if (uniqueUserIds.size > 0) {
+              // Estimate: assume 40-60% of users write reviews
+              // So multiply unique reviewers by 1.5-2.5
+              const estimatedUsers = Math.ceil(uniqueUserIds.size * 2);
+              statistics.value[3].value = formatNumber(estimatedUsers);
+            } else {
+              statistics.value[3].value = "0";
             }
-          });
-          
-          // Estimate: if we sampled all reviews, use unique count directly
-          // Otherwise, estimate based on sample ratio
-          if (sampleReviews.length >= totalReviews) {
-            // We have all reviews, count unique users
-            statistics.value[3].value = formatNumber(uniqueUserIds.size);
-          } else if (uniqueUserIds.size > 0) {
-            // Estimate: assume 40-60% of users write reviews
-            // So multiply unique reviewers by 1.5-2.5
-            const estimatedUsers = Math.ceil(uniqueUserIds.size * 2);
-            statistics.value[3].value = formatNumber(estimatedUsers);
           } else {
             statistics.value[3].value = "0";
           }
@@ -779,27 +1023,72 @@ const formatNumber = (num) => {
   return number.toString();
 };
 
-const handleQuickFilter = (filterKey) => {
+const handleQuickFilter = async (filterKey) => {
   switch (filterKey) {
     case "nearby":
-      // Note: distance sort requires user location, redirect to search page
-      // Backend doesn't support distance sort without location
-      router.push({path: "/search", query: {sort: "name,asc"}});
+      // Lấy vị trí người dùng và tìm outlets gần nhất
+      try {
+        if ("geolocation" in navigator) {
+          navigator.geolocation.getCurrentPosition(
+            async (position) => {
+              const { latitude, longitude } = position.coords;
+              // Redirect đến search page với location và sort by distance
+              router.push({
+                path: "/search",
+                query: {
+                  latitude: latitude.toString(),
+                  longitude: longitude.toString(),
+                  radius: "10",
+                  sort: "distance,asc",
+                  useAdvancedSearch: "true"
+                }
+              });
+            },
+            (error) => {
+              console.error("Error getting location:", error);
+              // Nếu không lấy được location, redirect đến search page bình thường
+              alert("Không thể lấy vị trí của bạn. Vui lòng bật quyền truy cập vị trí.");
+              router.push({ path: "/search" });
+            }
+          );
+        } else {
+          alert("Trình duyệt của bạn không hỗ trợ định vị.");
+          router.push({ path: "/search" });
+        }
+      } catch (error) {
+        console.error("Error in nearby filter:", error);
+        router.push({ path: "/search" });
+      }
       break;
     case "newest":
-      // Backend supports sort via Pageable, but createdAt may not be available
-      // Use default sort or name sort as fallback
-      router.push({path: "/search"});
+      // Redirect đến search page với newest outlets
+      router.push({
+        path: "/search",
+        query: {
+          filter: "newest"
+        }
+      });
       break;
     case "promotion":
-      // Backend doesn't support hasPromotion filter
-      // Redirect to search page without filter
-      router.push({path: "/search"});
+      // Redirect đến search page với promoted outlets
+      router.push({
+        path: "/search",
+        query: {
+          filter: "promotion"
+        }
+      });
       break;
     case "booking":
-      // Backend doesn't support hasBooking filter
-      // Redirect to search page without filter
-      router.push({path: "/search"});
+      // Redirect đến booking page hoặc search với booking filter
+      if (authStore.isAuthenticated) {
+        router.push({ path: "/booking" });
+      } else {
+        // Nếu chưa đăng nhập, redirect đến login với return URL
+        router.push({ 
+          path: "/auth/login",
+          query: { returnUrl: "/booking" }
+        });
+      }
       break;
     default:
       router.push("/search");
@@ -809,6 +1098,15 @@ const handleQuickFilter = (filterKey) => {
 const handleSearch = () => {
   if (searchQuery.value.trim()) {
     router.push({path: "/search", query: {q: searchQuery.value}});
+  } else {
+    router.push({path: "/search"});
+  }
+};
+
+const handleSearchSelect = (suggestion) => {
+  if (suggestion && suggestion.name) {
+    searchQuery.value = suggestion.name;
+    handleSearch();
   }
 };
 

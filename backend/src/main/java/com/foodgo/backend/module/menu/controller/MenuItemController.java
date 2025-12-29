@@ -39,4 +39,18 @@ public class MenuItemController {
       @ModelAttribute MenuItemFilterRequest filter, Pageable pageable) {
     return menuItemService.getPage(filter, pageable);
   }
+
+  // 3. GET IMAGE URL for menu item
+  @PermitAll
+  @GetMapping("/{id}/image")
+  @Operation(
+      summary = "Lấy ảnh cho món ăn gốc từ outlet menu items",
+      description = "Tìm ảnh từ outlet menu items có sử dụng món ăn gốc này.")
+  public org.springframework.http.ResponseEntity<String> getMenuItemImage(@PathVariable UUID id) {
+    String imageUrl = menuItemService.getMenuItemImageUrl(id);
+    if (imageUrl == null || imageUrl.trim().isEmpty()) {
+      return org.springframework.http.ResponseEntity.notFound().build();
+    }
+    return org.springframework.http.ResponseEntity.ok(imageUrl);
+  }
 }

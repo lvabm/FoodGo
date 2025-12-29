@@ -2,6 +2,7 @@ package com.foodgo.backend.security.config;
 
 import com.foodgo.backend.security.config.interceptor.SuccessMessageCleanupInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -17,7 +18,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
   }
 
   @Override
-  public void addInterceptors(InterceptorRegistry registry) {
+  public void addInterceptors(@NonNull InterceptorRegistry registry) {
     // Đăng ký Interceptor để áp dụng cho mọi request ("/**")
     registry.addInterceptor(cleanupInterceptor).addPathPatterns("/**");
   }

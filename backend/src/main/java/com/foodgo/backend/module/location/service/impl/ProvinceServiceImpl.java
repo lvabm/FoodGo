@@ -12,6 +12,7 @@ import com.foodgo.backend.module.location.dto.mapper.ProvinceMapper;
 import com.foodgo.backend.module.location.repository.ProvinceRepository;
 import com.foodgo.backend.module.location.service.ProvinceService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -54,5 +55,12 @@ public class ProvinceServiceImpl
   @Override
   protected Specification<Province> buildSpecification(ProvinceFilterRequest filter) {
     return new ProvinceSpecification(filter);
+  }
+
+  // Override getAll() để thêm cache
+  @Override
+  @Cacheable(value = "provinces", unless = "#result == null || #result.isEmpty()")
+  public java.util.List<ProvinceResponse> getAll() {
+    return super.getAll();
   }
 }

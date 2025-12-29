@@ -10,3 +10,5 @@ public record OutletCategoryCreateRequest(
     @NotNull Integer typeId // ID của OutletType
     ) {}
 
+
+

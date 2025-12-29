@@ -20,7 +20,10 @@ import com.foodgo.backend.module.review.dto.response.ReviewResponse;
 import com.foodgo.backend.module.review.entity.*;
 import com.foodgo.backend.module.review.repository.*;
 import com.foodgo.backend.module.review.service.ReviewService;
+import com.foodgo.backend.module.moderation.service.ModerationService;
 import com.foodgo.backend.module.user.repository.UserAccountRepository;
+import com.foodgo.backend.module.outlet.entity.Outlet;
+import com.foodgo.backend.module.outlet.repository.OutletRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -30,6 +33,8 @@ import jakarta.persistence.criteria.JoinType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -49,6 +54,8 @@ public class ReviewServiceImpl
   private final ReviewReplyRepository replyRepository;
   private final ReviewReactionRepository reactionRepository;
   private final ReviewImageRepository imageRepository;
+  private final OutletRepository outletRepository;
+  private final ModerationService moderationService;
 
   private final String reviewEntityName = EntityName.REVIEW.getFriendlyName();
 
@@ -114,6 +121,18 @@ public class ReviewServiceImpl
     if (reviewRepository.existsByBookingId(booking.getId())) {
       throw new BadRequestException("Bạn đã đánh giá đơn hàng này rồi.");
     }
+    // 4. Check thời gian: chỉ được review trong vòng 30 ngày sau khi completed
+    if (booking.getUserCheckedInAt() != null) {
+      java.time.Instant completedTime = booking.getUserCheckedInAt();
+      java.time.Instant now = java.time.Instant.now();
+      long daysSinceCompleted = java.time.Duration.between(completedTime, now).toDays();
+      
+      if (daysSinceCompleted > com.foodgo.backend.common.constant.AppConstants.MAX_REVIEW_DAYS_AFTER_COMPLETED) {
+        throw new BadRequestException(
+            String.format("Bạn chỉ có thể đánh giá trong vòng %d ngày sau khi hoàn tất đơn hàng.", 
+                com.foodgo.backend.common.constant.AppConstants.MAX_REVIEW_DAYS_AFTER_COMPLETED));
+      }
+    }
   }
 
   @Override
@@ -146,9 +165,20 @@ public class ReviewServiceImpl
       review.setReviewImages(images);
     }
 
-    Review saved = reviewRepository.save(review);
+    // Lưu review trước
+    Review savedReview = reviewRepository.save(review);
+
+    // Tự động kiểm duyệt
+    moderationService.autoModerateReview(savedReview);
+
+    // Reload để lấy moderation status đã cập nhật
+    savedReview = reviewRepository.findById(savedReview.getId()).orElse(savedReview);
+
+    // Auto-update outlet rating và total reviews
+    updateOutletRating(booking.getOutlet());
+    
     SuccessMessageContext.setMessage("Cảm ơn bạn đã đánh giá!");
-    return reviewMapper.toResponse(saved);
+    return reviewMapper.toResponse(savedReview);
   }
 
   @Override
@@ -186,9 +216,16 @@ public class ReviewServiceImpl
                   + review.getPriceRating())
               / 4);
     }
+    
+    Review updated = reviewRepository.save(review);
+    
+    // Auto-update outlet rating sau khi update review
+    if (updated.getOutlet() != null) {
+      updateOutletRating(updated.getOutlet());
+    }
 
     SuccessMessageContext.setMessage("Cập nhật đánh giá thành công.");
-    return reviewMapper.toResponse(review);
+    return reviewMapper.toResponse(updated);
   }
 
   // --- UPDATE LOGIC (24h Policy) ---
@@ -318,7 +355,7 @@ public class ReviewServiceImpl
   public ReviewResponse getDetail(UUID id) {
     Specification<Review> specById = (root, query, cb) -> {
       // Fetch join để tránh LazyInitializationException
-      if (Long.class != query.getResultType()) {
+      if (query != null && Long.class != query.getResultType()) {
         root.fetch("outlet", JoinType.LEFT);
         root.fetch("user", JoinType.LEFT).fetch("profile", JoinType.LEFT);
         root.fetch("booking", JoinType.LEFT);
@@ -340,5 +377,43 @@ public class ReviewServiceImpl
         String.format(SuccessMessageContext.FETCH_DETAIL_SUCCESS, getEntityName(), id));
 
     return reviewMapper.toResponse(review);
+  }
+
+  /**
+   * Tự động cập nhật average rating và total reviews của outlet
+   */
+  private void updateOutletRating(Outlet outlet) {
+    if (outlet == null || outlet.getId() == null) {
+      return;
+    }
+    
+    try {
+      List<com.foodgo.backend.module.review.entity.Review> reviews = 
+          reviewRepository.findByOutletIdIn(List.of(outlet.getId()));
+      
+      if (reviews == null || reviews.isEmpty()) {
+        outlet.setAverageRating(null);
+        outlet.setTotalReviews(0);
+      } else {
+        double avg = reviews.stream()
+            .mapToInt(r -> r.getOverallRating() != null ? r.getOverallRating() : 0)
+            .average()
+            .orElse(0.0);
+        
+        if (avg > 0) {
+          outlet.setAverageRating(BigDecimal.valueOf(avg).setScale(2, RoundingMode.HALF_UP));
+        } else {
+          outlet.setAverageRating(null);
+        }
+        
+        outlet.setTotalReviews(reviews.size());
+      }
+      
+      outletRepository.save(outlet);
+    } catch (Exception e) {
+      // Log error nhưng không fail review operation
+      org.slf4j.LoggerFactory.getLogger(ReviewServiceImpl.class)
+          .warn("Failed to update outlet rating for outlet {}: {}", outlet.getId(), e.getMessage());
+    }
   }
 }

@@ -222,21 +222,22 @@ const fetchMembershipPlans = async () => {
   error.value = null;
   try {
     const response = await adminApi.getMembershipPlans({page: 0, size: 100});
-    // Handle different response structures
+    // Axios interceptor đã xử lý response, trả về Spring Data Page object hoặc data
     let allPlans = [];
-    if (response?.data?.content) {
-      allPlans = response.data.content;
-    } else if (response?.content) {
+    if (response?.content && Array.isArray(response.content)) {
+      // Spring Data Page format: { content: [...], totalElements, totalPages, ... }
       allPlans = response.content;
-    } else if (Array.isArray(response?.data)) {
-      allPlans = response.data;
     } else if (Array.isArray(response)) {
+      // Direct array
       allPlans = response;
+    } else if (response?.data && Array.isArray(response.data)) {
+      // Wrapped in data field
+      allPlans = response.data;
     }
-    membershipPlans.value = allPlans;
+    membershipPlans.value = allPlans || [];
   } catch (err) {
     console.error("Error fetching membership plans:", err);
-    error.value = err.response?.data?.message || "Không thể tải danh sách gói thành viên";
+    error.value = err.message || err.response?.data?.message || "Không thể tải danh sách gói thành viên";
     showError(error.value);
   } finally {
     isLoading.value = false;

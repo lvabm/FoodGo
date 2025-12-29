@@ -1,7 +1,5 @@
 package com.foodgo.backend.module.user.service.impl;
 
-import com.foodgo.backend.common.base.mapper.BaseMapper;
-import com.foodgo.backend.common.base.service.impl.BaseServiceImpl;
 import com.foodgo.backend.common.constant.EntityName;
 import com.foodgo.backend.common.context.SecurityContext;
 import com.foodgo.backend.common.context.SuccessMessageContext;

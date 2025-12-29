@@ -170,9 +170,17 @@
             </div>
 
             <div class="flex flex-col gap-2 ml-4">
-              <!-- Xác nhận button -->
+              <!-- Badge: Booking của chính owner -->
+              <div
+                v-if="isOwnerOwnBooking(booking)"
+                class="px-3 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-700 dark:bg-yellow-900/20 dark:text-yellow-400 mb-2"
+              >
+                Đặt bàn của bạn
+              </div>
+
+              <!-- Xác nhận button - chỉ hiển thị nếu không phải booking của chính owner -->
               <button
-                v-if="booking.status === 'PENDING'"
+                v-if="booking.status === 'PENDING' && !isOwnerOwnBooking(booking)"
                 @click="confirmBooking(booking.id)"
                 :disabled="actionLoading[booking.id]"
                 class="px-4 py-2 bg-primary text-white rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 whitespace-nowrap"
@@ -181,9 +189,9 @@
                 <span v-else>Xác nhận</span>
               </button>
 
-              <!-- Từ chối button -->
+              <!-- Từ chối button - chỉ hiển thị nếu không phải booking của chính owner -->
               <button
-                v-if="booking.status === 'PENDING'"
+                v-if="booking.status === 'PENDING' && !isOwnerOwnBooking(booking)"
                 @click="openRejectDialog(booking)"
                 class="px-4 py-2 border border-red-500 text-red-500 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors whitespace-nowrap"
               >
@@ -308,8 +316,10 @@
 import {ref, computed, onMounted} from "vue";
 import {bookingApi} from "@/api";
 import {useRouter} from "vue-router";
+import {useAuthStore} from "@/stores/auth";
 
 const router = useRouter();
+const authStore = useAuthStore();
 
 // State
 const bookings = ref([]);
@@ -513,6 +523,12 @@ const changePage = (page) => {
   }
 };
 
+// Check if booking belongs to owner (owner's own booking at another outlet)
+const isOwnerOwnBooking = (booking) => {
+  if (!authStore.user?.id || !booking?.userId) return false;
+  return booking.userId === authStore.user.id;
+};
+
 // Confirm booking
 const confirmBooking = async (bookingId) => {
   actionLoading.value[bookingId] = true;
@@ -525,10 +541,10 @@ const confirmBooking = async (bookingId) => {
     await loadBookings();
   } catch (err) {
     console.error("❌ Error confirming booking:", err);
-    alert(
-      err.response?.data?.message ||
-        "Không thể xác nhận đặt bàn. Vui lòng thử lại."
-    );
+    const errorMessage = err.response?.data?.message || 
+      err.message || 
+      "Không thể xác nhận đặt bàn. Vui lòng thử lại.";
+    alert(errorMessage);
   } finally {
     actionLoading.value[bookingId] = false;
   }
@@ -552,6 +568,12 @@ const closeRejectDialog = () => {
 const submitReject = async () => {
   if (!rejectReason.value.trim() || !selectedBooking.value) return;
 
+  // Double check: không cho reject booking của chính mình
+  if (isOwnerOwnBooking(selectedBooking.value)) {
+    alert("Bạn không thể từ chối đơn đặt bàn của chính mình.");
+    return;
+  }
+
   rejectLoading.value = true;
 
   try {
@@ -565,10 +587,10 @@ const submitReject = async () => {
     await loadBookings();
   } catch (err) {
     console.error("❌ Error rejecting booking:", err);
-    alert(
-      err.response?.data?.message ||
-        "Không thể từ chối đặt bàn. Vui lòng thử lại."
-    );
+    const errorMessage = err.response?.data?.message || 
+      err.message || 
+      "Không thể từ chối đặt bàn. Vui lòng thử lại.";
+    alert(errorMessage);
   } finally {
     rejectLoading.value = false;
   }

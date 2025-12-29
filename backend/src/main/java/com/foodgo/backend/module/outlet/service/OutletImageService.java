@@ -3,7 +3,6 @@ package com.foodgo.backend.module.outlet.service;
 import com.foodgo.backend.common.base.service.DeletableService;
 import com.foodgo.backend.common.base.service.ReadableService;
 import com.foodgo.backend.module.outlet.dto.response.OutletImageResponse;
-import com.foodgo.backend.module.outlet.entity.OutletImage;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;

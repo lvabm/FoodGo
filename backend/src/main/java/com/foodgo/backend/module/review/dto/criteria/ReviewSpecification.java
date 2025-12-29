@@ -5,6 +5,8 @@ import com.foodgo.backend.module.review.entity.Review;
 import com.foodgo.backend.module.review.entity.ReviewReply;
 import jakarta.persistence.criteria.*;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,11 +14,11 @@ import java.util.List;
 public record ReviewSpecification(ReviewFilterRequest filter) implements Specification<Review> {
 
   @Override
-  public Predicate toPredicate(Root<Review> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+  public Predicate toPredicate(@NonNull Root<Review> root, @Nullable CriteriaQuery<?> query, @NonNull CriteriaBuilder cb) {
     List<Predicate> predicates = new ArrayList<>();
 
     // Fetch join để tránh LazyInitializationException khi map ReviewResponse
-    if (Long.class != query.getResultType()) {
+    if (query != null && Long.class != query.getResultType()) {
       root.fetch("outlet", JoinType.LEFT);
       root.fetch("user", JoinType.LEFT).fetch("profile", JoinType.LEFT);
       root.fetch("booking", JoinType.LEFT);

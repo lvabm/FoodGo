@@ -31,7 +31,8 @@ public class AdminProfileServiceImpl
 
   private final ProfileRepository repository;
   private final ProfileMapper mapper;
-  private final CountryRepository countryRepository;
+  @SuppressWarnings("unused")
+  private final CountryRepository countryRepository; // Reserved for future use
 
   private final String profileEntityName = EntityName.PROFILE.getFriendlyName() + " (Admin)";
 

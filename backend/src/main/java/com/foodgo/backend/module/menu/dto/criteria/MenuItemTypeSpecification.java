@@ -7,6 +7,8 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +18,7 @@ public record MenuItemTypeSpecification(MenuItemTypeFilterRequest filter)
 
   @Override
   public Predicate toPredicate(
-      Root<MenuItemType> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
+      @NonNull Root<MenuItemType> root, @Nullable CriteriaQuery<?> query, @NonNull CriteriaBuilder builder) {
     List<Predicate> predicates = new ArrayList<>();
 
     // Lọc theo Tên (tương đối, không phân biệt chữ hoa/thường)

@@ -7,6 +7,8 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +18,7 @@ public record MembershipPlanSearchSpecification(MembershipPlanFilterRequest filt
 
   @Override
   public Predicate toPredicate(
-      Root<MembershipPlan> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+      @NonNull Root<MembershipPlan> root, @Nullable CriteriaQuery<?> query, @NonNull CriteriaBuilder cb) {
     List<Predicate> predicates = new ArrayList<>();
 
     // 1. Filter by Keyword (Name OR Description)

@@ -4,6 +4,8 @@ import com.foodgo.backend.module.user.dto.request.filter.ProfileFilterRequest;
 import com.foodgo.backend.module.user.entity.Profile;
 import jakarta.persistence.criteria.*;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +15,7 @@ public record ProfileSearchSpecification(ProfileFilterRequest request)
 
   @Override
   public Predicate toPredicate(
-      Root<Profile> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
+      @NonNull Root<Profile> root, @Nullable CriteriaQuery<?> query, @NonNull CriteriaBuilder builder) {
     List<Predicate> predicates = new ArrayList<>();
 
     // 1. Lọc theo Tên đầy đủ (tương đối)
@@ -41,7 +43,9 @@ public record ProfileSearchSpecification(ProfileFilterRequest request)
               predicates.add(builder.equal(root.get("country").get("id"), countryId));
             });
 
-    query.distinct(true);
+    if (query != null) {
+      query.distinct(true);
+    }
 
     return builder.and(predicates.toArray(new Predicate[0]));
   }

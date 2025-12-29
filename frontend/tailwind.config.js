@@ -27,10 +27,18 @@ export default {
         inter: ["Inter", "sans-serif"],
       },
       borderRadius: {
-        DEFAULT: "0.5rem",
-        lg: "1rem",
-        xl: "1.5rem",
+        DEFAULT: "0.875rem", // 14px - iOS style
+        sm: "0.625rem", // 10px
+        md: "0.875rem", // 14px
+        lg: "1.25rem", // 20px - iOS card style
+        xl: "1.5rem", // 24px
+        "2xl": "2rem", // 32px
         full: "9999px",
+      },
+      boxShadow: {
+        "ios": "0 2px 8px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06)",
+        "ios-lg": "0 8px 24px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.08)",
+        "ios-xl": "0 12px 32px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.1)",
       },
     },
   },

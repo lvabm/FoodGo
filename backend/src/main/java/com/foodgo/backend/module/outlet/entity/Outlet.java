@@ -108,4 +108,9 @@ public class Outlet extends BaseUUIDEntity {
   @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinColumn(name = "type_id", nullable = false)
   private OutletType type;
+
+  // 10. QUAN HỆ ONE - TO - MANY: Outlet <--> Advertisement
+  // Advertisement sở hữu quan hệ (fk_outlet_id_advertisement)
+  @OneToMany(mappedBy = "outlet", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  private Set<com.foodgo.backend.module.advertisement.entity.Advertisement> advertisements;
 }

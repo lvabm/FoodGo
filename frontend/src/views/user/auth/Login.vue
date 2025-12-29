@@ -5,7 +5,7 @@
     <div class="flex h-full grow flex-col">
       <main class="flex min-h-screen w-full items-center justify-center">
         <div
-          class="flex w-full max-w-6xl overflow-hidden rounded-xl shadow-2xl bg-white dark:bg-[#231510]"
+          class="flex w-full max-w-6xl overflow-hidden rounded-2xl shadow-premium-lg bg-white dark:bg-[#231510] animate-fade-in-scale"
         >
           <div class="w-full lg:w-1/2 p-8 sm:p-12 flex flex-col justify-center">
             <div class="max-w-md mx-auto w-full">
@@ -58,7 +58,7 @@
                     </p>
                     <input
                       v-model="formData.email"
-                      class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-black dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-gray-300 dark:border-[#684031] bg-gray-50 dark:bg-[#342018] h-12 placeholder:text-gray-400 dark:placeholder:text-[#cba090] px-4 text-base font-normal leading-normal"
+                      class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-black dark:text-white focus:outline-0 focus:ring-4 focus:ring-primary/20 focus:border-primary border-2 border-gray-300 dark:border-[#684031] bg-gray-50 dark:bg-[#342018] h-12 placeholder:text-gray-400 dark:placeholder:text-[#cba090] px-4 text-base font-normal leading-normal transition-all duration-300 hover:border-primary/50"
                       placeholder="Nhập email hoặc số điện thoại của bạn"
                     />
                   </label>
@@ -83,7 +83,7 @@
                       <input
                         v-model="formData.password"
                         :type="showPassword ? 'text' : 'password'"
-                        class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-black dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-gray-300 dark:border-[#684031] bg-gray-50 dark:bg-[#342018] h-12 placeholder:text-gray-400 dark:placeholder:text-[#cba090] p-4 rounded-r-none border-r-0 pr-2 text-base font-normal leading-normal"
+                        class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-black dark:text-white focus:outline-0 focus:ring-4 focus:ring-primary/20 focus:border-primary border-2 border-gray-300 dark:border-[#684031] bg-gray-50 dark:bg-[#342018] h-12 placeholder:text-gray-400 dark:placeholder:text-[#cba090] p-4 rounded-r-none border-r-0 pr-2 text-base font-normal leading-normal transition-all duration-300 hover:border-primary/50"
                         placeholder="Nhập mật khẩu"
                       />
                       <button
@@ -115,22 +115,33 @@
                 <button
                   type="submit"
                   :disabled="isLoading"
-                  class="flex w-full items-center justify-center rounded-lg h-12 px-5 bg-primary text-white text-base font-bold leading-normal tracking-[0.015em] hover:bg-opacity-90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  class="btn-premium flex w-full items-center justify-center rounded-xl h-12 px-5 text-white text-base font-bold leading-normal tracking-[0.015em] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:transform-none"
                 >
                   <span v-if="!isLoading" class="truncate">Đăng nhập</span>
-                  <span v-else class="truncate">Đang đăng nhập...</span>
+                  <span v-else class="truncate flex items-center gap-2">
+                    <LoadingSpinner size="sm" color="white" />
+                    Đang đăng nhập...
+                  </span>
                 </button>
               </form>
             </div>
           </div>
 
-          <!-- Right Side Image -->
+          <!-- Right Side Image with Overlay -->
           <div
-            class="hidden lg:block lg:w-1/2 bg-cover bg-center"
+            class="hidden lg:block lg:w-1/2 bg-cover bg-center relative overflow-hidden"
             style="
               background-image: url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800');
             "
-          ></div>
+          >
+            <div class="absolute inset-0 bg-gradient-to-br from-primary/80 via-primary/60 to-primary/40"></div>
+            <div class="absolute inset-0 flex flex-col items-center justify-center p-8 text-white z-10">
+              <div class="text-center animate-fade-in-scale">
+                <h2 class="text-4xl font-black mb-4 text-shadow-lg">Chào mừng đến FoodGo</h2>
+                <p class="text-lg opacity-90 text-shadow">Khám phá hàng ngàn quán ăn tuyệt vời tại Sài Gòn</p>
+              </div>
+            </div>
+          </div>
         </div>
       </main>
     </div>
@@ -141,6 +152,7 @@
 import {ref} from "vue";
 import {useRouter} from "vue-router";
 import {useAuthStore} from "@/stores/auth";
+import LoadingSpinner from "@/components/common/LoadingSpinner.vue";
 
 const router = useRouter();
 const authStore = useAuthStore();

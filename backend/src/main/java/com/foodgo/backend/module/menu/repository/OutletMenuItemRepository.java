@@ -13,4 +13,16 @@ public interface OutletMenuItemRepository
 
   // Phương thức cần thiết để kiểm tra trùng lặp
   boolean existsByOutletIdAndMenuItemId(UUID outletId, UUID menuItemId);
+  
+  // Tìm outlet menu items theo menuItemId và có imageUrl (chỉ lấy items chưa bị xóa)
+  @org.springframework.data.jpa.repository.Query(
+      "SELECT omi FROM OutletMenuItem omi " +
+      "JOIN FETCH omi.menuItem mi " +
+      "WHERE mi.id = :menuItemId " +
+      "AND omi.imageUrl IS NOT NULL " +
+      "AND omi.imageUrl != '' " +
+      "AND (omi.isDeleted IS NULL OR omi.isDeleted = false) " +
+      "ORDER BY omi.id ASC")
+  java.util.List<OutletMenuItem> findTop5ByMenuItemIdAndImageUrlIsNotNullOrderByIdAsc(
+      @org.springframework.data.repository.query.Param("menuItemId") java.util.UUID menuItemId);
 }

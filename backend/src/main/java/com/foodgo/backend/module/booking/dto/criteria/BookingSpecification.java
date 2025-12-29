@@ -6,6 +6,8 @@ import com.foodgo.backend.module.booking.dto.request.filter.BookingFilterRequest
 import com.foodgo.backend.module.booking.entity.Booking;
 import jakarta.persistence.criteria.*;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +16,7 @@ import java.util.UUID;
 public record BookingSpecification(BookingFilterRequest filter) implements Specification<Booking> {
 
   @Override
-  public Predicate toPredicate(Root<Booking> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+  public Predicate toPredicate(@NonNull Root<Booking> root, @Nullable CriteriaQuery<?> query, @NonNull CriteriaBuilder cb) {
     List<Predicate> predicates = new ArrayList<>();
 
     // 1. SECURITY FILTER

@@ -4,7 +4,9 @@ import com.foodgo.backend.common.base.dto.BaseIntegerEntity;
 import com.foodgo.backend.module.user.entity.UserAccount;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.Instant;
 import java.util.UUID;
 
 @Entity
@@ -31,6 +33,10 @@ public class Notification extends BaseIntegerEntity<Long> {
   @Column(name = "is_read")
   @Builder.Default
   private Boolean isRead = false;
+
+  @Column(name = "created_at", nullable = false, updatable = false)
+  @CreationTimestamp
+  private Instant createdAt;
 
   // 1. QUAN HỆ MANY - TO - ONE: Notification <--> UserAccount
   // Notification sở hữu quan hệ (fk_user_account_id_notification)
