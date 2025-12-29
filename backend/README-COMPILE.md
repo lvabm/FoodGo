@@ -47,3 +47,4 @@ If using IntelliJ IDEA or Eclipse:
 3. Then "Maven" > "Compile"
 4. Finally "Maven" > "Test Compile"
 
+# Trigger Render redeploy
