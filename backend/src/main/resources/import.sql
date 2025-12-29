@@ -880,10 +880,16 @@ INSERT INTO review (id, outlet_id, user_id, booking_id, food_rating, service_rat
 ('50000000-0000-0000-0000-000000000013', (SELECT id FROM outlet WHERE name = 'Bún Riêu Cua'), (SELECT id FROM user_account WHERE username = 'ha.hoang_97'), NULL, 5, 4, 3, 4, 5, 'Bún riêu cua đậm đà, cua tươi', 9, 0);
 
 -- 🔑 1. Profile (BIGINT ID)
+-- PostgreSQL
 SELECT setval(pg_get_serial_sequence('profile', 'id'), (SELECT COALESCE(MAX(id), 0) FROM profile) + 1, false);
+-- H2 Database (for local development)
+ALTER TABLE profile ALTER COLUMN id RESTART WITH (SELECT COALESCE(MAX(id), 0) + 1 FROM profile);
 
 -- 🔑 2. Refresh Token (BIGINT ID)
+-- PostgreSQL
 SELECT setval(pg_get_serial_sequence('refresh_token', 'id'), (SELECT COALESCE(MAX(id), 0) FROM refresh_token) + 1, false);
+-- H2 Database
+ALTER TABLE refresh_token ALTER COLUMN id RESTART WITH (SELECT COALESCE(MAX(id), 0) + 1 FROM refresh_token);
 
 -- 🔑 3. Password Reset Token (BIGINT ID)
 SELECT setval(pg_get_serial_sequence('password_reset_token', 'id'), (SELECT COALESCE(MAX(id), 0) FROM password_reset_token) + 1, false);

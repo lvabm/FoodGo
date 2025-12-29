@@ -5,11 +5,11 @@ server:
 spring:
   # PHẦN 1: THIẾT LẬP KẾT NỐI DATASOURCE
   datasource:
-    # QUAN TRỌNG: Kết nối tới DB chạy trong Docker trên máy Host
-    url: jdbc:postgresql://localhost:5432/foodgo_db
-    username: admin
-    password: admin
-    driver-class-name: org.postgresql.Driver
+    # For development with Docker (H2 in-memory database)
+    url: jdbc:h2:mem:foodgo_db
+    username: sa
+    password: 
+    driver-class-name: org.h2.Driver
 
   # PHẦN 2: CẤU HÌNH JPA/HIBERNATE
   jpa:
@@ -20,7 +20,7 @@ spring:
       # Dùng create xong đổi sang update là ok (Chạy 2 lần)
       # ddl-auto: update
       ddl-auto: create-drop
-      database-platform: org.hibernate.dialect.PostgreSQLDialect
+      database-platform: org.hibernate.dialect.H2Dialect
 
     # Hiển thị câu lệnh SQL trong console (Giúp Debug và tối ưu)
     show-sql: true
