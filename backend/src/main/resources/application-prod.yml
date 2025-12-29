@@ -2,6 +2,12 @@ server:
   port: ${PORT:8080}
 
 spring:
+  datasource:
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
   jpa:
     hibernate:
       ddl-auto: validate
@@ -15,6 +21,14 @@ spring:
       enabled: false
     livereload:
       enabled: false
+
+  docker:
+    compose:
+      enabled: false
+
+jwt:
+  secret: ${JWT_SECRET:MTAwUGVyY2VudFNlY3JldEtleUZvckZvb2RHb0JhY2tlbmRNYXlCRTEyMzQ1Njc4OQ==}
+  exp-minutes: 60
 
 logging:
   level:
